@@ -277,7 +277,7 @@ class Account extends Data_format{
     }
 
     //get user's profile with id
-    public function user_get($id){
+    public function profile_get($id){
         $data = $this->Account_Model->profile($id);
         $this->res(1,$data,"data found", count($data));
     }
