@@ -32,7 +32,7 @@ class Account extends Data_format{
         else{
 
          $user = array(
-            "acnt_pic" => "http://localhost/tabogarahe/profiles/download.png",
+            "acnt_pic" => "profiles/download.png",
             "email" => $email,
             "password" => $pass,
             "firstname" => $fname,
@@ -101,7 +101,7 @@ class Account extends Data_format{
             $this->res(0,null,"Invalid Email",0);
      }else{
             $admin = array(
-                "acnt_pic" => "http://localhost/tabogarahe/profiles/download.png",
+                "acnt_pic" => "profiles/download.png",
                 "username" => $username,
                 "password" => $password,
                 "email" => $email,
