@@ -88,6 +88,9 @@ class User extends Data_format{
             $this->res(0,null,"error updated");
         }
     }
+    public function sample_get(){
+        echo "wew";
+    }
 }
 
 

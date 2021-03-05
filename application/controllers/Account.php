@@ -13,6 +13,8 @@ class Account extends Data_format{
   
     public function register_post(){
         $data = $this->decode();
+        date_default_timezone_set('asia/manila'); 
+        $dte = date("Y-m-d");
         $email = isset($data->email) ? $data->email : "";
         $pass = isset($data->pass) ? $data->pass : "";
         $fname = ucfirst(isset($data->fname) ? $data->fname : "");
@@ -45,7 +47,8 @@ class Account extends Data_format{
             "sitio" => $sitio,
             "brgy" => $brgy,
             "type" => $type,
-            "status" => $status
+            "status" => $status,
+            "date_added" => $dte
         );
             $res = $this->Account_Model->register($user);
                 if($res){
@@ -59,17 +62,17 @@ class Account extends Data_format{
 
     public function createadmin_post(){
         $data = $this->decode();
-        
+        date_default_timezone_set('asia/manila'); 
         $email =  isset($data->email) ? $data->email : "";
         $fname = ucfirst(isset($data->fname) ? $data->fname : "");
-        $mi =  ucfirst(isset($data->mi) ? $data->mi : "");
         $lname = ucfirst(isset($data->lname) ? $data->lname : "");
-        $gender = isset($data->gender) ? $data->gender : "";
         $contact = isset($data->contact) ? $data->contact : "";
         $sitio = isset($data->sitio) ? $data->sitio : "";
         $brgy = isset($data->brgy) ? $data->brgy : "";
+        $date = date("Y-m-d");
         $password = mt_rand(100000,999999);
-        $username = "admin_".$fname."".$password;
+        $foruser = mt_rand(100,999);
+        $username = "admin_".$fname."".$foruser;
         $message = "<p>Welcome to Tabogarahe we are assign you as a admin</p>
                     <p>Username:{$username}</p>
                     <p>Password:{$password}</p>";
@@ -94,28 +97,37 @@ class Account extends Data_format{
        
        $isExist = $this->Account_Model->isEmailExist($email);
      //  var_dump($isExist);
-       if($isExist){
+        if(empty($fname) || empty($lname) || empty($contact) || empty($email) || empty($sitio)){
+            $this->res(0,null,"Fill out all Fields",0);
+        }else if(empty($brgy)){
+            $this->res(0,null,"Choose barangay",0);
+        }
+        else if($isExist){
             $this->res(0,null,"This Email is Already Existed",0);
        }
        else if($this->isEmail($email)){
             $this->res(0,null,"Invalid Email",0);
-     }else{
+       }else if($this->isMobile($contact)){
+           $this->res(0,null,"Invalid Phone Number",0);
+       
+        }else{
             $admin = array(
                 "acnt_pic" => "profiles/download.png",
                 "username" => $username,
                 "password" => $password,
                 "email" => $email,
                 "firstname" => $fname,
-                "mi" => $mi,
+                "mi" => "",
                 "lastname" => $lname,
-                "gender" => $contact,
+                "gender" => "",
                 "contact" => $contact,
                 "civil_status"=>"",
                 "birthdate"=>"",
                 "sitio" => $sitio,
                 "brgy" => $brgy,
                 "type"=>"admin2",
-                "status"=>"active"
+                "status"=>"active",
+                "date_added" => $date
             
             );
             $res = $this->Account_Model->register($admin);
@@ -160,57 +172,39 @@ class Account extends Data_format{
     //Update your Personal Information
     public function updateDetails_post(){
         $data = $this->decode();
-        $id = isset($data->id) ? $data->id : "";
-        $fname = isset($data->fname) ?  $data->fname : "";
-        $mi = isset($data->mi) ? $data->mi : "";
-        $lname = isset($data->lname) ? $data->lname : "";
+        $id = isset($data->id) ? $data->id:"";
+        $fname = ucfirst(isset($data->fname) ? $data->fname : "");
+        $mi = ucfirst(isset($data->mi) ? $data->mi : "");
+        $lname = ucfirst(isset($data->lname) ? $data->lname : "");
         $contact = isset($data->contact) ? $data->contact : "";
-        $age = isset($data->age) ? $data->age : "";        
-        $firstname = "";
-        $lastname = "";
-        $mis = "";
-        $phone = "";
-        $nage =  "";
-        $profile = $this->Account_Model->profile($id);
-        foreach($profile as $newData){
-            $firstname = $newData->firstname;
-            $lastname = $newData->lastname;
-            $mis = $newData->mi;
-            $phone = $newData->contact;
-            $nage = $newData->age;
-        }
-        
-        if(empty($fname)){
-            $fname = $firstname;
-        }
-         if(empty($mi)){
-            $mi = $mis;
-        }
-         if(empty($lname)){
-            $lname = $lastname;
-        } 
-         if(empty($contact)){
-            $contact = $phone;
-        }
-         if(empty($age)){
-             $age = $nage;
-         }
-    
+        $gender = isset($data->gender) ? $data->gender : "";
+        $civil = isset($data->civil) ? $data->civil : "";
+        $bday = isset($data->bday) ? $data->bday : "";
+        $sitio = isset($data->sitio) ? $data->sitio : "";
+       $brgy = isset($data->brgy) ? $data->brgy : "";
         $user = array(
-            "firstname" => ucfirst($fname),
-            "MI" => ucfirst($mi),
-            "lastname" => ucfirst($lname),
+            "firstname" => $fname,
             "contact" => $contact,
-            "age" => $age
+            "mi"=>$mi,
+            "lastname"=>$lname,
+            "gender"=>$gender,
+            "civil_status"=>$civil,
+            "birthdate" => $bday,
+            "sitio" => $sitio,
+            "brgy" => $brgy
         );
-        $res =  $this->Account_Model->update($user,$id);
+        $res = $this->Account_Model->update($user,$id);
         if($res){
             $this->res(1,null,"Successfully Updated",0);
         }else{
-            $this->res(0,null,"Error updating",0);
+            $this->res(0,null,"Error Updated",0);
         }
     }
 
+   
+    public function extension($file){
+        return pathinfo($file, PATHINFO_EXTENSION);
+    }
     //view the all active or inactive users
     public function status_get($status){
         $count = $this->Account_Model->user_status($status);
@@ -221,9 +215,8 @@ class Account extends Data_format{
             $this->res(1,$count,"data found",0);
         }
     }
-
-    //Update Profile Picture of the user
-    public function updateProfilePic_post(){
+     //Update Profile Picture of the user
+    public function updatepic_post(){
         $file = $_FILES['pp']['name'];
         $id = $this->post('id');
         $ext = pathinfo($file, PATHINFO_EXTENSION);
@@ -232,10 +225,10 @@ class Account extends Data_format{
             $this->res(0,null,"File is Empty");
         }
         else if($this->all_ext($ext)){
-            $this->res(0,null,"Your file extension is not allowed, only jpg,png, and jpeg is allowed");
+            $this->res(0,null,"Your file extension is not allowed, only jpg,png, and jpeg is allowed",0);
         }else{
             $profilepic = move_uploaded_file($_FILES['pp']['tmp_name'],"profiles/".$file);
-            $user = array("acnt_pic" => "http://localhost/tabogarahe/profiles/".$file);
+            $user = array("acnt_pic" => "profiles/".$file);
             $upload = $this->Account_Model->update($user,$id);
             if($upload){
                 $this->res(1,null,"successfully updated",0);
@@ -243,8 +236,10 @@ class Account extends Data_format{
                 $this->res(0,null,"error",0);
             }
         }
-        
     }
+
+   
+   
 
     //Update the password of the user
     public function updatePassword_post(){
@@ -257,12 +252,13 @@ class Account extends Data_format{
         if(empty($pass) || empty($npass) || empty($cpass) || empty($id)){
             $this->res(0,null,"Fill out all Fields",0);
         }
+        else if($npass != $cpass){
+            $this->res(0,null,"Your password do not match",0);
+        }
         else if(!$check){
             $this->res(0,$check,"Pls, enter your old password correctly",0);
         }
-        else if($npass != $cpass){
-            $this->res(0,null,"you password do not match",0);
-        }else{
+      else{
             $user = array("password" => $npass);
             $update = $this->Account_Model->update($user,$id);
             if($update){
@@ -294,6 +290,8 @@ class Account extends Data_format{
         }else{
             $this->res(0,null,"Error",0);
         }
+    
+    
     }
 
     public function users_get(){
@@ -306,10 +304,15 @@ class Account extends Data_format{
         if(count($data) > 0 ){
             $this->res(1,$data,"datafound",count($data));
         }else{
-            $this->res(1,null,"data not found",0);
+            $this->res(0,null,"data not found",0);
         }
     }
+    
 
+    public function sample_get($acnt_id){
+        $result = $this->Account_Model->sample($acnt_id);
+        $this->res(1,$result,"GG",0);
+    }
  
 }
 

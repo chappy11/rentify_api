@@ -23,15 +23,34 @@
         return $this->db->update('garage',$garage,'garage_id='.$garage_id);
     }
 
-    public function garage(){
+    public function getbyid($garage_id){
         $this->db->select("*");
-        $this->db->where("garage.status","active");
+        $this->db->where("garage_id",$garage_id);
+        $this->db->from("garage");
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function garages($id){
+        $this->db->select("*");
+        $this->db->where("garage.garage_status","active");
         $this->db->where('account.status','active');
+        $this->db->where("garage.acnt_id !=",$id);
         $this->db->from("garage");
         $this->db->join('account',"account.acnt_id=garage.acnt_id");
         $query = $this->db->get();
         return $query->result();
     }
+    
+    public function seller_garage($garage_id){
+        $this->db->select("*");
+        $this->db->where("garage.garage_id",$garage_id);
+        $this->db->from("garage");
+        $this->db->join("account","account.acnt_id=garage.acnt_id");
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
     
 
 

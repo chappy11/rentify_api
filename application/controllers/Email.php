@@ -30,7 +30,7 @@
             $this->email->message($code);
         $isExist  = $this->Account_Model->isEmailExist($email);
          if($isExist){
-            $this->res(0,null,"Email is already exist..",0);
+            $this->res(0,null,"Email is already exist.. pls choose another email",0);
         }else if($this->isEmail($email)){
             $this->res(0,null,"Invalid Email",0);
         }

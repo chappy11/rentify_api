@@ -2,7 +2,7 @@
 
 include_once(dirname(__FILE__)."/Data_format.php");
 
- class Item extends Data_Format{
+ class Item extends Data_format{
 
     public function __construct(){
         parent::__construct();
@@ -23,7 +23,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
         $orig_price = $this->post('orig_price');
         $quantity = $this->post('quantity');
         $unit = $this->post('unit');
-        $status = "validate";
+        $status = "toValidate";
         $date = date('Y-m-d');
         $ext1 =  $this->extension($img1);
         $ext2 = $this->extension($img2);
@@ -49,9 +49,9 @@ include_once(dirname(__FILE__)."/Data_format.php");
             if($move1 && $move2 && $move3){
                 $item = array(
                     "acnt_id" => $id,
-                    "item_pic1" => "http://localhost/tabogarahe/items/".$img1,
-                    "item_pic2" => "http://localhost/tabogarahe/items/".$img2,
-                    "item_pic3" => "http://localhost/tabogarahe/items/".$img3,
+                    "item_pic1" => "items/".$img1,
+                    "item_pic2" => "items/".$img2,
+                    "item_pic3" => "items/".$img3,
                     "item_name" => $name,
                     "item_description" => $desc,
                     "item_category" => $category,
@@ -153,6 +153,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 if(empty($unit)){
                     $unit = $ounit;
                 }
+        
             $item = array(
                 "item_pic1" => $pic1,
                 "item_pic2" => $pic2,
@@ -162,7 +163,8 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 "item_category" => $category,
                 "item_orig_price" => $orig_price,
                 "item_quantity" => $quantity,
-                "item_unit" => $unit
+                "item_unit" => $unit,
+                "date_added"=> date("Y-m-d")   
             );
             $response = $this->Item_Model->update($id,$item);
                 if($response){
@@ -181,6 +183,21 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $this->res(0,null,"Data not found",0);
             }
     }
-   
+   public function countvalidated_get($id){
+       $res =$this->Item_Model->getValidated($id);
+       $this->res(1,$res,"datafound",count($res));
+       
+   }
+
+   public function sample_get($acnt_id){
+       $items  = $this->Item_Model->getall($acnt_id);
+       $getgarage = array();
+       foreach ($items as $item) {
+           if($item->item_status==="garage"){
+               array_push($getgarage,$item);
+           }
+       }
+       $this->res(1,$getgarage,"",count($getgarage));
+   }
 }
 ?>

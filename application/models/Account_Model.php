@@ -88,6 +88,15 @@ class Account_Model extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function sample($acnt_id){
+        $this->db->select("account.*, COUNT(item.acnt_id) as numrows");
+        $this->db->where("account.acnt_id",$acnt_id);
+        $this->db->from("account");
+        $this->db->join("item","item.acnt_id=account.acnt_id",'left');
+        $qeury = $this->db->get();
+        return $qeury->result();
+    }
 }
 
 ?>
