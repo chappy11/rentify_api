@@ -11,6 +11,7 @@ class User_Model extends CI_Model{
     public function user_list(){
         $this->db->select("*");
         $this->db->from("user");
+        $this->db->where("user_type","user");
         $q = $this->db->get();
         return $q->result();
     }
@@ -21,10 +22,11 @@ class User_Model extends CI_Model{
     }
 
     //login user
-    public function login($data=array()){
+    public function login_admin($email,$password){
         $this->db->select("*");
         $this->db->from("user");
-        $this->db->where($data);
+        $this->db->where("email",$email);
+        $this->db->where("password",$password);
         $query = $this->db->get();
         return $query->result();
     }

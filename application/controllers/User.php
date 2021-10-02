@@ -14,10 +14,10 @@ class User extends Data_format{
     public function userlist_get(){
       $data = $this->User_Model->user_list();
         if(count($data)<1){
-            $this->res(0,null,"no data founds");
+            $this->res(0,null,"no data founds",0);
         }
         else{
-            $this->res(1,$data,"data found");
+            $this->res(1,$data,"data found",0);
         }
     }
 
@@ -36,7 +36,7 @@ class User extends Data_format{
             );
             $res = $this->User_Model->register($dat);
             if($res){
-                $this->res(1,null,"success");
+                $this->res(1,null,"success",0);
             }else{
                 $this->res(1,null,"error network");
             }
@@ -44,6 +44,23 @@ class User extends Data_format{
         
     }
     
+    //login admin
+    public function loginAdmin_post(){
+        $data = $this->decode();
+        $email = isset($data->email) ? $data->email : "";
+        $password = isset($data->password) ? $data->password : "";
+        if(empty($email) || empty($password)){
+            $this->res(0,null,"Fillout All Fields",0);
+        }else{
+            $res = $this->User_Model->login_admin($email,$password);
+            if(count($res) > 0){
+                $this->res(1,$res,"Successfully Login",1);
+            }else{
+                $this->res(0,null,"Wrong Credential",0);
+            }
+        }
+    }
+
 
     //login user
     public function login_post(){
