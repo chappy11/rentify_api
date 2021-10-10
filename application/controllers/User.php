@@ -24,25 +24,32 @@ class User extends Data_format{
     //register all user
     public function register_post(){
         $data = $this->decode();
-        $username = isset($data->username) ? $data->username : "";
-        $password = isset($data->password) ? $data->password : "";
-
-        if(empty($username) || empty($password)){
-            $this->res(1,null,"fill out all fields");
-        }else{
+        
             $dat = array(
-                "username" => $username,
-                "password" => $password
+                "email" => $data->email,
+                "password" => $data->password,
+                "user_pic" => "profiles/download.png",
+                "firstname" => $data->fname,
+                "lastname" => $data->lname,
+                "contact" => $data->contact,
+                "birthday" => "",
+                "street" => $data->sitio,
+                "barangay" => $data->brgy,
+                "user_type" => "user",
+                "user_status" => "active",
+                "sub_id" => 0
+
             );
+            // $this->res(1,$dat,"Data",0);
             $res = $this->User_Model->register($dat);
             if($res){
                 $this->res(1,null,"success",0);
             }else{
-                $this->res(1,null,"error network");
+                $this->res(0,null,"error network",0);
             }
-        }
-        
     }
+        
+    
     
     //login admin
     public function loginAdmin_post(){
@@ -65,22 +72,18 @@ class User extends Data_format{
     //login user
     public function login_post(){
         $d = $this->decode();
-        $username = isset($d->username) ? $d->username : "";
+       
+        $email = isset($d->email) ? $d->email : "";
         $password = isset($d->password) ? $d->password : "";
         
-        if(empty($username) || empty($password)){
-            $this->res(1,null,"wrong credential");
+        if(empty($email) || empty($password)){
+            $this->res(1,null,"Fill out all Fields",0);
         }else{
-            $data = array(
-                "username" => $username,
-                "password" => $password
-            );
-           $res = $this->User_Model->login($data);
-
+           $res = $this->User_Model->login($email,$password);
            if(count($res)>0){
-                $this->res(1,$res,"successfully login");
+                $this->res(1,$res,"Successfully login",0);
            }else{
-                $this->res(0,null,"wrong credential");
+                $this->res(0,null,"Wrong credential",0);
            }
             
         }

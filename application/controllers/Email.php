@@ -5,7 +5,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array('Account_Model'));
+            $this->load->model(array("User_Model"));
         }
     
         public function sendEmail_post(){
@@ -14,9 +14,9 @@
             $code = isset($data->code) ? $data->code : "";
             $config['protocol']    = 'smtp';
             $config['smtp_host']    = 'smtp.mailtrap.io';
-            $config['smtp_port']    = '465';
-            $config['smtp_user'] = '9d029ad9cac28d';
-            $config['smtp_pass'] = 'bcf3804b878028';
+            $config['smtp_port']    = '2525';
+            $config['smtp_user'] = 'd1599a6ac44e80';
+            $config['smtp_pass'] = '05ee8ba68ff893';
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
@@ -24,14 +24,19 @@
             $this->load->library('email');
 
             $this->email->initialize($config);
-            $this->email->from("tabogarahe@gmail.com");
+            $this->email->from("happypet@gmail.com");
             $this->email->to($email);
             $this->email->subject("Email Verificatoin Code");
             $this->email->message($code);
-        $isExist  = $this->Account_Model->isEmailExist($email);
-         if($isExist){
+        $count  = count($this->User_Model->isEmailExist($email));
+      
+        if(empty($email)){
+            $this->res(0,null,"Fill out all Fields",0);
+        }
+        else if($count > 0){
             $this->res(0,null,"Email is already exist.. pls choose another email",0);
-        }else if($this->isEmail($email)){
+        }
+        else if($this->isEmail($email)){
             $this->res(0,null,"Invalid Email",0);
         }
         else{
