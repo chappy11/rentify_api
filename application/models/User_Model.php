@@ -56,6 +56,15 @@ class User_Model extends CI_Model{
         return $query->result();
     }
 
+    //get profile 
+    public function getProfile($id){
+        $this->db->select("*");
+        $this->db->from("user");
+        $this->db->where("user_id",$id);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
    
 }
 

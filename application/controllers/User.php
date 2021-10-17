@@ -24,7 +24,7 @@ class User extends Data_format{
     //register all user
     public function register_post(){
         $data = $this->decode();
-        
+           
             $dat = array(
                 "email" => $data->email,
                 "password" => $data->password,
@@ -88,7 +88,17 @@ class User extends Data_format{
             
         }
     }
-  
+
+    //get profile 
+    public function getprofile_get($id){
+        $data = $this->User_Model->getProfile($id);
+        if(count($data) > 0 ){
+            $this->res(1,$data,"Data found",count($data));
+        }else{
+            $this->res(0,null,"data not found",0);
+        }
+    }
+
     //update user details
     public function update_post(){
         $d = $this->decode();
