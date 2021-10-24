@@ -31,6 +31,7 @@ class User extends Data_format{
                 "user_pic" => "profiles/download.png",
                 "firstname" => $data->fname,
                 "lastname" => $data->lname,
+                "service" => 0,
                 "contact" => $data->contact,
                 "birthday" => "",
                 "street" => $data->sitio,
@@ -118,8 +119,10 @@ class User extends Data_format{
             $this->res(0,null,"error updated");
         }
     }
-    public function sample_get(){
-        echo "wew";
+    public function sample_post(){
+        $file = $_FILES['videoFile']['name'];
+        $this->res(1,$file,"gg",0);
+        move_uploaded_file($_FILES['videoFile']['tmp_name'],"uploads/".$file);
     }
 }
 

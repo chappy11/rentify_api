@@ -19,6 +19,14 @@
             }
         }
 
+        public function getprofile_get($id){
+            $data = $this->ServiceUser_Model->getuser($id);
+            if(count($data) > 0){
+                $this->res(1,$data,"Data found",count($data));
+            }else{
+                $this->res(0,$data,"Data not found",0);
+            }
+        }
 
     }
 

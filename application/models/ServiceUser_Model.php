@@ -13,6 +13,18 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function insert($data){
+            return $this->db->insert("userservice",$data);
+        }
+
+        public function getuser($id){
+            $this->db->select("*");
+            $this->db->from("serviceuser");
+            $this->db->where("user_id",$id);
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 
 ?>
