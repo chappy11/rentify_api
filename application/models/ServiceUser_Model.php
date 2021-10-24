@@ -7,15 +7,16 @@
             $this->load->database();
         }
 
-        public function getserviceUsers(){
+        public function getapply(){
             $this->db->select("*");
             $this->db->from("serviceuser");
+            $this->db->where('sStatus','apply');
             $query = $this->db->get();
             return $query->result();
         }
 
         public function insert($data){
-            return $this->db->insert("userservice",$data);
+            return $this->db->insert("serviceuser",$data);
         }
 
         public function getuser($id){
@@ -25,6 +26,23 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function getusers(){
+            $this->db->select("*");
+            $this->db->from('serviceuser');
+            $this->db->where('sstatus!=','apply');
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getprofile($id){
+            $this->db->select("*");
+            $this->db->from("serviceuser");
+            $this->db->where("sUser_id",$id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+        
     }
 
 ?>
