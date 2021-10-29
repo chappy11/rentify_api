@@ -60,7 +60,17 @@ require APPPATH.'libraries/REST_Controller.php';
                 return false;
             }
         }
-     
+    
+        public function serviceType($type){
+            if($type === "Training"){
+                return "Trainer";
+            }
+            else if($type === "Keeping"){
+                return "Keeper";
+            }else{
+                return "Both";
+            }
+        }
     }
 
 ?>

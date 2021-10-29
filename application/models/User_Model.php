@@ -65,6 +65,7 @@ class User_Model extends CI_Model{
         return $query->result();
     }
 
+    
    
 }
 
