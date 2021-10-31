@@ -18,14 +18,14 @@
             }
         }
 
-        public function insert_post(){
+        public function addpet_post(){
             $user_id = $this->post("id");
             $petname = $this->post("name");
             $category = $this->post("category");
             $weight = $this->post("weight");
             $dob = $this->post("dob");
             $breed = $this->post("breed");
-            $color = $this->post("color");
+            $color = $this->post("desc");
             $pet_pic = $_FILES["petpic"]['name'];
             $med_cert = $_FILES['medcert']['name'];
             
@@ -37,18 +37,22 @@
                 "weight" => $weight,
                 "dob" => $dob,
                 "breed" => $breed,
-                "color" => $color,
+                "description" => $color,
                 "pet_status" => "active",
-                "ppic" => "pet/".$pet_pic
+                "ppic" => "pets/".$pet_pic
             );
+            
+            
 
+            move_uploaded_file($_FILES['petpic']['tmp_name'],"pets/".$pet_pic);
+            move_uploaded_file($_FILES['medcert']['tmp_name'],"medcert/".$med_cert);
 
             $result = $this->Pet_Model->insert($data);
             if($result){
                 $petData = $this->Pet_Model->lastIndex();
                 $certData = array(
                     "pet_id" => $petData[0]->pet_id,
-                    "medcer_pic" => "petmed/".$med_cert
+                    "medcer_pic" => "medcert/".$med_cert
                 );        
                 $isSuccess = $this->PetMedical_Model->insert($certData);
                 if($isSuccess){
@@ -66,7 +70,7 @@
         public function getpet_get($pet_id){
             $data = $this->Pet_Model->getpet($pet_id);
             if(count($data) > 0){
-                $this->res(1,null,"Data found",count($data));
+                $this->res(1,$data,"Data found",count($data));
             }
             else{
                 $this->res(0,null,"Data not found",0);
@@ -76,10 +80,24 @@
         public function getpets_get($user_id){
             $data = $this->Pet_Model->getpets($user_id);
             if(count($data) > 0){
-                $this->res(1,null,"Data found",count($data));
+                $this->res(1,$data
+                ,"Data found",count($data));
             }else{
                 $this->res(0,null,"Data not found",0);
             }
+        }
+
+        public function getcerts_get($pet_id){
+            $data = $this->PetMedical_Model->getmedicals($pet_id);
+            if(count($data) > 0){
+                $this->res(1,$data,"Data found",0);
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
+
+        public function data_post(){
+            echo "HI";
         }
     }
 ?>

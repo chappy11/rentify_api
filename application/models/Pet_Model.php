@@ -46,7 +46,7 @@
             $this->db->select("*");
             $this->db->from($this->table);
             $this->db->limit(1);
-            $this->db->order_by("pet_id",DESC);
+            $this->db->order_by("pet_id","DESC");
             $query = $this->db->get();
             return $query->result();
         }

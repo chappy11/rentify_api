@@ -87,6 +87,41 @@
                 $this->res(0,null,"Data not found",0);
             }
        }
+
+       //get services of the user
+       public function getservices_get($user_id){
+            $result = $this->Service_Model->getservices($user_id);
+            if(count($result) > 0){
+                $this->res(1,$result,"Data found",0);
+            }else{
+                $this->res(0,null,"data not found",0);
+            }
+       }
     
+       public function getapplication_get(){
+           $result = $this->Service_Model->getapplication();
+           if(count($result)){
+               $this->res(1,$result,"Data found",0);
+           }else{
+               $this->res(0,null,"Data not found",0);
+           }
+       }
+
+       public function verify_post(){
+           $data = $this->decode();
+           $id = $data->id;
+           $status = $data->status;
+        
+           $arr = array(
+               "service_status" => $status
+           );
+
+           $result = $this->Service_Model->verify($id,$arr);
+           if($result){
+               $this->res(1,null,"Successfully Update",0);
+           }else{
+               $this->res(0,null,"Network Error",0);
+           }
+        }
     }
 ?>

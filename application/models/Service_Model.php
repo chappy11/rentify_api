@@ -18,7 +18,7 @@
         //get service specified by id
         public function getservice($service_id){
             $this->db->select("*");
-            $this->db->where("service_id",$id);
+            $this->db->where("service_id",$service_id);
             $this->db->from($this->table);
             $query = $this->db->get();
             return $query->result();
@@ -27,7 +27,8 @@
         //get services by user's
         public function getservices($user_id){
             $this->db->select("*");
-            $this->db->where("user_id",$service_id);
+            $this->db->where("user_id",$user_id);
+            $this->db->where("service_status!","Decline");
             $this->db->from($this->table);
             $query = $this->db->get();
             return $query->result();
@@ -49,6 +50,20 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function getapplication(){
+            $this->db->select("*");
+            $this->db->where("service_status","apply");
+            $this->db->from($this->table);
+            $this->db->join("user","user.user_id=service.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function verify($id,$data){
+            return $this->db->update($this->table,$data,"service_id=".$id);
+        }
+
     }
 ?>
 
