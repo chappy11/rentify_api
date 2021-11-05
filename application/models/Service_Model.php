@@ -20,6 +20,7 @@
             $this->db->select("*");
             $this->db->where("service_id",$service_id);
             $this->db->from($this->table);
+            $this->db->join("user","user.user_id=service.user_id");
             $query = $this->db->get();
             return $query->result();
         }
@@ -28,7 +29,7 @@
         public function getservices($user_id){
             $this->db->select("*");
             $this->db->where("user_id",$user_id);
-            $this->db->where("service_status!","Decline");
+            $this->db->where("service_status !=","Decline");
             $this->db->from($this->table);
             $query = $this->db->get();
             return $query->result();

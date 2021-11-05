@@ -1,5 +1,5 @@
 RewriteEngine on
-RewriteCond $1 !^(index\.php|assets|images|js|css|libs|uploads|medcert|pets|facility|profiles|categories|cert|map|proofs|icons|favicon.png|fonts)
+RewriteCond $1 !^(index\.php|assets|images|js|css|libs|uploads|post|medcert|pets|facility|profiles|categories|cert|map|proofs|icons|favicon.png|fonts)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ ./index.php/$1 [L]

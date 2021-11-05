@@ -1,7 +1,7 @@
 
 <?php 
 
-    include_once(dirname(__FILE__)."/Data_format.php");
+include_once(dirname(__FILE__)."/Data_format.php");
 
     class Service extends Data_format{
 
@@ -18,10 +18,14 @@
             $type = $this->post("type");
             $description = $this->post("description");
             $fee = $this->post("fee");
+            $sitio = $this->post("sitio");
+            $brgy = $this->post("brgy");
             $location = $this->post("location");
             $no_pet = $this->post("no_pet");
-            $date_started = date("Y-m-d");
-            $date_end = $this->post("date_end");
+            $date_started = $this->post('date_start'); 
+            $date_end = $this->post('date_end'); 
+            $time_start = $this->post('time_start');
+            $time_end = $this->post('time_end');
             $certif = $_FILES['cert']['name'];
             $fac1 = $_FILES['fac1']['name'];
             $fac2 = $_FILES['fac2']['name'];
@@ -32,13 +36,17 @@
                 "service_name" => $name,
                 "service_type" => $type,
                 "service_description" => $description,
-                "service_fee" => $fee,
+                "service_fee" => $fee,  
+                "service_street" => $sitio,
+                "service_brgy" => $brgy,
+                "date_started" => $date_started,
+                "date_end" => $date_end,
+                "time_start" => $time_start,
+                "time_end" => $time_end,
                 "service_location" => $location,
                 "no_pet" => $no_pet,
                 "service_status" => "apply",
                 "isAvailable" => 1,
-                "service_date_started" => $date_started,
-                "service_end_date" => $date_end,
                 "fac1" => "facility/".$fac1,
                 "fac2" => "facility/".$fac2,
                 "fac3" => "facility/".$fac3
@@ -98,6 +106,15 @@
             }
        }
     
+       public function getservice_get($service_id){
+            $result = $this->Service_Model->getservice($service_id);
+            if(count($result) > 0){
+                $this->res(1,$result,"Data found",0);
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+       }
+
        public function getapplication_get(){
            $result = $this->Service_Model->getapplication();
            if(count($result)){
@@ -122,6 +139,14 @@
            }else{
                $this->res(0,null,"Network Error",0);
            }
+        }
+        public function getCert_get($service_id){
+            $data = $this->Certification_Model->getcert($service_id);
+            if(count($data) > 0){
+                $this->res(1,$data,"Data found",count($data));
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }        
         }
     }
 ?>
