@@ -13,74 +13,43 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         //create service
         public function insert_post(){
-            $id = $this->post("id");
-            $name = $this->post("name");
-            $type = $this->post("type");
-            $description = $this->post("description");
-            $fee = $this->post("fee");
-            $sitio = $this->post("sitio");
-            $brgy = $this->post("brgy");
-            $location = $this->post("location");
-            $no_pet = $this->post("no_pet");
-            $date_started = $this->post('date_start'); 
-            $date_end = $this->post('date_end'); 
-            $time_start = $this->post('time_start');
-            $time_end = $this->post('time_end');
-            $certif = $_FILES['cert']['name'];
-            $fac1 = $_FILES['fac1']['name'];
-            $fac2 = $_FILES['fac2']['name'];
-            $fac3 = $_FILES['fac3']['name'];
-        
-            $data = array(
+           $data = $this->decode();
+            $id = isset($data->id) ? $data->id : "";
+            $type = isset($data->type) ? $data->type : "";
+            $name = isset($data->name) ? $data->name : "";
+            $desc = isset($data->desc) ? $data->desc : "";
+            $fee = isset($data->fee) ? $data->fee : "";
+            $limit =  isset($data->limit) ? $data->limit : "";
+            $sitio = isset($data->sitio) ? $data->sitio : "";
+            $brgy = isset($data->brgy) ? $data->brgy :"";
+            $sDate = isset($data->date_start) ? $data->date_start: "";
+            $eDate = isset($data->date_end) ? $data->date_end : "";
+            $sTime = isset($data->time_start) ? $data->time_start : "";
+            $eTime = isset($data->time_end) ? $data->time_end : "";
+
+            $arr = array(
                 "user_id" => $id,
                 "service_name" => $name,
                 "service_type" => $type,
-                "service_description" => $description,
-                "service_fee" => $fee,  
+                "service_description" => $desc,
+                "service_fee" => $fee,
                 "service_street" => $sitio,
                 "service_brgy" => $brgy,
-                "date_started" => $date_started,
-                "date_end" => $date_end,
-                "time_start" => $time_start,
-                "time_end" => $time_end,
-                "service_location" => $location,
-                "no_pet" => $no_pet,
-                "service_status" => "apply",
-                "isAvailable" => 1,
-                "fac1" => "facility/".$fac1,
-                "fac2" => "facility/".$fac2,
-                "fac3" => "facility/".$fac3
+                "no_pet" => $limit,
+                "service_location" => "",
+                "service_status" => "available",
+                "isAvailable" => "1",
+                "date_started" => $sDate,
+                "date_end" => $eDate,
+                "time_start" => $sTime,
+                "time_end" => $eTime
             );
-
-            
-            move_uploaded_file($_FILES['cert']['tmp_name'],"certification/".$certif);
-            move_uploaded_file($_FILES['fac1']['tmp_name'],"facility/".$fac1);
-            move_uploaded_file($_FILES['fac2']['tmp_name'],"facility/".$fac2);
-            move_uploaded_file($_FILES['fac3']['tmp_name'],"facility/".$fac3);
-            $result = $this->Service_Model->insert($data);
-            if($result){
-                $lastIndex = $this->Service_Model->lastIndex();
-                $service_id = $lastIndex[0]->service_id;
-                $certData = array(
-                    "service_id" => $service_id,
-                    "cert_pic" => "certification/".$certif
-                );
-                $isSuccess = $this->Certification_Model->insert($certData);
-                if($isSuccess){
-                   $updateUser = array(
-                       "service" => $this->serviceType($type)
-                   ); 
-                   $isUpdate = $this->User_Model->update($id,$updateUser);
-                    if($isUpdate){
-                        $this->res(1,null,"Successfully Register Please wait for admin to accept it",0);
-                    }else{
-                        $this->res(0,null,"Error Updating",0);
-                    }
-                }else{
-                    $this->res(0,null,"Error Inserting Cert",0);
-                }
+         
+            $res = $this->Service_Model->insert($arr);
+            if($res){
+                $this->res(1,null,"Successfully Created",0);
             }else{
-                $this->res(0,null,"Error Inserting Service",0);
+                $this->res(0,null,"Error",0);
             }
 
        }

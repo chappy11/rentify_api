@@ -6,7 +6,7 @@ class User extends Data_format{
     public function __construct(){
         parent::__construct();
         $this->load->database();
-        $this->load->model(array("User_Model"));
+        $this->load->model(array("User_Model","Company_Model","Facility_Model","Certification_Model"));
     }
 
 
@@ -37,7 +37,7 @@ class User extends Data_format{
                 "barangay" => $data->brgy,
                 "user_type" => "user",
                 "user_status" => "active",
-                "user_mode" => "user",
+                "service_status" => "none",
                 "service" => "none",
                 "isSubscribe" => 0
             );
@@ -120,7 +120,62 @@ class User extends Data_format{
         }
     }
     
-    
+    public function apply_post(){
+        $id = $this->post('id');
+        $type = $this->post("type");
+        $company = json_decode($this->post("company"));
+        $cert = $_FILES['cert']['name'];
+        $fac1 = $_FILES['fac1']['name'];
+        $fac2 = $_FILES['fac2']['name'];
+        $fac3 = $_FILES['fac3']['name'];
+
+        $data = array(
+            "service" => $type,
+            "service_status" => "apply"
+        );
+
+        $update = $this->User_Model->update($id,$data);
+        if($update){
+            if(count($company) > 0){
+                foreach($company as $val){
+                    $comp = array(
+                        "user_id" => $id,
+                        "company_name" => $val->comp,
+                        "exp_years" => $val->yrs
+                    );
+                     $this->Company_Model->addComp($comp);
+                }
+            }
+        $cer = array(
+            "user_id" => $id,
+            "cert_pic" => "certification/".$cert
+        );
+        $this->Certification_Model->insert($cer);
+        $f1 = array(
+            "user_id" => $id,
+            "fac_pic" => "facility/".$fac1
+        );
+        $this->Facility_Model->insert($f1);
+        $f2 = array(
+            "user_id" => $id,
+            "fac_pic" => "facility/".$fac2
+        );
+        $this->Facility_Model->insert($f2);
+        $f3 = array(
+            "user_id" => $id,
+            "fac_pic" => "facility/".$fac3
+        );
+        $this->Facility_Model->insert($f3);
+        move_uploaded_file($_FILES['cert']['tmp_name'],"certification/".$cert);
+        move_uploaded_file($_FILES['fac1']['tmp_name'],"facility/".$fac1);
+        move_uploaded_file($_FILES['fac2']['tmp_name'],"facility/".$fac2);
+        move_uploaded_file($_FILES['fac3']['tmp_name'],"facility/".$fac3);
+        $this->res(1,null,"Application Successfully Submitted",0);
+
+        }else{
+            $this->res(0,null,"Error Creating Application",0);
+        }
+    }
     
     
     
@@ -128,6 +183,13 @@ class User extends Data_format{
         $file = $_FILES['videoFile']['name'];
         $this->res(1,$file,"gg",0);
         move_uploaded_file($_FILES['videoFile']['tmp_name'],"uploads/".$file);
+    }
+
+
+    public function sample2_post(){
+        
+        $data = json_decode($this->post('arr'));
+        $this->res(1,$data[0],"Data fond",0);
     }
 }
 
