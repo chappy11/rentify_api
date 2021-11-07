@@ -13,9 +13,9 @@
             return $this->db->insert($this->table,$data);
         }
         
-        public function getcert($service_id){
+        public function getcert($user_id){
             $this->db->select("*");
-            $this->db->where("service_id",$service_id);
+            $this->db->where("user_id",$user_id);
             $this->db->from($this->table);
             $query = $this->db->get();
             return $query->result();

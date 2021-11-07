@@ -40,5 +40,14 @@
                  $this->res(0,null,"Data not found",0);
              }
          }
+
+         public function checkpost_get($service_id){
+            $result = $this->Post_Model->getpostservice($service_id);
+            if(count($result) > 0){
+                $this->res(1,$result,"Data found",0);
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+         }
     }
 ?>

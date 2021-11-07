@@ -14,10 +14,10 @@ class User extends Data_format{
     public function userlist_get(){
       $data = $this->User_Model->user_list();
         if(count($data)<1){
-            $this->res(0,null,"no data founds",0);
+            $this->res(0,null,"No data found",0);
         }
         else{
-            $this->res(1,$data,"data found",0);
+            $this->res(1,$data,"Data found",0);
         }
     }
 
@@ -44,9 +44,9 @@ class User extends Data_format{
             // $this->res(1,$dat,"Data",0);
             $res = $this->User_Model->register($dat);
             if($res){
-                $this->res(1,null,"success",0);
+                $this->res(1,null,"Success",0);
             }else{
-                $this->res(0,null,"error network",0);
+                $this->res(0,null,"Error network",0);
             }
     }
         
@@ -64,7 +64,7 @@ class User extends Data_format{
             if(count($res) > 0){
                 $this->res(1,$res,"Successfully Login",1);
             }else{
-                $this->res(0,null,"Wrong Credential",0);
+                $this->res(0,null,"Wrong Credentials",0);
             }
         }
     }
@@ -78,13 +78,13 @@ class User extends Data_format{
         $password = isset($d->password) ? $d->password : "";
         
         if(empty($email) || empty($password)){
-            $this->res(1,null,"Fill out all Fields",0);
+            $this->res(1,null,"Fill out all fields",0);
         }else{
            $res = $this->User_Model->login($email,$password);
            if(count($res)>0){
                 $this->res(1,$res,"Successfully login",0);
            }else{
-                $this->res(0,null,"Wrong credential",0);
+                $this->res(0,null,"Wrong credentials",0);
            }
             
         }
@@ -96,7 +96,7 @@ class User extends Data_format{
         if(count($data) > 0 ){
             $this->res(1,$data,"Data found",count($data));
         }else{
-            $this->res(0,null,"data not found",0);
+            $this->res(0,null,"Data not found",0);
         }
     }
 
@@ -114,9 +114,9 @@ class User extends Data_format{
 
         $res = $this->User_Model->update($user_id,$data);
         if($res){
-            $this->res(1,null,"successfully updated");
+            $this->res(1,null,"Successfully updated");
         }else{
-            $this->res(0,null,"error updated");
+            $this->res(0,null,"Error updated");
         }
     }
     
@@ -177,6 +177,68 @@ class User extends Data_format{
         }
     }
     
+
+    public function updateInfo_post(){
+        $data = $this->decode();
+        $id = isset($data->id) ? $data->id : "";
+        $fname = isset($data->fname) ? $data->fname : "";
+        $lname = isset($data->lname) ? $data->lname : "";
+        $bday = isset($data->bday) ? $data->bday : "";
+        $contact = isset($data->contact) ? $data->contact : "";
+        $street = isset($data->street) ? $data->street : "";
+        $brgy = isset($data->brgy) ? $data->brgy : "";
+
+        if($this->isMobile($contact)){
+            $this->res(1,null,"Invalid Phone Number",0);
+        }else{
+            $arr = array(
+                "firstname" => $fname,
+                "lastname" => $lname,
+                "birthday" => $bday,
+                "contact" => $contact,
+                "street" => $street,
+                "barangay" => $brgy
+            );
+            $result = $this->User_Model->update($id,$arr);
+            if($result){
+                $this->res(1,null,"Succesfully Updated",0);
+            }else{
+                $this->res(0,null,"Error while updating",0);
+            }
+
+        } 
+    }
+
+    public function updatePass_post(){
+        $data = $this->decode();
+        $id = isset($data->id) ? $data->id : "";
+        $opass = isset($data->opass) ? $data->opass : "";
+        $npass = isset($data->npass) ? $data->npass : "";
+        $cpass = isset($data->cpass) ? $data->cpass : "";
+        
+        $result = $this->User_Model->getProfile($id);
+        if(empty($opass)||empty($npass) || empty($cpass)){
+            $this->res(0,null,"Fill out all fields",0);
+        }
+        else if($npass != $cpass){
+            $this->res(0,null,"Password does not match",0);
+        }
+        else if($opass != $result[0]->password){
+            $this->res(0,null,"Old Password Incorrect",0);
+        }else{
+            $arr = array(
+                "password" => $npass
+            );
+
+            $isUpdate = $this->User_Model->update($id,$arr);
+            if($isUpdate){
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Error Updated",0);
+            }
+        }
+        
+    }
     
     
     public function sample_post(){
@@ -189,7 +251,7 @@ class User extends Data_format{
     public function sample2_post(){
         
         $data = json_decode($this->post('arr'));
-        $this->res(1,$data[0],"Data fond",0);
+        $this->res(1,$data[0],"Data found",0);
     }
 }
 
