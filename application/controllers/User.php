@@ -253,6 +253,26 @@ class User extends Data_format{
         $data = json_decode($this->post('arr'));
         $this->res(1,$data[0],"Data found",0);
     }
+
+    public function getApplication_get(){
+       
+    }
+
+    public function validate_post(){
+        $data = $this->decode();
+        $id = $data->id;
+        $action = $data->action;
+        $arr = array(
+            "service_status" => $action
+        );
+        $update = $this->User_Model->update($id,$arr);
+        if($update){
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(0,null,"Error Updated",0);
+        }
+
+    }
 }
 
 

@@ -29,7 +29,6 @@
             $this->db->from($this->table);
             $query = $this->db->get();
             return $query->result();
-
         }        
     
     }

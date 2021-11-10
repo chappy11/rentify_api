@@ -65,7 +65,13 @@ class User_Model extends CI_Model{
         return $query->result();
     }
 
-    
+    public function getApplication(){
+        $this->db->select("*");
+        $this->db->from("user");
+        $this->db->where("service_status","apply");
+        $query = $this->db->get();
+        return $query->result();
+    }  
    
 }
 

@@ -6,7 +6,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("Pet_Model","PetMedical_Model"));
+            $this->load->model(array("Pet_Model","PetMedical_Model","Petimg_Model"));
         }
 
         public function getallpet_get(){
@@ -96,8 +96,21 @@
             }
         }
 
-        public function data_post(){
-            echo "HI";
+        public function addimg_post(){
+            $id = $this->post("id");
+            $img = $_FILES['img']['name'];
+
+            $arr = array(
+                "pet_id" => $id,
+                "petimg" => "pets/".$img
+            );
+            
+            $result = $this->Petimg_Model->insert($arr);
+            if($result){
+                $this->res(1,null,"Successfully Added",0);
+            }else{
+                $this->res(0,null,"Error Added",0);
+            }
         }
     }
 ?>
