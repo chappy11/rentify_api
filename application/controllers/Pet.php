@@ -97,6 +97,8 @@
         }
 
         public function addimg_post(){
+          
+         
             $id = $this->post("id");
             $img = $_FILES['img']['name'];
 
@@ -105,12 +107,27 @@
                 "petimg" => "pets/".$img
             );
             
+           
+            
             $result = $this->Petimg_Model->insert($arr);
             if($result){
                 $this->res(1,null,"Successfully Added",0);
+                move_uploaded_file($_FILES['img']['tmp_name'],"pets/".$img);
             }else{
                 $this->res(0,null,"Error Added",0);
             }
         }
+
+        public function getimg_get($pet_id){
+            $result = $this->Petimg_Model->getimages($pet_id);
+            if(count($result) > 0){
+                $this->res(1,$result,"Data found",0);
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
+
+        
+
     }
 ?>
