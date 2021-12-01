@@ -6,7 +6,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("Pet_Model","PetMedical_Model","Petimg_Model"));
+            $this->load->model(array("Pet_Model","PetMedical_Model","Petimg_Model","Notification_Model"));
         }
 
         public function getallpet_get(){
@@ -25,6 +25,7 @@
             $weight = $this->post("weight");
             $dob = $this->post("dob");
             $breed = $this->post("breed");
+            $dis = $this->post("dis");
             $color = $this->post("desc");
             $pet_pic = $_FILES["petpic"]['name'];
             $med_cert = $_FILES['medcert']['name'];
@@ -38,6 +39,7 @@
                 "dob" => $dob,
                 "breed" => $breed,
                 "description" => $color,
+                "disabilities" => $dis,
                 "pet_status" => "active",
                 "ppic" => "pets/".$pet_pic
             );
@@ -103,6 +105,7 @@
             $img = $_FILES['img']['name'];
 
             $arr = array(
+              
                 "pet_id" => $id,
                 "petimg" => "pets/".$img
             );
@@ -127,7 +130,84 @@
             }
         }
 
-        
+        public function removepet_post($pet_id){
+            $data = array(
+                "pet_id"=>$pet_id
+            );
 
+            $result = $this->Pet_Model->removepet($data);
+            if($result){
+                $this->res(1,null,"Successfully Remove",0);
+            }else{
+                $this->res(0,null,"Error Removing",0);
+            }
+        }
+        
+        public function updatepet_post(){
+            $data = $this->decode();
+            $id = $data->id;
+            $name = $data->name;
+            $breed = $data->breed;
+            $weight = $data->weight;
+            $dob = $data->dob;
+            $desc = $data->desc;
+            $dis = $data->dis; 
+         
+         ///   $this->res(1,$data,"",0);
+            $arr = array(
+                "petname" => $name,
+                "weight" => $weight,
+                "dob" => $dob,
+                "breed" => $breed,
+                "description" => $desc,
+                "disabilities" => $dis
+            );
+            $update = $this->Pet_Model->update($id,$arr);
+            if($update){
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Error Updated",0);
+            }
+        }
+
+        public function activePet_get($id){
+            $result = $this->Pet_Model->activePet($id);
+            if(count($result) > 0){
+                $this->res(1,$result,"Data found",0);
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
+    
+        public function returnpet_post($id){
+            $arr = array(
+                "pet_status" => "onReturn"
+            );
+
+            $result = $this->Pet_Model->update($id,$arr);
+            if($result){
+                $owner = $this->Pet_Model->getOwner($id);
+                $name = "";
+                $body = "Your pet ".$owner[0]->petname." is being return";
+                $this->notification($owner[0]->user_id,$name,$body,"pet",$id);                             
+                $this->res(1,null,"We will notify Owner",0);
+            }else{
+                $this->res(0,null,"Error",0);
+            }
+        }
+        public function notification($id,$name,$body,$type,$target_id){
+            $arr = array(
+                "user_id" => $id,
+                "notif_name" => $name,
+                "notif_body" => $body,
+                "notif_status" => 0,
+                "notif_type" =>$type,
+                "target_id" => $target_id
+            );
+  
+             $this->Notification_Model->createNotif($arr);
+            
+        }
+  
     }
 ?>

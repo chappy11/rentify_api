@@ -71,7 +71,18 @@ class User_Model extends CI_Model{
         $this->db->where("service_status","apply");
         $query = $this->db->get();
         return $query->result();
-    }  
+    }
+    
+    public function getServiceUser(){
+        $this->db->select("*");
+        $this->db->from("user");
+        $this->db->where("service_status","accept");
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+
+
    
 }
 

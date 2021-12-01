@@ -129,6 +129,7 @@ class User extends Data_format{
         $fac2 = $_FILES['fac2']['name'];
         $fac3 = $_FILES['fac3']['name'];
 
+        
         $data = array(
             "service" => $type,
             "service_status" => "apply"
@@ -155,7 +156,8 @@ class User extends Data_format{
             "user_id" => $id,
             "fac_pic" => "facility/".$fac1
         );
-        $this->Facility_Model->insert($f1);
+        $res = $this->Facility_Model->insert($f1);
+//        print_r($res);
         $f2 = array(
             "user_id" => $id,
             "fac_pic" => "facility/".$fac2
@@ -255,13 +257,23 @@ class User extends Data_format{
     }
 
     public function getApplication_get(){
-       
+       $result = $this->User_Model->getApplication();
+        if(count($result) > 0){
+            $this->res(1,$result,"Data found",0);
+        }
     }
+
+    public function getServiceUser_get(){
+        $result = $this->User_Model->getServiceUser();
+         if(count($result) > 0){
+             $this->res(1,$result,"Data found",0);
+         }
+     }
 
     public function validate_post(){
         $data = $this->decode();
         $id = $data->id;
-        $action = $data->action;
+        $action = $data->actions;
         $arr = array(
             "service_status" => $action
         );
@@ -272,6 +284,62 @@ class User extends Data_format{
             $this->res(0,null,"Error Updated",0);
         }
 
+    }
+
+    public function sample_get(){
+        $data= $this->Schedule_Model->lastIndex();
+        $this->res(1,$data,"Data found",0);
+    }
+  
+    public function changeStatus_post(){
+        $data = $this->decode();
+        $id = $data->id;
+        $action = $data->actions;
+
+        $arr = array(
+            "user_status" => $action
+        );
+
+        $result = $this->User_Model->update($id,$arr);
+        if($result){
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(0,null,"error",0);
+        }
+    }
+
+    public function acceptApplication_post(){
+       $data = $this->decode(); 
+       $id = $data->id;
+       $action = $data->actions;
+       $arr = array(
+           "service_status" => $action
+       );
+
+
+       $result = $this->User_Model->update($id,$arr);
+       if($result){
+           $this->res(1,null,"Successfully $action",0);
+       }else{
+           $this->res(0,null,"error",0);
+       }
+    }
+
+    public function changepic_post(){
+        $id = $this->post("id");
+        $image = $_FILES['pic']['name'];
+
+        $arr = array(
+            "user_pic" => "profiles/".$image
+        );
+
+        $result = $this->User_Model->update($id,$arr);
+        if($result){
+            move_uploaded_file($_FILES['pic']['tmp_name'],"profiles/".$image);
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(0,null,"Error",0);
+        }
     }
 }
 

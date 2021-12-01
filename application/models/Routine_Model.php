@@ -20,6 +20,10 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function removeroutine($data){
+            return $this->db->delete($this->table,$data);
+        }
     }
 
 

@@ -50,6 +50,28 @@
             $query = $this->db->get();
             return $query->result();
         }
+        
+        public function removepet($data){
+            return $this->db->delete($this->table,$data);
+        }
+
+        public function activePet($id){
+            $this->db->select("*");
+            $this->db->where("user_id",$id);
+            $this->db->where("pet_status","active");
+            $this->db->from($this->table);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getOwner($pet_id){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->where("pet_id",$pet_id);
+            $this->db->join("user","user.user_id=pet.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 
 ?>
