@@ -12,6 +12,7 @@
             return $this->db->insert($this->table,$data);
         }
 
+        
         public function getTransaction($transac_id){
             $this->db->select("*");
             $this->db->where("transac_id",$transac_id);
@@ -88,6 +89,7 @@
             return $query->result();
         }
   
+        
       
     }
 

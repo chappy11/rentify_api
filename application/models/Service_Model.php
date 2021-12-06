@@ -75,6 +75,7 @@
             $this->db->where("isPublish",1);
             $this->db->from($this->table);
             $this->db->join("user",'user.user_id=service.user_id');
+            $this->db->order_by("publish_date","DESC");
             $query = $this->db->get();
             return $query->result();   
         }

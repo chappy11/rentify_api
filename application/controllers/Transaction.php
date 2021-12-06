@@ -329,7 +329,24 @@
                 $this->res(0,null,"Data not found",0);
             }
         }
-  
+
+        public function decline_post(){
+            $data = $this->decode();
+            $id = $data->id;
+            $pet_id = $data->pet_id;
+            $result = $this->Transaction_Model->cancel($id);
+            if($result){
+                $ar = array(
+                    "pet_status" => "active"
+                );
+                $r = $this->Pet_Model->update($pet_id,$ar);
+                if($r){
+                    $this->res(1,null,"Successfully Declined",0);
+                }else{
+                    $this->res(0,null,"Error",0);
+                }
+            }   
+        }
     }
 
 ?>
