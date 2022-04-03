@@ -71,7 +71,7 @@ class User extends Data_format{
 
         $resp = $this->User_Model->login($email,$password);
         if(count($resp) > 0) {
-            $this->res(1,null,"Succesfully Login",0);
+            $this->res(1,$resp,"Succesfully Login",0);
         }else{
             $this->res(0,null,"Error",0);
         }

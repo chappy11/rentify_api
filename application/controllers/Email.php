@@ -15,8 +15,8 @@
             $config['protocol']    = 'smtp';
             $config['smtp_host']    = 'smtp.mailtrap.io';
             $config['smtp_port']    = '2525';
-            $config['smtp_user'] = 'd1599a6ac44e80';
-            $config['smtp_pass'] = '05ee8ba68ff893';
+            $config['smtp_user'] = 'c4b7a8d3ceaa1e';
+            $config['smtp_pass'] = '1f1283e2b7b609';
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
@@ -44,7 +44,7 @@
             if($res){
                 $this->res(1,null,"We send verification code to your email",0);
             }else{
-                $this->res(0,null,$this->email->print_debugger());
+                $this->res(0,null,"Something went wrong",0);
             }
         }
     }
