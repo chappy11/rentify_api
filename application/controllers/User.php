@@ -6,7 +6,7 @@ class User extends Data_format{
     public function __construct(){
         parent::__construct();
         $this->load->database();
-        $this->load->model(array("User_Model","Company_Model","Facility_Model","Certification_Model"));
+        $this->load->model(array("User_Model"));
     }
 
 
@@ -68,18 +68,63 @@ class User extends Data_format{
         $email = isset($data->email) ? $data->email : "";
         $password = isset($data->password) ? $data->password : "";
         
-
-        $resp = $this->User_Model->login($email,$password);
-        if(count($resp) > 0) {
-            $this->res(1,$resp,"Succesfully Login",0);
-        }else{
-            $this->res(0,null,"Error",0);
-        }
+        
+        // $resp = $this->User_Model->login($email,$password);
+        // if(count($resp) > 0) {
+        //     $this->res(1,$resp,"Succesfully Login",0);
+        // }else{
+        //     $this->res(0,null,"Error",0);
+        // }
         
     }
 
+    public function update_post(){
+        $data = $this->decode();
+        $id = isset($data->user_id) ? $data->user_id : "";
+        $fname = isset($data->fname) ? $data->fname : "";
+        $mname = isset($data->mname) ? $data->mname : "";
+        $lname = isset($data->lname)  ? $data->lname  : "";
+        $contact = isset($data->contact) ? $data->contact : "";
 
+        //old data
+        $current = $this->User_Model->getProfile($id);
+        $fn = $fname == "" ? $current[0]->firstname : $fname;
+        $mn = $mname == "" ? $current[0]->middlename : $mname;
+        $ln = $lname == "" ? $current[0]->lastname : $lname;
+        $cont = $contact == "" ? $current[0]->contact : $contact;
+
+        $array = array(
+            "firstname" => $fn,
+            "middlename" => $mn,
+            "lastname" => $ln,
+            "contact" => $cont
+        );
+        $resp = $this->User_Model->update($id,$array);
+        if($resp){
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(1,$array,"Something went wrong",0);
+        }
+    }
+
+    public function changeStatus_post(){
+        $data = $this->decode();
+        $id = $data->id;
+        $status = $data->status;
+        
+        $paylaod = array(
+            "isActive" => $status
+        );
+
+        $resp = $this->User_Model->update($id,$payload);
+        if($resp){
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(0,null,"Something Went Wrong",0);
+        }
+    }
+
+    public function 
 }
-
 
 ?>

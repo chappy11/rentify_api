@@ -28,6 +28,7 @@ class User_Model extends CI_Model{
         $this->db->from("user");
         $this->db->where("email",$email);
         $this->db->where("password",$password);
+        $this->db->where("user_type","admin");
         $query = $this->db->get();
         return $query->result();
     }
@@ -37,7 +38,6 @@ class User_Model extends CI_Model{
         $this->db->from("user");
         $this->db->where("email",$email);
         $this->db->where("password",$password);
-      
         $query =$this->db->get();
         return $query->result();
     }
@@ -65,22 +65,8 @@ class User_Model extends CI_Model{
         return $query->result();
     }
 
-    public function getApplication(){
-        $this->db->select("*");
-        $this->db->from("user");
-        $this->db->where("service_status","apply");
-        $query = $this->db->get();
-        return $query->result();
-    }
-    
-    public function getServiceUser(){
-        $this->db->select("*");
-        $this->db->from("user");
-        $this->db->where("service_status","accept");
-        $query = $this->db->get();
-        return $query->result();
-    }
-
+   
+  
 
 
    
