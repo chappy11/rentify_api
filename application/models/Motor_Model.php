@@ -18,6 +18,19 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function getmotorbyuser($user_id){
+            $this->db->select("*");
+            $this->db->from($table);
+            $this->db->where("user_id",$user_id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+        
+        public function update($id,$data=array()){
+            return $this->db->update($table,$data,"motor_id=".$id);
+        }
+
     }
 
 ?>
