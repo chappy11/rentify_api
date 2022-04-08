@@ -124,7 +124,7 @@ class User extends Data_format{
         }
     }
 
-    public function 
+    
 }
 
 ?>
