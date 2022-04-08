@@ -2,9 +2,9 @@
 -- version 5.1.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Apr 03, 2022 at 04:48 PM
--- Server version: 10.4.24-MariaDB
+-- Host: localhost
+-- Generation Time: Apr 08, 2022 at 10:08 AM
+-- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.4.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -29,7 +29,11 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `motourista` (
   `m_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  `motour_name` varchar(50) NOT NULL,
+  `latitude` varchar(100) NOT NULL,
+  `longitude` varchar(100) NOT NULL,
+  `isActive` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -57,7 +61,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `email`, `password`, `firstname`, `middlename`, `lastname`, `contact`, `user_pic`, `license_pic`, `user_type`, `isActive`) VALUES
-(1, 'test@gmail.com', '123', 'John', 'de', 'Doe', '09750791317', 'profiles/wp9378515-dave2d-wallpapers.jpg', 'certification/wp9378515-dave2d-wallpapers.jpg', 'user', 1),
+(1, 'test@gmail.com', '123', 'test', 'de', 'gg', '09750791317', 'profiles/wp9378515-dave2d-wallpapers.jpg', 'certification/wp9378515-dave2d-wallpapers.jpg', 'user', 1),
 (2, 'test1@gmail.com', '123', 'test', 'test', 'test', '09750791317', 'profiles/Remini20220127160315579__1_-removebg-preview.png', 'certification/IMG_20220127_161949.jpg', 'user', 1),
 (3, 'test3@gmail.com', 'test', 'test', 'test', 'tse', '09750791317', 'profiles/', 'certification/', 'user', 1),
 (4, 'test6@gmail.com', 'test', 'test', 'test', 'tse', '09750791317', 'profiles/e1cb1004-f219-4b05-b299-daf7cdb48dee.jpg', 'certification/64493c78-14fe-4f0d-912f-1869e8fc330e.jpg', 'user', 1),
@@ -72,17 +76,18 @@ INSERT INTO `user` (`user_id`, `email`, `password`, `firstname`, `middlename`, `
 
 CREATE TABLE `vehicle` (
   `motor_id` int(11) NOT NULL,
+  `user_id` int(10) NOT NULL,
   `m_id` int(11) NOT NULL,
-  `brand` int(11) NOT NULL,
-  `name` int(11) NOT NULL,
-  `pic1` int(11) NOT NULL,
-  `pic2` int(11) NOT NULL,
-  `pic3` int(11) NOT NULL,
-  `offRec` int(11) NOT NULL,
-  `certReg` int(11) NOT NULL,
-  `transmission` int(11) NOT NULL,
-  `onRent` int(11) NOT NULL,
-  `isActive` int(11) NOT NULL,
+  `brand` varchar(50) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `pic1` varchar(225) NOT NULL,
+  `pic2` varchar(225) NOT NULL,
+  `pic3` varchar(225) NOT NULL,
+  `offRec` varchar(225) NOT NULL,
+  `certReg` varchar(225) NOT NULL,
+  `transmission` varchar(50) NOT NULL,
+  `onRent` int(2) NOT NULL,
+  `isActive` int(2) NOT NULL,
   `tourmopoints` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
