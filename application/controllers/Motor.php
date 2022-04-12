@@ -5,7 +5,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->db->model("Motor_Model");
+            $this->load->model(array("Motor_Model"));
         }
 
         public function addMotor_post(){
@@ -18,6 +18,7 @@
             $m_id = $this->post("m_id");
             $name = $this->post("name");
             $transmission = $this->post("transmission");
+            $brand = $this->post("brand");
             
             $arr = array(
                 "pic1" => "motor/".$pic1,
@@ -29,11 +30,12 @@
                 "m_id" => $m_id,
                 "name" => $name,
                 "transmission" => $transmission,
+                "brand"=>$brand,
                 "onRent" => 0,
                 "isActive" => 0,
                 "tourmopoints" => 0
             );
-            $resp = $this->Motor_Model->addMotor($data=array());
+            $resp = $this->Motor_Model->addMotor($arr);
             if($resp){
                 move_uploaded_file($_FILES['pic1']['tmp_name'],"motor/".$pic1);
                 move_uploaded_file($_FILES['pic2']['tmp_name'],"motor/".$pic2);
@@ -85,11 +87,9 @@
         }
 
 
-        //functional data
-        // public function deduct_(){
-        //     $data = $this->decode();
-        //     $points = is;
-        // }        
+    public function sample_get(){
+        $this->res(1,null,"HI",0);
+    }
     }
 
 
