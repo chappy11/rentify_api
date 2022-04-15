@@ -33,7 +33,8 @@ class Vehicle extends Data_format{
             "brand"=>$brand,
             "onRent" => 0,
             "isActive" => 0,
-            "tourmopoints" => 0
+            "tourmopoints" => 0,
+            "isVerified"=>0
         );
         $resp = $this->Motor_Model->addMotor($arr);
         if($resp){
@@ -63,6 +64,15 @@ class Vehicle extends Data_format{
             $this->res(1,$data,"Successfully Retrieve",count($data));
         }else{
             $this->res(0,null,"No data found",0);
+        }
+    }
+
+    public function getbymid_get($m_id){
+        $data = $this->Motor_Model->getmotorbymid($m_id);
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found",0);
+        }else{
+            $this->res(0,null,"No Data found",0);
         }
     }
 

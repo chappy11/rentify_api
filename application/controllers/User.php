@@ -46,7 +46,8 @@ class User extends Data_format{
                 "user_pic" => "profiles/".$user_pic,
                 "license_pic" => "certification/".$license,
                 "user_type" => "user",
-                "isActive" => 1
+                "isActive" => 1,
+                "isVer" => 0
             ); 
             $res = $this->User_Model->register($data);
             if($res){
