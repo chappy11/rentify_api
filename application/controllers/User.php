@@ -61,7 +61,14 @@ class User extends Data_format{
 
     }
         
-    
+    public function profile_get($id){
+        $data = $this->User_Model->getprofile($id);
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found",0);
+        }else{
+            $this->res(1,null,"Something went wrong");
+        }
+    }
     
 
     public function login_post(){
@@ -77,6 +84,42 @@ class User extends Data_format{
             $this->res(0,null,"Error",0);
         }
         
+    }
+
+    public function updateProfile_post(){
+        $profile = $_FILES['profile']['name'];
+        $user_id = $this->post("user_id");
+
+        $arr = array(
+            "user_pic" => "profiles/".$profile
+        );
+
+        $res = $this->User_Model->update($user_id,$arr);
+        if($res){
+             move_uploaded_file($_FILES['profile']['tmp_name'],"profiles/".$profile);
+            $this->res(1,null,"Successfully Updated",0);
+            
+        }else{
+            $this->res(0,null,"Error while updating",0);
+        }
+    }
+
+    public function updateLicense_post(){
+        $license = $_FILES['license']['name'];
+        $user_id = $this->post("user_id");
+
+        $arr = array(
+            "license_pic" => "certification/".$license
+        );
+
+        $res = $this->User_Model->update($user_id,$arr);
+        if($res){
+           
+            move_uploaded_file($_FILES['license']['tmp_name'],"certification/".$license);
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(1,null,"Error while updating",0);
+        }
     }
 
     public function update_post(){
@@ -105,6 +148,22 @@ class User extends Data_format{
             $this->res(1,null,"Successfully Updated",0);
         }else{
             $this->res(1,$array,"Something went wrong",0);
+        }
+    }
+
+    public function changepass_post(){
+        $data = $this->decode();
+        $user_id = isset($data->user_id) ? $user_id : "";
+        $password = isset($data->password) ? $password : "";
+        
+        $arr = array(
+            "password" => $password
+        );
+        $res = $this->User_Model->update($user_id,$arr);
+        if($res){
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(0,null,"Something went wrong",0);
         }
     }
 
