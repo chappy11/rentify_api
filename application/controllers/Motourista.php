@@ -38,6 +38,12 @@ include_once(dirname(__FILE__)."/Data_format.php");
             }else{
                 $this->res(0,null,"No data found",0);
             }
+  
+  
+        }
+  
+        public function activateMotourista_post(){
+            $data = this
         }
     }
 ?>

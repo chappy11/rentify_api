@@ -9,7 +9,6 @@ class User extends Data_format{
         $this->load->model(array("User_Model"));
     }
 
-
     //view all user
     public function userlist_get(){
       $data = $this->User_Model->user_list();
@@ -68,6 +67,19 @@ class User extends Data_format{
         }else{
             $this->res(1,null,"Something went wrong");
         }
+    }
+
+    public function admin_post(){
+        $data = $this->decode();
+        $email = isset($data->email) ? $data->email : "";
+        $password = isset($data->password) ? $data->password : "";
+        $res = $this->User_Model->login_admin($email,$password);
+        if(count($res) > 0){
+            $this->res(1,null,"Successfully Login",0);
+        }else{
+            $this->res(0,null,"Wrong Credential",0);
+        }
+
     }
     
 
@@ -172,7 +184,7 @@ class User extends Data_format{
         $id = $data->id;
         $status = $data->status;
         
-        $paylaod = array(
+        $payload = array(
             "isActive" => $status
         );
 
@@ -181,6 +193,21 @@ class User extends Data_format{
             $this->res(1,null,"Successfully Updated",0);
         }else{
             $this->res(0,null,"Something Went Wrong",0);
+        }
+    }
+
+    public function verify_post(){
+        $data = $this->decode();
+        $user_id = $data->user_id;
+        $arr = array(
+            "isVer" => 1
+        );
+
+        $res = $this->User_Model->update($user_id,$arr);
+        if($res){
+            $this->res(1,null,"Successfully Verified",0);
+        }else{
+            $this->res(0,null,"Error Verified",0);
         }
     }
 

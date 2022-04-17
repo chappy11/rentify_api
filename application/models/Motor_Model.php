@@ -7,6 +7,14 @@
             $this->load->database();
         }
 
+        public function allvehicle(){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->join("user","user.user_id=vehicle.user_id",'left');
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function addMotor($data=array()){
             return $this->db->insert("vehicle",$data);
         }

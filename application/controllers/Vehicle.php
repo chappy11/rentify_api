@@ -50,7 +50,7 @@ class Vehicle extends Data_format{
     } 
 
     public function getbyid_get($motor_id){
-        $data = $this->Motor_Model->getmotorbyid($id);
+        $data = $this->Motor_Model->getmotorbyid($motor_id);
         if(count($data) > 0){
             $this->res(1,$data[0],"Data Retrive",count($data));
         }else{
@@ -79,7 +79,7 @@ class Vehicle extends Data_format{
     public function addpoints_post(){
         $data = $this->decode();
         $motor_id =isset($data->motor_id) ? $data->motor_id : "";
-        $points = isset($data->points) ? $data->motor_id : "";
+        $points = isset($data->points) ? $data->points : "";
         $motor = $this->Motor_Model->getmotorbyid($motor_id)[0];
         
         $total = $motor->tourmopoints + $points;
@@ -95,6 +95,30 @@ class Vehicle extends Data_format{
         }
 
     }
+
+    public function allVehicle_get(){
+        $data = $this->Motor_Model->allvehicle();
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found",count($data));
+        }else{
+            $this->res(0,null,"No data found",0);
+        }
+    }
+
+    public function verify_post(){
+        $data = $this->decode();
+        $id = $data->id;
+        $arr = array(
+            "isVerified" => 1
+        );
+        $res = $this->Motor_Model->update($id,$arr);
+        if($res){
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(0,null,"Error",0);
+        }
+    }
+
 
 
         public function sample_get(){
