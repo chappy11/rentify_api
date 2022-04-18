@@ -15,8 +15,8 @@
             $config['protocol']    = 'smtp';
             $config['smtp_host']    = 'smtp.mailtrap.io';
             $config['smtp_port']    = '2525';
-            $config['smtp_user'] = 'c4b7a8d3ceaa1e';
-            $config['smtp_pass'] = '1f1283e2b7b609';
+            $config['smtp_user'] = '6d5ff02ecee7f8';
+            $config['smtp_pass'] = 'ca6a6441b64634';
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html

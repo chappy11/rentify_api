@@ -42,8 +42,8 @@ include_once(dirname(__FILE__)."/Data_format.php");
   
         }
   
-        public function activateMotourista_post(){
-            $data = this
-        }
+        // public function activateMotourista_post(){
+        //     $data = this
+        // }
     }
 ?>

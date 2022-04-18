@@ -33,7 +33,8 @@
                 "brand"=>$brand,
                 "onRent" => 0,
                 "isActive" => 0,
-                "tourmopoints" => 0
+                "tourmopoints" => 0,
+                "isVerified" => 0
             );
             $resp = $this->Motor_Model->addMotor($arr);
             if($resp){
