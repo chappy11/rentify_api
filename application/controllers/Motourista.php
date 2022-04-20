@@ -42,8 +42,51 @@ include_once(dirname(__FILE__)."/Data_format.php");
   
         }
   
-        // public function activateMotourista_post(){
-        //     $data = this
-        // }
+        public function activateMotourista_post(){
+            $data = $this->decode();
+            $mot_id = isset($data->mot_id) ? $data->mot_id : "";
+            $status = isset($data->status) ? $data->status :"";
+
+            $arr = array(
+                "isActive" => $status
+            );
+
+            $resp = $this->Motourista_Model->updatemotourista($mot_id,$arr);
+            if($resp){
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Error Updating",0);
+            }
+        }
+
+        public function UpdateMotourista_post(){
+            $data = $this->decode();
+            $mot_id = isset($data->mot_id) ? $data->mot_id : "";
+            $name = isset($data->name) ? $data->name : "";
+            $lat = isset($data->lat) ? $data->lat : "";
+            $lng = isset($data->lng) ? $data->lng : "";
+
+            $mData= $this->Motourista_Model->getmotouristabyId($mot_id)[0];
+            $name = $name == "" ? $mData->motour_name : $name;
+            $lat = $lat == "" ? $mData->latitude : $lat;
+            $lng = $lng == "" ? $mData->longitude : $lng;
+
+            $arr = array(
+                "motour_name" -> $name,
+                "latitude" -> $lat,
+                "longitude" -> $lng
+            );
+
+            $resp = $this->Motourista_Model->updatemotourista($mot_id,$arr);
+            if($resp){
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Error Updated",0);
+            }
+
+        }
+
+
+        
     }
 ?>
