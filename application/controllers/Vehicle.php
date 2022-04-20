@@ -119,6 +119,14 @@ class Vehicle extends Data_format{
         }
     }
 
+    public function allpostvehicle_get(){
+        $data = $this->Motor_Model->getpostvehicle();
+        if(count($data) > 0){
+            $this->res(1,$data,"data found",count($data));
+        }else{
+            $this->res(0,null,"data not found",0);
+        }
+    }
 
 
         public function sample_get(){

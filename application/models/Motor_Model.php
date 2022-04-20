@@ -15,6 +15,17 @@
             return $query->result();
         }
 
+        public function getpostvehicle(){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->where("vehicle.isActive",1);
+            $this->db->where("motourista.isActive",1);
+            $this->db->join("user","user.user_id=vehicle.user_id",'left');
+            $this->db->join("motourista","motourista.m_id=vehicle.m_id",'left');
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function addMotor($data=array()){
             return $this->db->insert("vehicle",$data);
         }
