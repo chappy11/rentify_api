@@ -18,6 +18,7 @@ class Vehicle extends Data_format{
         $m_id = $this->post("m_id");
         $name = $this->post("name");
         $transmission = $this->post("transmission");
+        $rate = $this->post("rate");
         $brand = $this->post("brand");
         
         $arr = array(
@@ -29,6 +30,7 @@ class Vehicle extends Data_format{
             "user_id" => $user_id,
             "m_id" => $m_id,
             "name" => $name,
+            "rate" => $rate,
             "transmission" => $transmission,
             "brand"=>$brand,
             "onRent" => 0,
