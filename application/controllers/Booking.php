@@ -15,14 +15,15 @@ class Booking extends Data_format{
         $date_start = isset($data->date_start) ? $data->date_start : "";
         $date_end = isset($data->date_end) ? $data->date_end : "";
         $time = isset($data->time) ? $data->time : "";
-
+        $no_days = isset($data->no_days) ? $data->no_days : "";
         $arr = array(
             "user_id" => $user_id,
             "motor_id" => $motor_id,
             "time" => $time,
             "start_date" => $date_start,
             "end_date" => $date_end,
-            "booking_status" => 0
+            "booking_status" => 0,
+            "no_days" => $no_days
         ); 
         $resp = $this->Booking_Model->insert($arr);
         if($resp){
