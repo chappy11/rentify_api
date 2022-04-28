@@ -10,7 +10,7 @@
         }
 
         public function insert($data=array()){
-            return $this->db->insert($table,$data);
+            return $this->db->insert($this->table,$data);
         }
 
         public function getnotifbyuser($user_id){

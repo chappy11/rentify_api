@@ -30,7 +30,7 @@ class Vehicle extends Data_format{
             "user_id" => $user_id,
             "m_id" => $m_id,
             "name" => $name,
-            "rate" => $rate,
+            "rate" => $rate * 0.15,
             "transmission" => $transmission,
             "brand"=>$brand,
             "onRent" => 0,

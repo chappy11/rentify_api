@@ -42,6 +42,16 @@ class Booking_Model extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function getdatelist($motor_id){
+        $this->db->select("start_date,end_date");
+        $this->db->from($this->table);
+        $this->db->where("motor_id",$motor_id);
+        $query= $this->db->get();
+        return $query->result();
+    }
+
+    
 }
 
 

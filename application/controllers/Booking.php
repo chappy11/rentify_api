@@ -5,7 +5,7 @@ class Booking extends Data_format{
 
     public function __construct(){
         parent::__construct();
-        $this->load->model(array("Booking_Model"));
+        $this->load->model(array("Booking_Model","User_Model","Motor_Model","Notification_Model"));
     }
 
     public function insert_post(){
@@ -58,6 +58,65 @@ class Booking extends Data_format{
         }else{
             $this->res(0,null,"Data not found",0);
         }
+    }
+
+
+    public function getdatelist_get($motor_id){
+        $data = $this->Booking_Model->getdatelist($motor_id);
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found",0);
+        }else{
+            $this->res(0,null,"Data not found",0);
+        }
+    }
+
+
+    public function acceptbooking_post($booking_id){
+        $arr = array(
+            "booking_status" => 1
+        );
+        $bdata = $this->Booking_Model->getbyid($booking_id)[0];
+        $mdata = $this->Motor_Model->getmotorbyid($bdata->motor_id)[0];
+        $isAccept = $this->Booking_Model->update($booking_id,$arr);
+      
+        if($mdata->tourmopoints < ($bdata->total_amount * 0.15)){
+            $this->res(1,null,"Your tourmopoints is insufficient",0);
+        }else{
+            if($isAccept){
+                $r = array(
+                    "onRent" => 1,
+                    "tourmopoints" => $mdata->tourmopoints - ($bdata->total_amount * 0.15)
+                );
+                $onRent = $this->Motor_Model->update($bdata->motor_id,$r);
+                if($onRent){
+                    $x = array(
+                        "isRent" => 1
+                    );
+                    $isRent = $this->User_Model->update($bdata->user_id,$x);
+                    if($isRent){
+                        $notif = array(
+                            "notif_title" => "Booking Accepted",
+                            "notif_body" => "Your Booking has successfully accepted",
+                            "isRead" => 0,
+                            "notif_type" => 2,
+                            "user_id" => $bdata->user_id
+                        );
+                        $this->Notification_Model->insert($notif);
+                        $this->res(1,null,"Successfully Accepted",0);
+                    }else{
+                        $this->res(0,null,"Something went wrong",0);
+                    }
+                }else{
+                    $this->res(1,null,"Something went wrong",0);
+                }
+            }else{
+                $this->res(1,null,"Something went wrong",0);
+            }
+    
+        }
+
+     
+
     }
 }
 

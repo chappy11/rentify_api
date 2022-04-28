@@ -5,7 +5,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("Motourista_Model"));
+            $this->load->model(array("Motourista_Model","User_Model"));
         }
 
         public function becomeMotourista_post(){
@@ -25,7 +25,16 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
             $resp = $this->Motourista_Model->addMotourista($payload);
             if($resp){
-                $this->res(1,null,"Successfully Added",0);
+                $r = array(
+                    "isMotourista" => 1
+                );
+                $res = $this->User_Model->update($user_id,$r);
+                    if($res){
+                        $this->res(1,null,"Successfully Added",0);
+                    }else{
+                        $this->res(0,null,"Something went wrong",0);
+                    }
+                
             }else{
                 $this->res(0,null,"Something went wrong",0);
             }
