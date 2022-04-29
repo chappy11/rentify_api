@@ -25,12 +25,18 @@ class Booking extends Data_format{
             "booking_status" => 0,
             "no_days" => $no_days
         ); 
-        $resp = $this->Booking_Model->insert($arr);
-        if($resp){
-            $this->res(1,null,"You Book Successfully",0);
+        $check = $this->Booking_Model->checkpending($user_id,$motor_id);
+        if(count($check) > 0){
+            $this->res(0,null,"You Have Current Pending Transaction",0);
         }else{
-            $this->res(0,null,"Something went wrong",0);
+               $resp = $this->Booking_Model->insert($arr);
+                if($resp){
+                    $this->res(1,null,"You Book Successfully",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
         }
+     
     }
 
     public function getbooking_get($id){
@@ -115,9 +121,54 @@ class Booking extends Data_format{
     
         }
 
-     
-
     }
+
+    public function declinebooking_post($booking_id,$motor_id){
+        $list = [];
+        $bookaccepted = $this->Booking_Model->getbyid($booking_id)[0];
+        $curr = $this->getDatesFromRange($bookaccepted->start_date,$bookaccepted->end_date);
+       // print_r($curr);
+        $other = $this->Booking_Model->getpending($motor_id);
+        foreach($other as $val){
+               $d = $this->getDatesFromRange($val->start_date,$val->end_date);
+                $dat = array_intersect($d,$curr);
+                if(count($dat) > 0){
+                    array_push($list,$val->booking_id);
+                }
+            }
+        if(count($list) > 0){
+            foreach($list as $val){
+                $id = $this->Booking_Model->getbyid($val->user_id);
+                $decline = array(
+                    "booking_status" => 3
+                );
+                $update = $this->Booking_Model->update($id,$decline);
+                if($update){
+                     $notif = array(
+                            "notif_title" => "Booking Accepted",
+                            "notif_body" => "Your Booking has successfully accepted",
+                            "isRead" => 0,
+                            "notif_type" => 2,
+                            "user_id" => $id
+                        );
+                    $this->Notification_Model->insert($notif);
+                }else{
+                    $this->res(0,null,"Something went wrong while updating",0);
+                }
+               
+                
+            }
+        }
+    }
+
+    public function getDatesFromRange($start, $end, $format='Y-m-d') {
+    return array_map(function($timestamp) use($format) {
+        return date($format, $timestamp);
+    },
+    range(strtotime($start) + ($start < $end ? 4000 : 8000), strtotime($end) + ($start < $end ? 8000 : 4000), 86400));
+    }
+
+   
 }
 
 ?>
