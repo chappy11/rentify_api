@@ -13,6 +13,16 @@ class Booking_Model extends CI_Model{
         return $this->db->insert($this->table,$arr);
     }
 
+    public function checkpending($user_id,$motor_id){
+        $this->db->select("*");
+        $this->db->from($this->table);
+        $this->db->where("motor_id",$motor_id);
+        $this->db->where("user_id",$user_id);
+        $this->db->where("booking_status",0);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function update($id,$arr=array()){
         return $this->db->update($this->table,$arr,"booking_id=".$id);
     }
@@ -33,6 +43,14 @@ class Booking_Model extends CI_Model{
         return $query->result();
     }
 
+    public function getpending($motor_id){
+        $this->db->select("*");
+        $this->db->from($this->table);
+        $this->db->where("booking_status",0);
+        $query = $this->db->get();
+        return  $query->result();
+    }
+
     public function getmybookinglist($owner_id){
         $this->db->select("*");
         $this->db->from($this->table);
@@ -48,6 +66,15 @@ class Booking_Model extends CI_Model{
         $this->db->from($this->table);
         $this->db->where("motor_id",$motor_id);
         $query= $this->db->get();
+        return $query->result();
+    }
+
+    public function getvalidate($motor_id){
+        $this->db->select("start_date,end_date");
+        $this->db->from($this->table);
+        $this->db->where("motor_id",$motor_id);
+        $this->db->where("booking_status",0);
+        $query = $this->db->get();
         return $query->result();
     }
 
