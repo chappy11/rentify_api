@@ -5,7 +5,7 @@ class Vehicle extends Data_format{
 
     public function __construct(){
         parent::__construct();
-        $this->load->model(array("Motor_Model"));
+        $this->load->model(array("Motor_Model","History_Model"));
     }
 
     public function addMotor_post(){
@@ -91,6 +91,7 @@ class Vehicle extends Data_format{
 
         $resp = $this->Motor_Model->update($motor_id,$updated);
         if($resp){
+            $this->history_insert(date("Y-m-d"),$motor->user_id,0,$motor_id,$points,1);
             $this->res(1,null,"Points Successfully Added",0);
         }else{
             $this->res(0,null,"Something went wrong",0);
@@ -130,6 +131,20 @@ class Vehicle extends Data_format{
         }
     }
 
+    public function history_insert($date,$rec_id,$booking_id,$motor_id,$amount,$type){
+        $en = str_replace("-","",$date);
+        $rand = mt_rand(1111,9999);
+        $trn = "TRN-".$en."-".$rand;
+        $arr = array(
+            "ref_no" => $trn,
+            "amount" => $amount,
+            "his_type" => $type,
+            "motor_id" => $motor_id,
+            "booking_id" => $booking_id,
+            "rec_id" => $rec_id
+        );
+        $this->History_Model->insert($arr);
+    }  
 
         public function sample_get(){
          $this->res(1,null,"HI",0);         

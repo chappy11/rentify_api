@@ -15,8 +15,8 @@
 
         public function getnotifbyuser($user_id){
             $this->db->select("*");
-            $this->db->from($table);
-            $this->db->where("user_id");
+            $this->db->from($this->table);
+            $this->db->where("user_id",$user_id);
             $query = $this->db->get();
             return $query->result();
         }

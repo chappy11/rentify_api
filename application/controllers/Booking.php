@@ -5,7 +5,7 @@ class Booking extends Data_format{
 
     public function __construct(){
         parent::__construct();
-        $this->load->model(array("Booking_Model","User_Model","Motor_Model","Notification_Model"));
+        $this->load->model(array("Booking_Model","User_Model","Motor_Model","Notification_Model","History_Model"));
     }
 
     public function insert_post(){
@@ -23,7 +23,8 @@ class Booking extends Data_format{
             "start_date" => $date_start,
             "end_date" => $date_end,
             "booking_status" => 0,
-            "no_days" => $no_days
+            "no_days" => $no_days,
+            "onStart" => 0
         ); 
         $check = $this->Booking_Model->checkpending($user_id,$motor_id);
         if(count($check) > 0){
@@ -90,7 +91,6 @@ class Booking extends Data_format{
         }else{
             if($isAccept){
                 $r = array(
-                    "onRent" => 1,
                     "tourmopoints" => $mdata->tourmopoints - ($bdata->total_amount * 0.15)
                 );
                 $onRent = $this->Motor_Model->update($bdata->motor_id,$r);
@@ -107,7 +107,12 @@ class Booking extends Data_format{
                             "notif_type" => 2,
                             "user_id" => $bdata->user_id
                         );
+      
                         $this->Notification_Model->insert($notif);
+                        $trn = $this->trngenerator($bdata->end_date);
+                        $this->history_insert($bdata->user_id,$booking_id,0,0,2,$trn);
+                        $this->history_insert($mdata->user_id,$booking_id,0,0,2,$trn);
+                        $this->declinebooking($booking_id,$bdata->motor_id);     
                         $this->res(1,null,"Successfully Accepted",0);
                     }else{
                         $this->res(0,null,"Something went wrong",0);
@@ -123,7 +128,7 @@ class Booking extends Data_format{
 
     }
 
-    public function declinebooking_post($booking_id,$motor_id){
+    public function declinebooking($booking_id,$motor_id){
         $list = [];
         $bookaccepted = $this->Booking_Model->getbyid($booking_id)[0];
         $curr = $this->getDatesFromRange($bookaccepted->start_date,$bookaccepted->end_date);
@@ -138,18 +143,18 @@ class Booking extends Data_format{
             }
         if(count($list) > 0){
             foreach($list as $val){
-                $id = $this->Booking_Model->getbyid($val->user_id);
+                $id = $this->Booking_Model->getbyid($val)[0];
                 $decline = array(
                     "booking_status" => 3
                 );
-                $update = $this->Booking_Model->update($id,$decline);
+                $update = $this->Booking_Model->update($val,$decline);
                 if($update){
                      $notif = array(
-                            "notif_title" => "Booking Accepted",
-                            "notif_body" => "Your Booking has successfully accepted",
+                            "notif_title" => "Booking Declined",
+                            "notif_body" => "Sorry your booking has been decline because it may the motorbike that you select is already book by another user",
                             "isRead" => 0,
                             "notif_type" => 2,
-                            "user_id" => $id
+                            "user_id" => $id->user_id
                         );
                     $this->Notification_Model->insert($notif);
                 }else{
@@ -161,6 +166,74 @@ class Booking extends Data_format{
         }
     }
 
+    public function startbooking_post($booking_id){
+        $data = $this->Booking_Model->getbyid($booking_id)[0];     
+        $mdata =  $this->Motor_Model->getmotorbyid($data->motor_id)[0];
+        
+        $dat = array(
+            "onStart" => 1
+        );
+        $onRent = $this->Booking_Model->update($booking_id,$dat);
+        if($onRent){
+            $arr = array(
+                "onRent" => 1
+            );
+            $isArr = $this->Motor_Model->update($data->motor_id,$arr);
+            if($isArr){
+                $this->res(1,null,"Successfully",0);
+            }else{
+                $this->res(0,null,"Error",0);
+            }
+        }else{
+            $this->res(0,null,"Something went wrong",0);
+        }
+    }
+  
+    public function returnMotor_post($booking_id){
+        $onStart = array(
+            "onStart" => 3
+        );
+        $data = $this->Booking_Model->getbyid($booking_id)[0];
+        $mdata = $this->Motor_Model->getmotorbyid($data->motor_id)[0];
+        $resp = $this->Booking_Model->update($booking_id,$onStart);
+        $notif = array(
+            "user_id" => $mdata->user_id,
+            "isRead" => 0,
+            "notif_type" => 3,
+            "notif_title" => "Return Motorbike",
+            "notif_body" => "User return motorbike"
+        ); 
+        if($resp){
+            $this->Notification_Model->insert($notif);
+            $this->res(1,null,"Successfully Return",0);
+        }else{
+            $this->res(0,null,"Something went wrong",0);
+        }
+    }
+
+    public function confirmReturn_post($booking_id){
+        $bdata = $this->Booking_Model->getbyid($booking_id)[0];
+        $motor = array(
+            "onRent" => 0
+        );
+
+        $user = array(
+            "isRent" => 0
+        );
+
+        $update = $this->Motor_Model->update($bdata->motor_id,$motor);
+            if($update){
+                $updateuser = $this->User_Model->update($bdata->user_id,$user);
+                if($updateuser){
+                    $this->res(1,null,"Successfully Confirm",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+    }
+  
     public function getDatesFromRange($start, $end, $format='Y-m-d') {
     return array_map(function($timestamp) use($format) {
         return date($format, $timestamp);
@@ -168,6 +241,25 @@ class Booking extends Data_format{
     range(strtotime($start) + ($start < $end ? 4000 : 8000), strtotime($end) + ($start < $end ? 8000 : 4000), 86400));
     }
 
+    public function history_insert($rec_id,$booking_id,$motor_id,$amount,$type,$trn){
+     
+        $arr = array(
+            "ref_no" => $trn,
+            "amount" => $amount,
+            "his_type" => $type,
+            "motor_id" => $motor_id,
+            "booking_id" => $booking_id,
+            "rec_id" => $rec_id
+        );
+        $this->History_Model->insert($arr);
+    }
+    
+    public function trngenerator($date){
+        $en = str_replace("-","",$date);
+        $rand = mt_rand(1111,9999);
+        $trn = "TRN-".$en."-".$rand;
+        return $trn;
+    }
    
 }
 
