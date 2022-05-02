@@ -5,7 +5,7 @@ class Vehicle extends Data_format{
 
     public function __construct(){
         parent::__construct();
-        $this->load->model(array("Motor_Model","History_Model"));
+        $this->load->model(array("Motor_Model","History_Model","Notification_Model"));
     }
 
     public function addMotor_post(){
@@ -20,7 +20,7 @@ class Vehicle extends Data_format{
         $transmission = $this->post("transmission");
         $rate = $this->post("rate");
         $brand = $this->post("brand");
-        
+        $date = $this->post("date");
         $arr = array(
             "pic1" => "motor/".$pic1,
             "pic2" => "motor/".$pic2,
@@ -36,7 +36,9 @@ class Vehicle extends Data_format{
             "onRent" => 0,
             "isActive" => 0,
             "tourmopoints" => 0,
-            "isVerified"=>0
+            "isVerified"=>0,
+            "expire" => 0,
+            "docu_exp" =>$date
         );
         $resp = $this->Motor_Model->addMotor($arr);
         if($resp){
@@ -51,9 +53,32 @@ class Vehicle extends Data_format{
         }
     } 
 
+    public function update_post(){
+        $id = $this->post("motor_id");
+        $offRec = $_FILES['offRec']['name'];
+        $certReg = $_FILES['certReg']['name'];
+        $date = $this->post("date");
+        $arr = array(
+            "offRec" => "or/".$offRec,
+             "certReg" => "cr/".$certReg,
+             "docu_exp" => $date
+        );
+
+        $resp = $this->Motor_Model->update($id,$arr);
+        if($resp){
+            move_uploaded_file($_FILES['offRec']['tmp_name'],"or/".$offRec);
+            move_uploaded_file($_FILES['certReg']['tmp_name'],"cr/".$certReg);
+            $this->res(1,null,"Successfully Updated",0);
+        }else{
+            $this->res(0,null,"Error while updating",0);
+        }
+    }
+
     public function getbyid_get($motor_id){
         $data = $this->Motor_Model->getmotorbyid($motor_id);
+        
         if(count($data) > 0){
+            $this->check($motor_id);
             $this->res(1,$data[0],"Data Retrive",count($data));
         }else{
             $this->res(0,null,"Error",0);
@@ -91,6 +116,14 @@ class Vehicle extends Data_format{
 
         $resp = $this->Motor_Model->update($motor_id,$updated);
         if($resp){
+            $ar = array(
+                "notif_title" => "Adding Tourmopoint",
+                "notif_body" => "You have successfully Top up Tourmopoint",
+                "isRead" => 0,
+                "notif_type" => 0,
+                "user_id" => $motor->user_id
+            );
+            $this->Notification_Model->insert($ar);
             $this->history_insert(date("Y-m-d"),$motor->user_id,0,$motor_id,$points,1);
             $this->res(1,null,"Points Successfully Added",0);
         }else{
@@ -149,6 +182,19 @@ class Vehicle extends Data_format{
         public function sample_get(){
          $this->res(1,null,"HI",0);         
         }
+
+    
+    public function check($motor_id){
+        $data = $this->Motor_Model->getmotorbyid($motor_id)[0];
+        if($data->docu_exp == date("Y-m-d")){
+            $ar = array(
+                "expire" => 1
+            );
+            $this->Motor_Model->update($motor_id,$ar);
+        }
+
+       
+    }
 }
 
 

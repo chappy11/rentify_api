@@ -30,7 +30,7 @@ class User extends Data_format{
         $email = $this->post("email");
         $password = $this->post("password");
         $contact = $this->post("contact");
-
+        $date = $this->post("date");
        
         if($this->User_Model->isEmailExist($email)){
             $this->res(0,null,"Email is Already Exist",0);
@@ -47,7 +47,9 @@ class User extends Data_format{
                 "user_type" => "user",
                 "isActive" => 1,
                 "isVer" => 0,
-                "isMotourista" => 0
+                "isMotourista" => 0,
+                "date_exp" => $date,
+                "isExp" => 0
             ); 
             $res = $this->User_Model->register($data);
             if($res){
@@ -63,11 +65,14 @@ class User extends Data_format{
         
     public function profile_get($id){
         $data = $this->User_Model->getprofile($id);
+        
         if(count($data) > 0){
             $this->res(1,$data,"Data found",0);
+            $this->checkDate($id);
         }else{
             $this->res(1,null,"Something went wrong");
         }
+    
     }
 
     public function admin_post(){
@@ -209,6 +214,17 @@ class User extends Data_format{
             $this->res(1,null,"Successfully Verified",0);
         }else{
             $this->res(0,null,"Error Verified",0);
+        }
+    }
+
+    public function checkDate($user_id){
+        $data = $this->User_Model->getProfile($user_id)[0];
+        $isExp = $data->date_exp == date("Y-m-D") ? true : false;
+        $arr = array(
+            "isVer" => 0
+        );
+        if($isExp){
+            $this->User_Model->update($user_id,$arr);
         }
     }
 

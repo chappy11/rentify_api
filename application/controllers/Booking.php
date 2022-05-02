@@ -16,6 +16,7 @@ class Booking extends Data_format{
         $date_end = isset($data->date_end) ? $data->date_end : "";
         $time = isset($data->time) ? $data->time : "";
         $no_days = isset($data->no_days) ? $data->no_days : "";
+        $total = isset($data->total) ? $data->total : "";
         $arr = array(
             "user_id" => $user_id,
             "motor_id" => $motor_id,
@@ -24,7 +25,8 @@ class Booking extends Data_format{
             "end_date" => $date_end,
             "booking_status" => 0,
             "no_days" => $no_days,
-            "onStart" => 0
+            "onStart" => 0,
+            "total_amount" => $total
         ); 
         $check = $this->Booking_Model->checkpending($user_id,$motor_id);
         if(count($check) > 0){
@@ -79,16 +81,18 @@ class Booking extends Data_format{
 
 
     public function acceptbooking_post($booking_id){
-        $arr = array(
-            "booking_status" => 1
-        );
+       
         $bdata = $this->Booking_Model->getbyid($booking_id)[0];
         $mdata = $this->Motor_Model->getmotorbyid($bdata->motor_id)[0];
-        $isAccept = $this->Booking_Model->update($booking_id,$arr);
+       
       
         if($mdata->tourmopoints < ($bdata->total_amount * 0.15)){
             $this->res(1,null,"Your tourmopoints is insufficient",0);
         }else{
+            $arr = array(
+                "booking_status" => 1
+            );
+            $isAccept = $this->Booking_Model->update($booking_id,$arr);
             if($isAccept){
                 $r = array(
                     "tourmopoints" => $mdata->tourmopoints - ($bdata->total_amount * 0.15)
