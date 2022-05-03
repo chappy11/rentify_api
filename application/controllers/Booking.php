@@ -30,7 +30,7 @@ class Booking extends Data_format{
         ); 
         $check = $this->Booking_Model->checkpending($user_id,$motor_id);
         if(count($check) > 0){
-            $this->res(0,null,"You Have Current Pending Transaction",0);
+            $this->res(0,null,"You Have Current Pending Transaction ",0);
         }else{
                $resp = $this->Booking_Model->insert($arr);
                 if($resp){
@@ -40,6 +40,16 @@ class Booking extends Data_format{
                 }
         }
      
+    }
+
+    public function getbyuser_get($user_id){
+        $data = $this->Booking_Model->getbyuserid($user_id);
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found",0);
+        }else{
+            $this->res(0,null,"No data found",0);
+        }
+
     }
 
     public function getbooking_get($id){
@@ -71,7 +81,7 @@ class Booking extends Data_format{
 
 
     public function getdatelist_get($motor_id){
-        $data = $this->Booking_Model->getdatelist($motor_id);
+        $data = $this->Booking_Model->getvalidate($motor_id);
         if(count($data) > 0){
             $this->res(1,$data,"Data found",0);
         }else{
@@ -195,7 +205,8 @@ class Booking extends Data_format{
   
     public function returnMotor_post($booking_id){
         $onStart = array(
-            "onStart" => 3
+            "onStart" => 3,
+            "booking_status" => 5
         );
         $data = $this->Booking_Model->getbyid($booking_id)[0];
         $mdata = $this->Motor_Model->getmotorbyid($data->motor_id)[0];
@@ -214,6 +225,8 @@ class Booking extends Data_format{
             $this->res(0,null,"Something went wrong",0);
         }
     }
+
+    
 
     public function confirmReturn_post($booking_id){
         $bdata = $this->Booking_Model->getbyid($booking_id)[0];
