@@ -79,6 +79,14 @@ class Booking extends Data_format{
         }
     }
 
+    public function getongoing_get($owner_id){
+        $data = $this->Booking_Model->getongoing($owner_id);
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found",0);
+        }else{
+            $this->res(0,null,"Data not found",0);
+        }
+    }
 
     public function getdatelist_get($motor_id){
         $data = $this->Booking_Model->getvalidate($motor_id);
@@ -121,7 +129,6 @@ class Booking extends Data_format{
                             "notif_type" => 2,
                             "user_id" => $bdata->user_id
                         );
-      
                         $this->Notification_Model->insert($notif);
                         $trn = $this->trngenerator($bdata->end_date);
                         $this->history_insert($bdata->user_id,$booking_id,0,0,2,$trn);
@@ -206,7 +213,7 @@ class Booking extends Data_format{
     public function returnMotor_post($booking_id){
         $onStart = array(
             "onStart" => 3,
-            "booking_status" => 5
+            "booking_status" => 2
         );
         $data = $this->Booking_Model->getbyid($booking_id)[0];
         $mdata = $this->Motor_Model->getmotorbyid($data->motor_id)[0];
@@ -242,7 +249,16 @@ class Booking extends Data_format{
             if($update){
                 $updateuser = $this->User_Model->update($bdata->user_id,$user);
                 if($updateuser){
-                    $this->res(1,null,"Successfully Confirm",0);
+                    $book_stat = array(
+                        "booking_status" => 5
+                    );
+                    $updatebooking = $this->Booking_Model->update($booking_id,$book_stat);
+                   
+                    if($updatebooking){
+                        $this->res(1,null,"Successfully Confirm",0);
+                    }else{
+                        $this->res(0,null,"Something went wrong",0);
+                    }
                 }else{
                     $this->res(0,null,"Something went wrong",0);
                 }
