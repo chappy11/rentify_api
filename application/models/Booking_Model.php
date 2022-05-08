@@ -26,7 +26,7 @@ class Booking_Model extends CI_Model{
         $this->db->select("*");
         $this->db->from($this->table);
         $this->db->where("booking.user_id",$user_id);
-        $this->db->where("booking.booking_status<",4);
+        $this->db->where("booking.booking_status <",3);
         $this->db->join("vehicle","vehicle.motor_id=booking.motor_id");
         $this->db->join("user","user.user_id=vehicle.user_id");
         $query = $this->db->get();

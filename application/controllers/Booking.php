@@ -98,6 +98,31 @@ class Booking extends Data_format{
     }
 
 
+    public function cancelbooking_post($booking_id){
+        $bookingData = $this->Booking_Model->getbyid($booking_id)[0];
+        $vehicleData = $this->Motor_Model->getmotorbyid($bookingData->motor_id)[0];
+        $userdata = $this->User_Model->getProfile($vehicleData->user_id)[0];
+        $arr = array(
+            "booking_status" => "3"
+        );
+        //print_r($bookingData);
+        $resp = $this->Booking_Model->update($booking_id,$arr);
+        if($resp){
+            $notif = array(
+                "notif_title" => "Booking Cancel",
+                "notif_body" => $userdata->firstname." ".$userdata->lastname." cancel his/her booking",
+                "isRead" => 0,
+                "notif_type" => 2,
+                "user_id" => $vehicleData->user_id
+            );
+
+            $this->Notification_Model->insert($notif);
+            $this->res(1,null,"Successfully Canceled",0);
+        }else{
+            $this->res(0,null,"Something went wrong",0);
+        }
+    }
+
     public function acceptbooking_post($booking_id){
        
         $bdata = $this->Booking_Model->getbyid($booking_id)[0];
@@ -149,6 +174,27 @@ class Booking extends Data_format{
 
     }
 
+    public function declinebooking_post($booking_id){
+        $arr =  array(
+            "booking_status" => 3
+        );
+        $id = $this->Booking_Model->getbyuser($booking_id);
+        $resp = $this->Booking_Model->update($booking_id,$arr);
+        if($resp){
+            $notif = array(
+                "notif_title" => "Booking Declined",
+                "notif_body" => "Sorry your booking has been declined by owner",
+                "isRead" => 0,
+                "notif_type" => 2,
+                "user_id" => $id->user_id
+            );
+        $this->Notification_Model->insert($notif);
+            $this->res(1,null,"Successfully Declined",0);
+        }else{
+            $this->res(0,null,"Something went wrong",0);
+        }
+    }
+  
     public function declinebooking($booking_id,$motor_id){
         $list = [];
         $bookaccepted = $this->Booking_Model->getbyid($booking_id)[0];
