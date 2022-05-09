@@ -26,7 +26,8 @@ class Booking extends Data_format{
             "booking_status" => 0,
             "no_days" => $no_days,
             "onStart" => 0,
-            "total_amount" => $total
+            "total_amount" => $total,
+            "deducted" => $total * 0.15
         ); 
         $check = $this->Booking_Model->checkpending($user_id,$motor_id);
         if(count($check) > 0){
@@ -156,8 +157,8 @@ class Booking extends Data_format{
                         );
                         $this->Notification_Model->insert($notif);
                         $trn = $this->trngenerator($bdata->end_date);
-                        $this->history_insert($bdata->user_id,$booking_id,0,0,2,$trn);
-                        $this->history_insert($mdata->user_id,$booking_id,0,0,2,$trn);
+                        $this->history_insert($bdata->user_id,$booking_id,0,$bdata->total_amount,1,$trn);
+                        $this->history_insert($mdata->user_id,$booking_id,0,$bdata->total_amount,2,$trn);
                         $this->declinebooking($booking_id,$bdata->motor_id);     
                         $this->res(1,null,"Successfully Accepted",0);
                     }else{
@@ -258,7 +259,7 @@ class Booking extends Data_format{
   
     public function returnMotor_post($booking_id){
         $onStart = array(
-            "onStart" => 3,
+            "onStart" => 1,
             "booking_status" => 2
         );
         $data = $this->Booking_Model->getbyid($booking_id)[0];
@@ -313,6 +314,26 @@ class Booking extends Data_format{
             }
     }
   
+  
+    public function tourista_get($booking_id){
+        $data = $this->Booking_Model->tourista($booking_id);
+        if(count($data) > 0){
+            $this->res(1,$data,"data found",0);
+        }else{
+            $this->res(0,null,"Data not found",0);
+        }
+    }
+
+    public function motourista_get($booking_id){
+        $data = $this->Booking_Model->motourista($booking_id);
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found",0);
+        }else{
+            $this->res(0,null,"data not found",0);
+        }
+    }
+  
+  
     public function getDatesFromRange($start, $end, $format='Y-m-d') {
     return array_map(function($timestamp) use($format) {
         return date($format, $timestamp);
@@ -326,7 +347,7 @@ class Booking extends Data_format{
             "ref_no" => $trn,
             "amount" => $amount,
             "his_type" => $type,
-            "motor_id" => $motor_id,
+            "payment_id" => $motor_id,
             "booking_id" => $booking_id,
             "rec_id" => $rec_id
         );

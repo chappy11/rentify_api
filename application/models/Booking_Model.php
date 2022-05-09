@@ -76,7 +76,8 @@ class Booking_Model extends CI_Model{
         $this->db->select("*");
         $this->db->from($this->table);
         $this->db->where("vehicle.user_id",$owner_id);
-        $this->db->where("booking.booking_status",1);
+        $this->db->where("booking.booking_status >",0);
+        $this->db->where("booking.booking_status <",3);
         $this->db->where("booking.onStart",1);
         $this->db->join("vehicle","vehicle.motor_id=booking.motor_id");
         $this->db->join("user","user.user_id=booking.user_id");
@@ -102,8 +103,27 @@ class Booking_Model extends CI_Model{
         return $query->result();
     }
 
-    
+    public function tourista($booking_id){
+        $this->db->select("*");
+        $this->db->from($this->table);
+        $this->db->where("booking.booking_id",$booking_id);
+        $this->db->join("vehicle","vehicle.motor_id=booking.motor_id");
+        $this->db->join("user","user.user_id=vehicle.user_id");
+        $this->db->join("motourista","motourista.user_id=vehicle.user_id");
+        $query = $this->db->get();
+        return $query->result();
+    }
+  
+    public function motourista($booking_id){
+        $this->db->select("*");
+        $this->db->from($this->table);
+        $this->db->where("booking.booking_id",$booking_id);
+        $this->db->join("vehicle","vehicle.motor_id=booking.motor_id");
+        $this->db->join("user","user.user_id=booking.user_id");
+        $this->db->join("motourista","motourista.user_id=vehicle.user_id");    
+        $query = $this->db->get();
+        return $query->result();
+    }
 }
-
 
 ?>

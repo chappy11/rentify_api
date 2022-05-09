@@ -17,6 +17,7 @@
             $this->db->select("*");
             $this->db->from($this->table);
             $this->db->where("user_id",$user_id);
+            $this->db->order_by("notif_id","DESC");
             $query = $this->db->get();
             return $query->result();
         }
@@ -31,7 +32,7 @@
         }
 
         public function update($notif_id,$data=array()){
-            return $this->db->update($table,$data,"notif_id=".$notif_id);
+            return $this->db->update($this->table,$data,"notif_id=".$notif_id);
         }
     }
 

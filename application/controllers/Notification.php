@@ -12,7 +12,7 @@
         public function getnotifbyuser_get($user_id){
             $data = $this->Notification_Model->getnotifbyuser($user_id);
             if(count($data) > 0){
-                $this->res(1,$data,"Data found",0);
+                $this->res(1,$data,"Data found",count($data));
             }else{
                 $this->res(0,null,"Data not found",0);
             }
