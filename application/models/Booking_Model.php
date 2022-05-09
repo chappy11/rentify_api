@@ -124,6 +124,15 @@ class Booking_Model extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function checkbooking($id){
+        $this->db->select("*");
+        $this->db->from($this->table);
+        $this->db->where("booking.booking_status <",2);
+        $this->db->where("motor_id",$id);
+        $query = $this->db->get();
+        return $query->result();
+    }
 }
 
 ?>

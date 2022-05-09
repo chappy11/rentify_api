@@ -21,7 +21,6 @@ class History_Model extends CI_Model{
         $this->db->join("payment","payment.payment_id = history.payment_id","LEFT");
         $this->db->order_by("history_id",'DESC');
         $query = $this->db->get();
-
         return $query->result();
     }
 

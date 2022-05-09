@@ -1,11 +1,11 @@
 <?php 
 include_once(dirname(__FILE__)."/Data_format.php");
-
+require(dirname(__FILE__)."/config.php");
 class Vehicle extends Data_format{
 
     public function __construct(){
         parent::__construct();
-        $this->load->model(array("Motor_Model","History_Model","Notification_Model"));
+        $this->load->model(array("Motor_Model","History_Model","Notification_Model","Booking_Model","Notification_Model","Payment_Model","Report_Model"));
     }
 
     public function addMotor_post(){
@@ -103,10 +103,8 @@ class Vehicle extends Data_format{
         }
     }
 
-    public function addpoints_post(){
-        $data = $this->decode();
-        $motor_id =isset($data->motor_id) ? $data->motor_id : "";
-        $points = isset($data->points) ? $data->points : "";
+    public function addpoints($motor_id,$points){
+     
         $motor = $this->Motor_Model->getmotorbyid($motor_id)[0];
         
         $total = $motor->tourmopoints + $points;
@@ -124,7 +122,6 @@ class Vehicle extends Data_format{
                 "user_id" => $motor->user_id
             );
             $this->Notification_Model->insert($ar);
-            $this->history_insert(date("Y-m-d"),$motor->user_id,0,$motor_id,$points,1);
             $this->res(1,null,"Points Successfully Added",0);
         }else{
             $this->res(0,null,"Something went wrong",0);
@@ -194,6 +191,138 @@ class Vehicle extends Data_format{
         }
 
        
+    }
+
+    public function deactivate_post($id){
+        $data = $this->Booking_Model->checkbooking($id);   
+        $arr = array(
+            "isActive" => 0
+        );
+       $resp = $this->Motor_Model->update($id,$arr);
+        if($resp){
+            if(count($data) > 0){
+                foreach ($data as $value) {
+                    $r = array(
+                        "booking_status" => 3
+                    );
+                    $this->Booking_Model->update($value->booking_id,$r);
+                    $notif_title = "Booking Canceled";
+                    $notif_body = "Your Booking has been cancel because motorbike is deactivated it may have some issue";
+                    $usr_id = $value->user_id;
+                    $notif_type = 2;
+                    $this->notif($notif_title,$notif_body,$usr_id,$notif_type);
+                }
+                $this->res(1,null,"Successfully Deactivated",0);
+            }else{
+                $this->res(1,null,"Successfully Deactivated",0);
+            }
+        }else{
+            
+            $this->res(0,null,"Something went wrong",0);
+        }
+
+    }
+
+    public function activate_post($vehicle_id){
+        $payload = array(
+            "isActive" => 1
+        );
+        $res = $this->Motor_Model->update($vehicle_id,$payload);
+        if($res){
+            $this->res(1,null,"Successfully Activated",0);
+        }else{
+            $this->res(0,null,"Something went wrong",0);
+        }
+    }
+
+    public function notif($notif_title,$notif_body,$user_id,$notif_type){
+        $payload = array(
+            "notif_title" => $notif_title,
+            "notif_body" => $notif_body,
+            "isRead" => 0,
+            "notif_type" => $notif_type,
+            "user_id" => $user_id
+        );
+        $this->Notification_Model->insert($payload);
+    }
+
+    public function pay_post(){
+        $payload = $this->decode();
+        $motor_id = isset($payload->motor_id) ? $payload->motor_id : "";
+        $amount = isset($payload->amount) ? $payload->amount : "";
+        $user_id = isset($payload->user_id) ? $payload->user_id : "";
+        $stripe = new \Stripe\StripeClient(
+            'sk_test_51IlXo6G5BhKeRDfTmCYLpZjnDUjIECIgBZUlFNzYGQqXepWsBCxj6lVHrBWAm4iYNUbvABO7jEpcgf8VEsGp6K0G00X9HlI94e'
+          );
+           $data =  $stripe->charges->create([
+            'amount' => $amount * 100,
+            'currency' => 'php',
+            'source' => 'tok_mastercard',
+            'description' => 'Pay Tourmopoints',
+          ]);
+
+        
+          if($data->status == "succeeded"){
+            if($this->insert_payment($user_id,$data->id,$amount,$data->receipt_url)){
+                $getpayment = $this->Payment_Model->getbyuser($user_id)[0];
+                if($this->insert_history($getpayment->payment_id,$user_id)){
+                    if($this->insert_report($user_id,$amount)){
+                        $this->addpoints($motor_id,$amount);
+                    }else{
+                        $this->res(0,null,"Something went wrong",0);
+                    }
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+          }else{
+              $this->res(1,null,"Payment",0);
+          }
+
+
+    }   
+
+    public function insert_payment($user_id,$trans_id,$amount,$link){
+        $arr = array(
+            "user_id" => $user_id,
+            "trans_id" => $trans_id,
+            "amount" => $amount,
+            "receipt_link" => $link
+        );
+        return $this->Payment_Model->insert($arr);
+    }
+
+    public function insert_report($user_id,$amount){
+        $arr = array(
+            "amount" => $amount,
+            "user_id" => $user_id,
+            "month" => date("M"),
+            "year" => date("Y")
+        );
+        return  $this->Report_Model->insert($arr);
+    }
+
+    public function insert_history($payment_id,$rec_id){
+        $trn = $this->trngenerator(date("Y-m-d"));
+        $type = 0;
+        $arr = array(
+            "ref_no" => $trn,
+            "his_type" => 0,
+            "amount" => 0,
+            "payment_id" => $payment_id,
+            "rec_id" => $rec_id
+        );
+        return $this->History_Model->insert($arr);
+    }
+
+    public function trngenerator($date){
+        $en = str_replace("-","",$date);
+        $rand = mt_rand(1111,9999);
+        $trn = "TRN-".$en."-".$rand;
+        return $trn;
     }
 }
 
