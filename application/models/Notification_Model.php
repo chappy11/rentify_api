@@ -21,6 +21,14 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function unread(){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->where("isRead",0);
+            $query = $this->db->get();
+            return $query->result();
+        }
         
 
         public function getnotifbyid($notif_id){

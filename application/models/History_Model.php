@@ -24,6 +24,9 @@ class History_Model extends CI_Model{
         return $query->result();
     }
 
+    public function delete($data=array()){
+        return $this->db->delete($this->table,$data);
+    }
     
     
 }

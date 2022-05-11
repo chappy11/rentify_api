@@ -124,6 +124,44 @@ class Booking extends Data_format{
         }
     }
 
+    public function cancelbymotourista_post($booking_id){
+        $bdata = $this->Booking_Model->getbyid($booking_id)[0];
+        $vdata = $this->Motor_Model->getmotorbyid($bdata->motor_id)[0];
+        $payload = array(
+            "booking_status" => 3,
+            "onStart" => 0
+        );
+        $isCancel = $this->Booking_Model->update($booking_id,$payload);
+        if($isCancel){
+            $vehicle = array(
+                "tourmopoints" => $vdata->tourmopoints + $bdata->deducted
+            );            
+            $isUpdate = $this->Motor_Model->update($vdata->motor_id,$vehicle);
+            if($isUpdate){
+                $d = array("booking_id"=> $booking_id);
+                $delete = $this->History_Model->delete($d);
+                if($delete){
+                    $x = array("isRent" => 0);
+                    $this->User_Model->update($bdata->user_id,$x);
+                    $notif = array(
+                        "notif_title" => "Booking Accepted",
+                        "notif_body" => "Your Booking has been canceled",
+                        "isRead" => 0,
+                        "notif_type" => 2,
+                        "user_id" => $bdata->user_id
+                    );
+                    $this->Notification_Model->insert($notif);
+                    $this->res(1,null,"Bookings has Successfully Cancel",0);
+                }else{
+                    $this->res(0,null,"Something went Wrong",0);
+                }
+            }else{
+                $this->res(1,null,"Something went Wrong",0);
+            }
+        }else{
+            $this->res(0,null,"Something went wrong");
+        }
+    }
     public function acceptbooking_post($booking_id){
        
         $bdata = $this->Booking_Model->getbyid($booking_id)[0];
@@ -314,7 +352,15 @@ class Booking extends Data_format{
             }
     }
   
-  
+    public function history_get($user_id){
+        $data = $this->Booking_Model->booking_history($user_id);
+        if(count($data) > 0){
+            $this->res(1,$data,"Data found ",0);
+        }else{
+            $this->res(0,null,"Data not found",0);
+        }
+    }
+
     public function tourista_get($booking_id){
         $data = $this->Booking_Model->tourista($booking_id);
         if(count($data) > 0){
@@ -330,6 +376,19 @@ class Booking extends Data_format{
             $this->res(1,$data,"Data found",0);
         }else{
             $this->res(0,null,"data not found",0);
+        }
+    }
+
+    public function getearning_get($motor_id){
+        $data = $this->Booking_Model->getearnings($motor_id);
+        $total = 0;
+        if(count($data) > 0){
+            foreach($data as $val){
+                $total = $total + $val->total_amount;
+            }
+            $this->res(1,$data,"Data found", $total);
+        }else{
+            $this->res(0,$data,"Data found", $total);
         }
     }
   

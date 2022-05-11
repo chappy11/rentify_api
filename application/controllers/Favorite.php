@@ -38,6 +38,16 @@
                 $this->res(0,null,"Data not found",0);
             }
         }
+
+        public function delete_post($motor_id,$user_id){
+            $data = array("motor_id"=>$motor_id,"user_id"=>$user_id);
+            $res = $this->Favorite_Model->remove($data);
+            if($res){
+                $this->res(1,null,"Successfully Remove",0);
+            }else{
+                $this->res(0,null,"Error",0);
+            }
+        }
     }
 
 

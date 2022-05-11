@@ -133,6 +133,28 @@ class Booking_Model extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function booking_history($user_id){
+        $this->db->select("*");
+        $this->db->from($this->table);
+        $this->db->where("booking.booking_status",5);
+        $this->db->where("booking.booking_status",3);
+        $this->db->or_where("vehicle.user_id",$user_id);
+        $this->db->join("vehicle","vehicle.motor_id=booking.motor_id");
+        $this->db->join("user","user.user_id=booking.user_id");
+        $this->db->order_by("booking.booking_id","DESC");
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function getearnings($motor_id){
+        $this->db->select("*");
+        $this->db->from($this->table);
+        $this->db->where("booking.booking_status",5);
+        $this->db->where("booking.motor_id",$motor_id);
+        $query = $this->db->get();
+        return $query->result();
+    }
 }
 
 ?>

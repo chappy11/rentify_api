@@ -29,13 +29,20 @@ include_once(dirname(__FILE__).'/Data_format.php');
             }
         }
 
+    
         public function getreview_get($motor_id){
             $data = $this->Review_Model->getbymotorid($motor_id);
+            $total = 0;
+  
             if(count($data) > 0){
-                $this->res(1,$data,"Data found",0);
+                foreach($data as $value){
+                    $total = $total + $value->rate;
+                }
+                $this->res(1,$data,"Data found",floor($total / count($data)));
             }else{
                 $this->res(0,null,"Data not found",0);
             }
+            
         }
     }
 

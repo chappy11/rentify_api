@@ -18,6 +18,11 @@
             }
         }
 
+        public function getunread_get($user_id){
+            $data = $this->Notification_Model->unread($user_id);
+            $this->res(1,$data,"Data not found",count($data));
+        }
+
         public function getnotifbyid_get($notif_id){
             $data = $this->Notification_Model->getnotifbyid($notif_id);
             if(count($data) > 0){

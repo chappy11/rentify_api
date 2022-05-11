@@ -29,7 +29,10 @@ class Favorite_Model extends CI_Model{
         $this->db->join("vehicle","vehicle.motor_id=favorite.motor_id");
         $query = $this->db->get();
         return $query->result();
+    }
 
+    public function remove($data=array()){
+        return $this->db->delete($this->table,$data);
     }
 }
 
