@@ -1,76 +1,39 @@
-<?php
+<?php 
 
-class User_Model extends CI_Model{
+    class User_Model extends CI_Model{
+        private $tbl = "user";
 
-    
-    public function __construct(){
-        parent::__construct();
-        $this->load->database();
+        public function __construct(){
+            parent::__construct();
+            $this->load->database();
+        }
+
+        //create new User
+        public function createUser($user=array()){
+            return $this->db->insert($this->tbl,$user);
+        }
+
+        //login user
+        public function login($username,$password){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("username",$username);
+            $this->db->where("password",$password);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getNewUser(){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->order_by("user_id","DESC");
+            $query = $this->db->get();
+            return $query->result();
+        }
+        
+        public function deleteUser($user_id){
+            return $this->db->delete($this->tbl,array("user_id"=>$user_id));
+        }
     }
-
-    //view all user
-    public function user_list(){
-        $this->db->select("*");
-        $this->db->from("user");
-        $this->db->where("user_type","user");
-        $q = $this->db->get();
-        return $q->result();
-    }
-
-    //register user
-    public function register($data=array()){
-        return $this->db->insert("user",$data);
-    }
-
-    //login user
-    public function login_admin($email,$password){
-        $this->db->select("*");
-        $this->db->from("user");
-        $this->db->where("email",$email);
-        $this->db->where("password",$password);
-        $this->db->where("user_type","admin");
-        $query = $this->db->get();
-        return $query->result();
-    }
-
-    public function login($email,$password){
-        $this->db->select("*");
-        $this->db->from("user");
-        $this->db->where("email",$email);
-        $this->db->where("password",$password);
-        $query =$this->db->get();
-        return $query->result();
-    }
-
-    //update user such a password, status, and acount details
-    public function update($id,$data=array()){
-        return $this->db->update('user', $data, "user_id = ".$id);
-    }
-
-    //search this email
-    public function isEmailExist($email){
-        $this->db->select("*");
-        $this->db->from("user");
-        $this->db->where("email",$email);
-        $query = $this->db->get();
-        return $query->result();
-    }
-
-    //get profile 
-    public function getProfile($id){
-        $this->db->select("*");
-        $this->db->from("user");
-        $this->db->where("user_id",$id);
-        $query = $this->db->get();
-        return $query->result();
-    }
-
-   
-  
-
-
-   
-}
-
 
 ?>

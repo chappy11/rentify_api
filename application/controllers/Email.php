@@ -48,6 +48,39 @@
             }
         }
     }
+
+    public function emailVerification($send_to,$ver_code){
+        // Email Sender order placed
+        $to =  $send_to;  // User email pass here
+        $subject = 'PetSociety | Code';
+        $from = 'no-reply@jannrey.tech';              // Pass here your mail id
+                  
+        $config['protocol']    = 'smtp';
+        $config['smtp_host']    = 'smtp.hostinger.com'; // ssl://smtp.gmail.com //hostinger
+        $config['smtp_port']    = '587'; //465 //587
+        $config['smtp_timeout'] = '60';
+    
+        $config['smtp_user']    = 'no-reply@jannrey.tech';    //Important
+        $config['smtp_pass']    = 'tzwvhA@4';  //Important
+    
+        $config['charset']    = 'utf-8';
+        $config['newline']    = "\r\n";
+        $config['mailtype'] = 'html'; // or html
+        $config['validation'] = TRUE; // bool whether to validate email or not
+    
+        $this->load->library('email', $config);
+        $this->email->initialize($config);
+        $this->email->set_mailtype("html");
+        $this->email->from($from);
+        $this->email->to($to);
+        $this->email->subject($subject);
+        $this->email->message("Use this as your verification code: $ver_code");
+        $this->email->send();
+        // show_error($this->email->print_debugger());
+        // Email Sender order placed
+    
+    }
+
 }
 
 ?>
