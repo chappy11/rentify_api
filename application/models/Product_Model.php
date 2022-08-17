@@ -54,7 +54,7 @@
         }
 
         public function updateProduct($id,$data=array()){
-            return $this->db->update($this->tbl_name,$data,"product_id=".$product_id);
+            return $this->db->update($this->tbl_name,$data,"product_id=".$id);
         }
     }
 ?>

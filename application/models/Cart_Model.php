@@ -34,5 +34,9 @@ class Cart_Model extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function deleteCart($cart_id){
+        return $this->db->delete($this->tbl_name,array("cart_id"=>$cart_id));
+    }
 }
 ?>

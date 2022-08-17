@@ -11,13 +11,19 @@
             $this->load->database();
         }
 
-        public function createNewOrder($payload=array()){
-            return $this->db->insert($this->table_name,$payload);
+        public function createNewOrder($payload=array(),$user_id){
+            $isInsert = $this->db->insert($this->table_name,$payload);
+            if($isInsert){
+                return $this->getLatestOrder($user_id);
+            }else{
+                return null;
+            }
         }
 
-        public function getLatestOrder(){
+        public function getLatestOrder($user_id){
             $this->db->select("*");
             $this->db->from($this->table_name);
+            $this->db->where("user_id",$user_id);
             $this->db->order_by("order_id","DESC");
             $query =$this->db->get();
             return $query->result();
@@ -27,6 +33,14 @@
             $this->db->select("*");
             $this->db->from($this->table_name);
             $this->db->where("user_id",$user_id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getOrderByOrderId($order_id){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+            $this->db->where("order_id",$order_id);
             $query = $this->db->get();
             return $query->result();
         }
