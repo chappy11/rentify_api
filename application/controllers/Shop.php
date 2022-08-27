@@ -40,6 +40,16 @@
 
         }
 
+        public function getpendingshop_get(){
+            $data = $this->Shop_Model->getPendingShop();
+
+            if(count($data) > 0){
+                $this->res(1,$data,"DATA FOUND",0);
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
+
 
     }
 

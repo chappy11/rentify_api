@@ -49,6 +49,17 @@
             return $this->db->update($this->tbl,$data,"shop_id=".$id);
         }
 
+        public function getPendingShop(){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user.user_roles!=",0);
+            $this->db->where("user.user_status",0);
+            $this->db->join("user","user.user_id=shop.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        
         public function hasSubscription($shop_id){
            
             $this->db->select("subscription_id");
@@ -81,5 +92,7 @@
                 return $shopSubscription;
             }
         }
+
+    
     }
 ?>

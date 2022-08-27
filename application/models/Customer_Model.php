@@ -32,6 +32,16 @@
             return $queyr->result();
         }
 
+        public function getPendingCustomer(){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user.user_roles!=",0);
+            $this->db->where("user.user_status",0);
+            $this->db->join("user","user.user_id=customer.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function isEmailExist($user_id){
             $this->db->select("email");
             $this->db->from($this->tbl);
@@ -41,7 +51,6 @@
             }
             return false;
         }
-
-      
+              
     }
 ?>

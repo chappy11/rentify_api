@@ -15,6 +15,7 @@
             $category_id =$this->post("category_id");
             $price = $this->post("price");
             $stock = $this->post("stock");
+            $unit = $this->post("unit");
             $shop_id = $this->post("shop_id");
         
 
@@ -30,7 +31,8 @@
                     "price" => $price,
                     "stock" => $stock,
                     "isAvailable" => 1,
-                    "product_del" => 0
+                    "product_del" => 0,
+                    "unit" => $unit,
                 );
         
                 $isCreated = $this->Product_Model->createNewProduct($productData);
@@ -65,7 +67,7 @@
             }
         }
         
-        public function myproducts($shop_id){
+        public function myproducts_get($shop_id){
             $myproducts = $this->Product_Model->getProductByShopId($shop_id);
         
             if(count($myproducts) > 0){

@@ -161,15 +161,42 @@
                     else if($user[0]->user_roles == 1){
                         $shopData = $this->Shop_Model->getShopByUserId($user[0]->user_id);
                     
-                        $this->res(1,$shopData,"Successfully Login",0);
+                        $this->res(1,$shopData[0],"Successfully Login",0);
                     }
                     else if($user[0]->user_roles == 2){
                         $customerData = $this->Customer_Model->getCustomerByUserId($user[0]->user_id);
     
-                        $this->res(1,$customerData,"Successfully Login",0);
+                        $this->res(1,$customerData[0],"Successfully Login",0);
                     }
                 }              
         }
+
+        public function getpendingcustomer_get(){
+            $data = $this->Customer_Model->getPendingCustomer();
+            if(count($data) > 0){
+                $this->res(1,$data,"Data found",count($data));
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
+
+        public function updatestatus_post(){
+            $data = $this->decode();
+            $user_id = $data->user_id;
+            $status = $data->status;
+
+            $payload = array("user_status"=>$status);
+           
+                $isUpdateUser = $this->User_Model->updateUser($user_id,$payload);
+
+                if($isUpdateUser){
+                    $this->res(1,null,"Succesfully Update",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+         
+        }
+    
     }
 
 ?>
