@@ -38,5 +38,24 @@ class Cart_Model extends CI_Model{
     public function deleteCart($cart_id){
         return $this->db->delete($this->tbl_name,array("cart_id"=>$cart_id));
     }
+
+    public function getCartItemByUser($user_id,$product_id){
+        $this->db->select("*");
+        $this->db->from($this->tbl_name);
+        $this->db->where('user_id',$user_id);
+        $this->db->where('product_id',$product_id);
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
+    public function getActiveItemByUser($user_id){
+        $this->db->select("*");
+        $this->db->from($this->tbl_name);
+        $this->db->where("user_id",$user_id);
+        $this->db->where("item_status",1);
+        $this->db->join("product","product.product_id=cart.product_id");
+        $query = $this->db->get();
+        return $query->result();
+    }
 }
 ?>

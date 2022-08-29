@@ -62,16 +62,18 @@
         
         public function hasSubscription($shop_id){
            
-            $this->db->select("subscription_id");
+            $this->db->select("*");
             $this->db->from($this->tbl);
             $this->db->where("shop_id",$shop_id);
             $query = $this->db->get();
-            $subscription = $query->result()[0];
-            if($subscription->subscription_id === "0"){
-                return false;
-            }else{
-                return true;
-            }
+            return  $query->result();
+            // $sub = $subscription[0];
+            // return $sub;
+            // if($sub->subscription_id === "0"){
+            //     return false;
+            // }else{
+            //     return true;
+            // }
         }
 
         public function checkIsSubscriptionExpire($shop_id){
@@ -80,7 +82,7 @@
            
             if($shopSubscription->subscription_id  > 0){
            
-                if($shopSubscription->subExp > $dateNow){
+                if($shopSubscription->subExp < $dateNow){
                     $isUpdated = $this->updateShop($shop_id,array("subExp"=>null,"subscription_id"=>0));
                     if($isUpdated){
                         return $this->getShopByid($shop_id)[0];

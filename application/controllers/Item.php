@@ -20,7 +20,7 @@
         
 
             $this->Shop_Model->checkIsSubscriptionExpire($shop_id);
-        
+            $isSubscribe = $this->Shop_Model->getShopByid($shop_id)[0];
             if($this->Shop_Model->hasSubscription($shop_id)){
                 $productData = array(
                     "shop_id" => $shop_id,
@@ -76,7 +76,15 @@
                 $this->res(0,null,"Data not found",0);
             }
         }
-        
+  
+        public function displayproducts_get(){
+            $products = $this->Product_Model->displayProduct();
+            if(count($products) > 0){
+                $this->res(1,$products,"Data found",0);
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
     }
 
 ?>

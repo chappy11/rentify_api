@@ -10,10 +10,12 @@
 
         public function createorder_post(){
             $data = $this->decode();
-            $itemList = $data->itemList;
+            
             $user_id = $data->user_id;
             $total_amount = $data->total_amount;
             $isHalf = $data->isHalf;
+
+            $itemList = $this->Cart_Model->getActiveItemByUser($user_id);
 
             $arr = $this->returnUniqueProperty($itemList,"shop_id");
             $orderNumber = $this->createNewOrder($user_id,$total_amount,$isHalf)[0];
@@ -48,8 +50,8 @@
                     $payload = array(
                         "itemReference" => $orderNumber->referenceNo,
                         "product_id" => $item->product_id,
-                        "orderItemAmount" => $item->amount,
-                        "orderItemNo"=>$item->noItems,
+                        "orderItemAmount" => $item->totalAmount,
+                        "orderItemNo"=>$item->noItem,
                         "order_id"=> $orderNumber->order_id
                     );
 
@@ -62,7 +64,6 @@
                         $hasError = $hasError * 0;
                     }
                }
-
                if($hasError === 0){
                     $this->res(0,null,"Something went wrong",0);
                }else{
@@ -135,7 +136,7 @@
             foreach($itemList as $item){
             $productData = $this->Product_Model->getProductById($item->product_id)[0];
             $payload = array(
-                "stock" => $productData->stock - $item->noItems
+                "stock" => $productData->stock - $item->noItem
             );
             
                 $isUpdate = $this->Product_Model->updateProduct($item->product_id,$payload);
@@ -165,7 +166,7 @@
            
             foreach($list as $value){
                 if($value->shop_id === $shop_id){
-                   $amount = $amount + $value->amount;
+                   $amount = $amount + $value->totalAmount;
                 }
             }
             return $amount;
