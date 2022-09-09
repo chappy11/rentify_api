@@ -85,6 +85,44 @@
                 $this->res(0,null,"Data not found",0);
             }
         }
+        
+        public function updatestock_post(){
+            $data = $this->decode();
+            $item_id = $data->itemId;
+            $no_stock_added = $data->noStockAdded;
+            $type = $data->type;
+            $itemData = $this->Product_Model->getProductById($item_id)[0];
+            $updatedStock = 0;
+            
+            if($type === 'add'){
+
+                $updateStock = $itemData->stock + $no_stock_added;
+            
+            }else if($type === 'out'){
+            
+                $updatedStock = $itemData->stock - $no_stock_added;
+
+            
+            }
+
+            if($updatedStock < 0){
+                $this->res(0,null,"You cannot update stock below zero",0);
+            }else{
+                $updateData = array(
+                    "stock" => $updatedStock,
+                );
+    
+                $update = $this->Product_Model->updateProduct($item_id,$updateData);
+    
+                if($update){
+                    $this->res(1,null,"Successfully Update",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+            }
+
+          
+        }
     }
 
 ?>
