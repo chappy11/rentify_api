@@ -5,13 +5,14 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("User_Model"));
+            $this->load->model(array("Customer_Model","Shop_Model"));
         }
     
         public function sendEmail_post(){
             $data = $this->decode();
             $email = isset($data->email) ? $data->email : "";
             $code = isset($data->code) ? $data->code : "";
+            
             $config['protocol']    = 'smtp';
             $config['smtp_host']    = 'smtp.mailtrap.io';
             $config['smtp_port']    = '2525';
@@ -24,17 +25,15 @@
             $this->load->library('email');
 
             $this->email->initialize($config);
-            $this->email->from("happypet@gmail.com");
+            $this->email->from("no-reply@petsoceity.com");
             $this->email->to($email);
             $this->email->subject("Email Verificatoin Code");
             $this->email->message($code);
-        $count  = count($this->User_Model->isEmailExist($email));
+        $isCustomerEmailExist  = $this->Customer_Model->checkIsEmailExist($email);
+        $isShopEmailExist = $this->Shop_Model->checkShopEmailExist($email);
       
-        if(empty($email)){
-            $this->res(0,null,"Fill out all Fields",0);
-        }
-        else if($count > 0){
-            $this->res(0,null,"Email is already exist.. pls choose another email",0);
+        if($isCustomerEmailExist && $isShopEmailExist){
+            $this->res(0,null,"Email is already Exist",0);
         }
         else if($this->isEmail($email)){
             $this->res(0,null,"Invalid Email",0);

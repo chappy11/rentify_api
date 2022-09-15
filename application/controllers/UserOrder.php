@@ -31,6 +31,7 @@
                     "order_id" => $orderNumber->order_id,
                     "shop_id" => $value,
                     "shopReference" => $orderNumber->referenceNo,
+                    "shop_order_status"=>"0",
                     "shoporderpaid" => $isHalf == 1 ? $totalByShop / 2 : $totalByShop,
                     "shopordertotal" => $totalByShop,
                 );
@@ -86,9 +87,20 @@
 
         public function orders_get($user_id){
             $orderList = $this->UserOrder_Model->getOrderByUserId($user_id);
+            $userOrder = array();
+            foreach($orderList as $item){
+                $arr = array(
+                    "order_id"=>$item->order_id,
+                    "reference"=>$item->referenceNo,
+                    "totalAmount"=>$item->totalAmount,
+                    "products"=>$this->OrderItem_Model->getOrderItemByOrderId($item->order_id)
+                );
+
+                array_push($userOrder,$arr);
+            }
 
             if(count($orderList) > 0){
-                $this->res(1,$orderList,"Data found",0);
+                $this->res(1,$userOrder,"Data found",0);
             }else{
                 $this->res(0,null,"Data not found",0);
             }
@@ -108,6 +120,7 @@
                     "shop_name" => $item->shopName,
                     "logo"=>$item->logo,
                     "totalAmount"=>$item->shopordertotal,
+                    "status"=>$item->shop_order_status,
                     "paid"=>$item->shoporderpaid,
                     "items"=>$this->OrderItem_Model->getOrderItem($order_id,$item->shop_id)
                 );
@@ -122,6 +135,33 @@
             }
         }
 
+        public function shoporderlist_get($shop_id,$status){
+            $data = $this->ShopOrder_Model->getOrderShop($shop_id,$status);
+
+            if(count($data)> 0 ){
+                $this->res(1,$data,"Data found",0);
+            }else{
+                $this->res(0,null,"Someting went wrong",0);
+            }
+        }
+
+        public function updateorderstatus_post(){
+            $data= $this->decode();
+            $status = $data->status;
+            $id = $data->id;
+
+            $payload = array(
+                "shop_order_status" => $status
+            );
+
+            $update = $this->ShopOrder_Model->update($id,$payload);
+        
+            if($update){
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
 
 
 

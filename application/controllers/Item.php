@@ -96,11 +96,11 @@
             
             if($type === 'add'){
 
-                $updateStock = $itemData->stock + $no_stock_added;
+                $updatedStock = (int)$itemData->stock + (int)$no_stock_added;
             
             }else if($type === 'out'){
             
-                $updatedStock = $itemData->stock - $no_stock_added;
+                $updatedStock = (int)$itemData->stock - (int)$no_stock_added;
 
             
             }
@@ -111,6 +111,7 @@
                 $updateData = array(
                     "stock" => $updatedStock,
                 );
+              
     
                 $update = $this->Product_Model->updateProduct($item_id,$updateData);
     

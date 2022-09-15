@@ -15,6 +15,41 @@
         //2 customer
         
         
+        public function warmup_post(){
+            $data = $this->decode();
+            $arr = array("email"=>$data->email);
+            $this->res(1,$this->Customer_Model->checkIsEmailExist($data->email),"error",1);
+        }
+
+        public function isEmailExist($email,$type){
+            $isExist = false;
+
+            if($type === "shop" && $this->Shop_Model->isEmailExist($email)){
+                $isExist = true;
+            }
+
+            if($type === "customer" && $this->Customer_Model->checkIsEmailExist($data->email)){
+                $isExist =  true;
+            }
+
+            return $isExist;
+
+        }
+
+        public function isMobileExist($mobile,$type){
+            $isExist = false;
+
+            if($type === "shop" && $this->Shop_Model->checkMobileExist($mobile)){
+                $isExist = true;
+            }
+
+            if($type === "customer" && $this->Customer_Model->checkMobileNumberExist($mobile)){
+                $isExist = true;
+            }
+
+            return $isExist;
+        }
+
         //create account for customer
         public function signupcustomer_post(){
             $profile_picture =  $_FILES["profilePicture"]["name"];
@@ -29,55 +64,66 @@
             $email = $this->post("email");
             $contact = $this->post("contact");
 
-            $userData = array(
-                "username" => $username,
-                "password" => $password,
-                "user_roles" => 2, //customer
-                "user_status" => 0, //status is active
-            );
-
-            $isCreated = $this->User_Model->createUser($userData);
-            
-            if(!$isCreated){
-              $this->res(0,null,"Something went wrong",0);
-            }else{
-               
-                $newUser = $this->User_Model->getNewUser(); //get latest user
-          
-                try{
-                 
-                    $newCustomer = array(
-                        "user_id" => $newUser[0]->user_id,
-                        "email" => $email,
-                        "contact" => $contact,
-                        "firstname" => $firstname,
-                        "lastname" => $lastname,
-                        "middlename" => $middleInitial,
-                        "gender" => $gender,
-                        "birthdate" => $birthdate,
-                        "addresss" => $address,
-                        "profilePic" => "profiles/".$profile_picture
-                    );
-        
-                    $createCustomer = $this->Customer_Model->createCustomer($newCustomer);
+            $isEmailExist = $this->isEmailExist($email,"customer");
+            $isMobileExist = $this->isMobileExist($mobile,"customer");
+            if($isEmailExist){
                 
-                    if($createCustomer){
-                        $this->res(1,null,"You Have Successfully Registered",0);
-                        move_uploaded_file($_FILES['profilePicture']['tmp_name'],"profiles/".$profile_picture);
-                    }else{
+                $this->res(0,null,"Your Email is Already Exist");
+            
+            }else if($isMobileExist){
+            
+                $this->res(0,null,"Your Mobile Number is Alreay Exist");
+            
+            }else{
+            
+                $userData = array(
+                    "username" => $username,
+                    "password" => $password,
+                    "user_roles" => 2, //customer
+                    "user_status" => 0, //status is active
+                );
+    
+                $isCreated = $this->User_Model->createUser($userData);
+                
+                if(!$isCreated){
+                  $this->res(0,null,"Something went wrong",0);
+                }else{
+                   
+                    $newUser = $this->User_Model->getNewUser(); //get latest user
+              
+                    try{
+                     
+                        $newCustomer = array(
+                            "user_id" => $newUser[0]->user_id,
+                            "email" => $email,
+                            "contact" => $contact,
+                            "firstname" => $firstname,
+                            "lastname" => $lastname,
+                            "middlename" => $middleInitial,
+                            "gender" => $gender,
+                            "birthdate" => $birthdate,
+                            "addresss" => $address,
+                            "profilePic" => "profiles/".$profile_picture
+                        );
+            
+                        $createCustomer = $this->Customer_Model->createCustomer($newCustomer);
+                    
+                        if($createCustomer){
+                            $this->res(1,null,"You Have Successfully Registered",0);
+                            move_uploaded_file($_FILES['profilePicture']['tmp_name'],"profiles/".$profile_picture);
+                        }else{
+                            $this->res(0,null,"Something went wrong",0);
+                        }
+                        
+                      
+                    } 
+                    catch(Exception $e){
+                        $this->User_Model->deleteUser($newUser[0]->user_id);
                         $this->res(0,null,"Something went wrong",0);
                     }
-                    
-                  
-                } 
-                catch(Exception $e){
-                    $this->User_Model->deleteUser($newUser[0]->user_id);
-                    $this->res(0,null,"Something went wrong",0);
                 }
-            }
-
-         
-          
+    
+            }          
         }
 
         //create account for shop
@@ -94,49 +140,68 @@
             $address = $this->post("address");
             $shopContact = $this->post("contact");
     
-            $userData = array(
-                "username" => $username,
-                "password" => $password,
-                "user_roles" => 1,
-                "user_status" => 0, 
-            );
+            $isEmailExist = $this->isEmailExist($shop_email,"shop");
+            $isMobileNumberExist = $this->isMobileExist($shopContact,'shop');
 
-            $isCreated = $this->User_Model->createUser($userData);
+            if($isEmailExist){
+                
+                $this->res(0,null,"This email is already exist",0);
+            }else if($isMobileNumberExist){
 
-            if(!$isCreated){
-                $this->res(0,null,"Something went wrong",0);
+                $this->res(0,null,"This mobile number is already exist",0);
             }else{
-                $newUserData = $this->User_Model->getNewUser();
 
-                try{
-                    $newShop = array(
-                        "user_id" => $newUserData[0]->user_id,
-                        "logo" => "shops/".$shop_logo,
-                        "shopName" => $shop_name,
-                        "shopEmail" => $shop_email,
-                        "shopDescription" => $shop_description,
-                        "ownerFirstname" => $firstname,
-                        "ownerMiddlename" => $middlename,
-                        "ownerLastname" => $lastname,
-                        "shopAddress" => $address,
-                        "subscription_id" => 0,
-                        "shopContact" => $shopContact
-                    );
+                $arr = array("username"=>$username);
+                $this->res(1,$this->User_Model->checkDataExist($arr),"error",1);
+            
     
-                    $isShopCreated = $this->Shop_Model->createShop($newShop);
+                $userData = array(
+                    "username" => $username,
+                    "password" => $password,
+                    "user_roles" => 1,
+                    "user_status" => 0, 
+                );
     
-                    if(!$isShopCreated){
-                        $this->res(0,null,"Something went wrong, Sorry for Inconvinience",0);
-                    }
+                $isCreated = $this->User_Model->createUser($userData);
     
-                    $this->res(1,null,$shop_name." is successfully created!",0);
-                    move_uploaded_file($_FILES['shopLogo']['tmp_name'],"shops/".$shop_logo);
-           
-                }catch(Exception $e){
-                    $this->User_Model->deleteUser($newUserData[0]->user_id);
+                if(!$isCreated){
                     $this->res(0,null,"Something went wrong",0);
+                }else{
+                    $newUserData = $this->User_Model->getNewUser();
+    
+                    try{
+                        $newShop = array(
+                            "user_id" => $newUserData[0]->user_id,
+                            "logo" => "shops/".$shop_logo,
+                            "shopName" => $shop_name,
+                            "shopEmail" => $shop_email,
+                            "shopDescription" => $shop_description,
+                            "ownerFirstname" => $firstname,
+                            "ownerMiddlename" => $middlename,
+                            "ownerLastname" => $lastname,
+                            "shopAddress" => $address,
+                            "subscription_id" => 0,
+                            "shopContact" => $shopContact
+                        );
+        
+                        $isShopCreated = $this->Shop_Model->createShop($newShop);
+        
+                        if(!$isShopCreated){
+                            $this->res(0,null,"Something went wrong, Sorry for Inconvinience",0);
+                        }
+        
+                        $this->res(1,null,$shop_name." is successfully created!",0);
+                        move_uploaded_file($_FILES['shopLogo']['tmp_name'],"shops/".$shop_logo);
+               
+                    }catch(Exception $e){
+                        $this->User_Model->deleteUser($newUserData[0]->user_id);
+                        $this->res(0,null,"Something went wrong",0);
+                    }
                 }
+
             }
+
+
 
       
         }
@@ -150,7 +215,8 @@
           
 
                 $user = $this->User_Model->login($username,$password);
-
+                $shopData = $this->Shop_Model->getShopByUserId($user[0]->user_id);
+                $this->res(1,$shopData,"data found",0);
                 if(count($user) < 1){
                     $this->res(0,null,"Invalid account please check your username or password",0);
                 }else{

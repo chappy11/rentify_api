@@ -22,5 +22,19 @@
             return $query->result();
         }
 
+        public function getOrderShop($shop_id,$status){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+            $this->db->where("shop_id",$shop_id);
+            $this->db->where("shop_order_status",$status);
+            $this->db->join("orders","orders.order_id=shoporder.order_id");
+            $this->db->join("customer","customer.user_id=orders.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function update($id,$arr){
+            return $this->db->update($this->table_name,$arr,"shoporder_id=".$id);
+        }
     }
 ?>

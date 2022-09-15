@@ -38,6 +38,14 @@
         public function deleteUser($user_id){
             return $this->db->delete($this->tbl,array("user_id"=>$user_id));
         }
+
+        public function checkDataExist($compareData){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where(array_keys($compareData),array_values($compareData));
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 
 ?>

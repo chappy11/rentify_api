@@ -13,6 +13,30 @@
             return $this->db->insert($this->tbl,$shopData);
         }
 
+        public function checkShopEmailExist($email){
+            $this->db->select("shopEmail");
+            $this->db->from($this->tbl);
+            $this->db->where("shopEmail",$email);
+            $query = $this->db->get();
+            if(count($query->result())){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public function checkMobileExist($mobile){
+            $this->db->select("shopContact");
+            $this->db->from($this->tbl);
+            $this->db->where("shopContact",$mobile);
+            $query = $this->db->get();
+            if(count($query->result())){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
         public function getShopByUserId($user_id){
             $this->db->select("*");
             $this->db->from($this->tbl);

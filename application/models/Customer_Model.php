@@ -42,6 +42,30 @@
             return $query->result();
         }
 
+        public function checkIsEmailExist($email){
+            $this->db->select("email");
+            $this->db->from($this->tbl);
+            $this->db->where("email",$email);
+            $query = $this->db->get();
+            if(count($query->result()) > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public function checkMobileNumberExist($mobile){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("contact",$mobile);
+            $query = $this->db->get();
+            if(count($query->result()) > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
         public function isEmailExist($user_id){
             $this->db->select("email");
             $this->db->from($this->tbl);

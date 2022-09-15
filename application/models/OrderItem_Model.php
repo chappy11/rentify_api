@@ -23,5 +23,14 @@
             return $query->result();
         }
 
+        public function getOrderItemByOrderId($order_id){
+            $this->db->select("*");
+            $this->db->from($this->tbl_name);
+            $this->db->where("order_id",$order_id);
+            $this->db->join("product","product.product_id=orderitem.product_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
     }
 ?>

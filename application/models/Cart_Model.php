@@ -19,6 +19,7 @@ class Cart_Model extends CI_Model{
         $this->db->where("cart.user_id",$user_id);
         $this->db->join("product","product.product_id=cart.product_id");
         $this->db->join("shop","shop.shop_id=product.shop_id");
+        $this->db->join("category","category.category_id=product.category_id");
         $query =$this->db->get();
         return $query->result();
     }
@@ -54,6 +55,17 @@ class Cart_Model extends CI_Model{
         $this->db->where("user_id",$user_id);
         $this->db->where("item_status",1);
         $this->db->join("product","product.product_id=cart.product_id");
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function getCartByShopId($user_id,$shop_id){
+        $this->db->select("*");
+        $this->db->from($this->tbl_name);
+        $this->db->where("cart.user_id",$user_id);
+        $this->db->where("product.shop_id",$shop_id);
+        $this->db->join("product","product.product_id=cart.product_id");
+        $this->db->join("category","category.category_id=product.category_id");
         $query = $this->db->get();
         return $query->result();
     }
