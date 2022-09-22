@@ -6,7 +6,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("User_Model","Customer_Model","Shop_Model"));
+            $this->load->model(array("User_Model","Customer_Model","Shop_Model","Admin_Model"));
         }
         //note:
         //user role:
@@ -24,7 +24,7 @@
         public function isEmailExist($email,$type){
             $isExist = false;
 
-            if($type === "shop" && $this->Shop_Model->isEmailExist($email)){
+            if($type === "shop" && $this->Shop_Model->checkShopEmailExist($email)){
                 $isExist = true;
             }
 
@@ -146,9 +146,6 @@
             if($isEmailExist){
                 
                 $this->res(0,null,"This email is already exist",0);
-            }else if($isMobileNumberExist){
-
-                $this->res(0,null,"This mobile number is already exist",0);
             }else{
 
                 $arr = array("username"=>$username);
@@ -211,12 +208,7 @@
             $data = $this->decode();
             $username = isset($data->username) ? $data->username : "";
             $password = isset($data->password) ? $data->password : "";
-
-          
-
                 $user = $this->User_Model->login($username,$password);
-                $shopData = $this->Shop_Model->getShopByUserId($user[0]->user_id);
-                $this->res(1,$shopData,"data found",0);
                 if(count($user) < 1){
                     $this->res(0,null,"Invalid account please check your username or password",0);
                 }else{
@@ -233,6 +225,10 @@
                         $customerData = $this->Customer_Model->getCustomerByUserId($user[0]->user_id);
     
                         $this->res(1,$customerData[0],"Successfully Login",0);
+                    }else if($user[0]->user_roles == 0 || $user[0]->user_roles == 3){
+                        $adminData = $this->Admin_Model->getAdminByUserId($user[0]->user_id);
+                        
+                        $this->res(1,$adminData[0],"Successfully Login",0);
                     }
                 }              
         }
@@ -241,6 +237,15 @@
             $data = $this->Customer_Model->getPendingCustomer();
             if(count($data) > 0){
                 $this->res(1,$data,"Data found",count($data));
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
+
+        public function getusers_get($roles,$status){
+            $data = $this->User_Model->getUserByStatus($roles,$status);
+            if(count($data) > 0){
+                $this->res(1,$data,"data found",0);
             }else{
                 $this->res(0,null,"Data not found",0);
             }

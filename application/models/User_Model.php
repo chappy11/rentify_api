@@ -23,6 +23,18 @@
             return $query->result();
         }
 
+        public function checkUserNameExist($username){
+            $this->db->select("username");
+            $this->db->from($this->tbl);
+            $this->db->where("username",$username);
+            $query = $this->db->get();
+            if(count($query->result()) > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
         public function getNewUser(){
             $this->db->select("*");
             $this->db->from($this->tbl);
@@ -44,6 +56,19 @@
             $this->db->from($this->tbl);
             $this->db->where(array_keys($compareData),array_values($compareData));
             $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getUserByStatus($roles,$status){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user.user_status",$status);
+            if($roles == 2){
+                $this->db->join("customer","customer.user_id=user.user_id");
+            }else{
+                $this->db->join("shop","shop.user_id=user.user_id");
+            }
+            $query =$this->db->get();
             return $query->result();
         }
     }

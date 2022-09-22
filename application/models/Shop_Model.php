@@ -9,6 +9,7 @@
             $this->load->database();
         }
 
+        
         public function createShop($shopData=array()){
             return $this->db->insert($this->tbl,$shopData);
         }
@@ -24,6 +25,16 @@
                 return false;
             }
         }
+
+        public function getShopByStatus($status){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user.user_status",$status);
+            $this->db->join("user","user.user_id=shop.shop_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
 
         public function checkMobileExist($mobile){
             $this->db->select("shopContact");

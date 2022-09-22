@@ -5,12 +5,13 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("Customer_Model","Shop_Model"));
+            $this->load->model(array("Customer_Model","Shop_Model","User_Model"));
         }
     
         public function sendEmail_post(){
             $data = $this->decode();
             $email = isset($data->email) ? $data->email : "";
+            $username = isset($data->username) ? $data->username: "";
             $code = isset($data->code) ? $data->code : "";
             
             $config['protocol']    = 'smtp';
@@ -29,10 +30,14 @@
             $this->email->to($email);
             $this->email->subject("Email Verificatoin Code");
             $this->email->message($code);
+
         $isCustomerEmailExist  = $this->Customer_Model->checkIsEmailExist($email);
         $isShopEmailExist = $this->Shop_Model->checkShopEmailExist($email);
-      
-        if($isCustomerEmailExist && $isShopEmailExist){
+        $isUsernameExist = $this->User_Model->checkUserNameExist($username);
+        if($isUsernameExist){
+            $this->res(0,null,"Username is already exist, Please choose another username",0);
+        }
+        else if($isCustomerEmailExist && $isShopEmailExist){
             $this->res(0,null,"Email is already Exist",0);
         }
         else if($this->isEmail($email)){

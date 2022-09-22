@@ -85,6 +85,13 @@
         }
 
 
+        public function warmup_get(){
+            $dates = $this->getBetweenDates('2022-9-18','2022-9-24');
+            $data = $this->ShopOrder_Model->getallorder($dates);
+        
+            $this->res(1,$data,"NO",null);
+        }
+
         public function orders_get($user_id){
             $orderList = $this->UserOrder_Model->getOrderByUserId($user_id);
             $userOrder = array();
@@ -168,7 +175,6 @@
 
 
 
-
 //--------------------------ITERNAL FUNCTION---------------------------------------------------------        
 
         public function updateProductStock($itemList){
@@ -235,5 +241,34 @@
             $order = $this->UserOrder_Model->createNewOrder($payload,$user_id);
             return $order;
         }
+
+        public function getAllSunday($y,$m){
+            
+                $date = "$y-$m-01";
+                $first_day = date('N',strtotime($date));
+                $first_day = 7 - $first_day + 1;
+                $last_day =  date('t',strtotime($date));
+                $days = array();
+                for($i=$first_day; $i<=$last_day; $i=$i+7 ){
+                    $days[] = "$y-$m-$i";
+                }
+                return  $days;
+        }
+
+        function getBetweenDates($startDate, $endDate){
+            $rangArray = [];
+                
+            $startDate = strtotime($startDate);
+            $endDate = strtotime($endDate);
+                 
+            for ($currentDate = $startDate; $currentDate <= $endDate; $currentDate += (86400)) {
+                                                    
+                $date = date('Y-m-d', $currentDate);
+                $rangArray[] = $date;
+            }
+      
+            return $rangArray;
+        }     
+    
     }
 ?>

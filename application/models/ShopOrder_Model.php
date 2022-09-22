@@ -36,5 +36,15 @@
         public function update($id,$arr){
             return $this->db->update($this->table_name,$arr,"shoporder_id=".$id);
         }
+
+        public function getallorder($dates){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+                $this->db->where("DATE(shopOrderUpdateAt)>=",'2022-9-18');
+                $this->db->where("DATE(shopOrderUpdateAt)<=",'2022-9-24');
+            $query =$this->db->get();
+
+            return $query->result();
+        }
     }
 ?>

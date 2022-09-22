@@ -24,12 +24,22 @@
            return $query->result();
         }
         
+        public function getCustomerByStatus($status){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user.user_status",$status);
+            $this->db->join("user","user.user_id=customer.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         //get all customer
         public function getAllCustomer(){
             $this->db->select("*");
             $this->db->from($this->tbl);
+            $this->db->join("user","user.user_id=customer.user_id");
             $query = $this->db->get();
-            return $queyr->result();
+            return $query->result();
         }
 
         public function getPendingCustomer(){
