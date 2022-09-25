@@ -31,8 +31,8 @@
             $isUpdated = $this->Shop_Model->updateShop($shop_id,$updatedShop);
 
             if($isUpdated){
-                
-                $this->res(1,null,"You have Successfully Subscribe You can now add  and sell products",0);
+                $shopData = $this->Shop_Model->getShopByid($shop_id);
+                $this->res(1,$shopData[0],"You have Successfully Subscribe You can now add  and sell products",0);
             }else{
 
                 $this->res(0,null,"Something went wrong",0);

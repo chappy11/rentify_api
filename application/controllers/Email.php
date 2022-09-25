@@ -37,7 +37,7 @@
         if($isUsernameExist){
             $this->res(0,null,"Username is already exist, Please choose another username",0);
         }
-        else if($isCustomerEmailExist && $isShopEmailExist){
+        else if($isCustomerEmailExist || $isShopEmailExist){
             $this->res(0,null,"Email is already Exist",0);
         }
         else if($this->isEmail($email)){

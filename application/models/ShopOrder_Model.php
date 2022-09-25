@@ -37,11 +37,11 @@
             return $this->db->update($this->table_name,$arr,"shoporder_id=".$id);
         }
 
-        public function getallorder($dates){
+        public function getorderbyrange($start,$end){
             $this->db->select("*");
             $this->db->from($this->table_name);
-                $this->db->where("DATE(shopOrderUpdateAt)>=",'2022-9-18');
-                $this->db->where("DATE(shopOrderUpdateAt)<=",'2022-9-24');
+            $this->db->where("DATE(shopOrderUpdateAt)>=",$start);
+            $this->db->where("DATE(shopOrderUpdateAt)<=",$end);
             $query =$this->db->get();
 
             return $query->result();

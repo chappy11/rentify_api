@@ -28,7 +28,7 @@
                 $isExist = true;
             }
 
-            if($type === "customer" && $this->Customer_Model->checkIsEmailExist($data->email)){
+            if($type === "customer" && $this->Customer_Model->checkIsEmailExist($email)){
                 $isExist =  true;
             }
 
@@ -65,7 +65,7 @@
             $contact = $this->post("contact");
 
             $isEmailExist = $this->isEmailExist($email,"customer");
-            $isMobileExist = $this->isMobileExist($mobile,"customer");
+            $isMobileExist = $this->isMobileExist($contact,"customer");
             if($isEmailExist){
                 
                 $this->res(0,null,"Your Email is Already Exist");

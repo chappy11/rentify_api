@@ -62,7 +62,10 @@
         public function getUserByStatus($roles,$status){
             $this->db->select("*");
             $this->db->from($this->tbl);
-            $this->db->where("user.user_status",$status);
+            if($status != 3){
+                $this->db->where("user.user_status",$status);
+            }
+           
             if($roles == 2){
                 $this->db->join("customer","customer.user_id=user.user_id");
             }else{

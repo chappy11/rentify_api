@@ -67,7 +67,8 @@
         public function getShopByid($shop_id){
             $this->db->select("*");
             $this->db->from($this->tbl);
-            $this->db->where("shop_id",$shop_id);
+            $this->db->where("shop.shop_id",$shop_id);
+            $this->db->join("user","user.user_id=shop.user_id");
             $query =$this->db->get();
             return $query->result();
         }

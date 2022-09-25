@@ -124,6 +124,31 @@
 
           
         }
+
+        public function getallitems_get(){
+            $data = $this->Product_Model->getAllProducts();
+
+            if(count($data) > 0){
+                $this->res(1,$data,"Data found",count($data));
+            }else{
+                $this->res(0,null,"Data not found",0);
+            }
+        }
+
+        public function getitembycategory_get($category_id){
+          $data = [];
+            if($category_id === 0){
+                $data = $this->Product_Model->displayProducts();
+          }else{
+            $data = $this->Product_Model->getproductbycategory($category_id);
+          }  
+
+          if(count($data) > 0){
+            $this->res(1,$data,"Data found",0);
+          }else{
+            $this->res(0,null,"Data not found",0);
+          }
+        }
     }
 
 ?>

@@ -53,6 +53,15 @@
             return $query->result();
         }
 
+
+        public function getproductbycategory($category_id){
+            $this->db->select("*");
+            $this->db->from($this->tbl_name);
+            $this->db->join("category","category.category_id=product.category_id");
+            $this->db->join("shop","shop.shop_id=product.shop_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
   
         
         public function displayProducts(){
