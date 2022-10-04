@@ -15,11 +15,15 @@
             $subName = isset($data->subscriptionName) ? $data->subscriptionName : "";
             $description = isset($data->description) ? $data->description : "";
             $noMonths = isset($data->noMonths) ? $data->noMonths : "";
+            $price = isset($data->price) ? $data->price : "";
+            $limit = isset($data->limit) ? $data->limit : "";
             
             $subData = array(
                 "subscriptionName" => $subName,
                 "subDescription" => $description,
                 "noMonths" => $noMonths,
+                "subprice" => $price,
+                "price_limit" => $limit,
                 "isActive" => 1
             );
 
