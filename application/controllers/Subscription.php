@@ -36,6 +36,33 @@
             }
         }
 
+        public function update_post(){
+            $data = $this->decode();
+            $id = isset($data->sub_id) ? $data->sub_id : "";
+            $subname = isset($data->subname) ? $data->subname : "";
+            $subdesc = isset($data->subdesc) ? $data->subdesc : "";
+            $noMonths = isset($data->noMonths) ? $data->noMonths : "";
+            $price = isset($data->price) ? $data->price : "";
+            $limit = isset($data->limit) ? $data->limit : "";
+        
+           
+            $payload = array(
+                "subscriptionName" => $subname,
+                "subDescription" => $subdesc,
+                "noMonths" => $noMonths,
+                "subprice" => $price,
+                "price_limit" => $limit,
+            );
+            $res = $this->Subscription_Model->updateSubscription($id,$payload);
+
+            if($res){
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        
+        }
+
         public function getsubscription_get($subscription_id){
             $subscriptionData = $this->Subscription_Model->getSubscriptionById($subscription_id);
 

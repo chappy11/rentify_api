@@ -11,7 +11,11 @@
         public function createcategory_post(){
             $data = $this->decode();
 
-            $isCreated = $this->Category_Model->createNewCategory($data);
+            $payload = array(
+                "category_name"=>$data->name
+            );
+            
+            $isCreated = $this->Category_Model->createNewCategory($payload);
             
             if($isCreated){
                 $this->res(1,null,"Successfully Created",0);
