@@ -5,7 +5,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("UserOrder_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model"));
+            $this->load->model(array("UserOrder_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model","ShopReport_Model"));
         }
 
         public function createorder_post(){
@@ -161,10 +161,27 @@
                 "shop_order_status" => $status
             );
 
+            $orderData = $this->ShopOrder_Model->getShopOrderByOrderId($id)[0];
             $update = $this->ShopOrder_Model->update($id,$payload);
         
             if($update){
-                $this->res(1,null,"Successfully Updated",0);
+                if($status == "5"){ 
+                    $payload = array(
+                        "order_id" => $id,
+                        "shop_id" => $orderData->shop_id,
+                        "order_total_amout"=> $orderData->shopordertotal
+                    );
+                    $resp = $this->ShopReport_Model->create($payload);
+                    
+                    if($resp){
+                        $this->res(1,null,"Successfully Updated",0);
+                    }else{
+                        $this->res(0,null,"Something went wrong",0);
+                    }
+                }
+
+                $this->res(1,null,"Successfully Update",0);
+
             }else{
                 $this->res(0,null,"Something went wrong",0);
             }
@@ -173,6 +190,15 @@
 
 
 
+        public function getallorders_get($shop_id){
+            $data =  $this->ShopOrder_Model->getorderByShopId($shop_id);
+
+            if(count($data) > 0){
+                $this->res(1,$data,"data found",0);
+            }else{
+                $this->res(0,null,"data  not found",0);
+            }
+        }
 
 
 //--------------------------ITERNAL FUNCTION---------------------------------------------------------        

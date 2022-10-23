@@ -33,6 +33,14 @@
             return $query->result();
         }
 
+        public function getorderByShopId($shop_id){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+            $this->db->where("shop_id",$shop_id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function update($id,$arr){
             return $this->db->update($this->table_name,$arr,"shoporder_id=".$id);
         }

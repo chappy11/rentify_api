@@ -2,7 +2,7 @@
 
 class ShopReport_Model extends CI_Model{
 
-    private $table = 'shopreport'
+    private $table = 'shopreport';
     public function __construct(){
         parent::__construct();
         $this->load->database();
@@ -15,8 +15,8 @@ class ShopReport_Model extends CI_Model{
     public function getAllDataByShop($shop_id){
         $this->db->select('*');
         $this->db->from($this->table);
-        $this->db->where('shop_id',$shop_id);
-        $this->db->join('shoporder','shoporder.shop_id=shopreport.shop_id');
+        $this->db->where('shopreport.shop_id',$shop_id);
+         $this->db->join('shoporder','shoporder.order_id=shopreport.order_id');
         $query = $this->db->get();
         return $query->result();
     }
