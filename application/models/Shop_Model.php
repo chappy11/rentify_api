@@ -53,7 +53,7 @@
             $this->db->from($this->tbl);
             $this->db->where("shop.user_id",$user_id);
             $this->db->join("user","user.user_id=".$user_id);
-            $this->db->join('subscription','subscription.subscription_id=shop.subscription_id');
+            $this->db->join('subscription','subscription.subscription_id=shop.subscription_id',"LEFT");
             $query = $this->db->get();
             return $query->result();
         }

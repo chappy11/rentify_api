@@ -209,6 +209,7 @@
             $username = isset($data->username) ? $data->username : "";
             $password = isset($data->password) ? $data->password : "";
                 $user = $this->User_Model->login($username,$password);
+                
                 if(count($user) < 1){
                     $this->res(0,null,"Invalid account please check your username or password",0);
                 }else{
@@ -216,12 +217,12 @@
                     if($user[0]->user_status === "0"){
                         $this->res(0,null,"Your Account is Inactive",0);
                     }
-                    else if($user[0]->user_roles == 1){
+                    else if($user[0]->user_roles == "1"){
                         $shopData = $this->Shop_Model->getShopByUserId($user[0]->user_id);
                     
                         $this->res(1,$shopData[0],"Successfully Login",0);
                     }
-                    else if($user[0]->user_roles == 2){
+                    else if($user[0]->user_roles == "2"){
                         $customerData = $this->Customer_Model->getCustomerByUserId($user[0]->user_id);
     
                         $this->res(1,$customerData[0],"Successfully Login",0);
