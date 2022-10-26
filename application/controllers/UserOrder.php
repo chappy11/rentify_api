@@ -200,6 +200,22 @@
             }
         }
 
+        public function getorderbyshop_get($order_id,$shop_id){
+           $order_data = $this->UserOrder_Model->getOrderByOrderId($order_id);
+           $shopOrder = $this->ShopOrder_Model->getOrderIdAndShopId($order_id,$shop_id)[0];
+           $orderItem = $this->OrderItem_Model->getOrderItem($order_id,$shop_id);
+           $arr = array(
+            "reference_number" => $order_data[0]->referenceNo,
+            'firstname' => $order_data[0]->firstname,
+            "middlename" => $order_data[0]->middlename,
+            "lastname" => $order_data[0]->lastname,
+            "totalAmount" => $shopOrder->shopordertotal,
+            'order' => $orderItem
+            );
+
+            $this->res(1,$arr,"data found",0);
+        }
+
 
       
 //--------------------------ITERNAL FUNCTION---------------------------------------------------------        

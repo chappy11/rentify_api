@@ -54,5 +54,16 @@
 
             return $query->result();
         }
+
+        public function getOrderIdAndShopId($order_id,$shop_id){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+            $this->db->where("order_id",$order_id);
+            $this->db->where("shop_id",$shop_id);
+            $query = $this->db->get();
+
+            return $query->result();
+
+        }
     }
 ?>

@@ -40,7 +40,8 @@
         public function getOrderByOrderId($order_id){
             $this->db->select("*");
             $this->db->from($this->table_name);
-            $this->db->where("order_id",$order_id);
+            $this->db->where("orders.order_id",$order_id);
+            $this->db->join("customer","customer.user_id=orders.user_id");
             $query = $this->db->get();
             return $query->result();
         }
