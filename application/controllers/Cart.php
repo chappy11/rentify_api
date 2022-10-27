@@ -18,7 +18,7 @@
             $productData = $this->Product_Model->getProductById($product_id)[0];
             $cartExistedItem = $this->Cart_Model->getCartItemByUser($user_id,$product_id);
             $stockAvailable = (int)$productData->stock - (int)$no_item;
-            if($stockAvailable < 1){
+            if($stockAvailable < 0){
                 $this->res(0,null,"Insufficient Stock",0);
             }else{
                 if(count($cartExistedItem) > 0){
