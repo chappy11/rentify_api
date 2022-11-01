@@ -33,6 +33,7 @@
             $this->db->select("*");
             $this->db->from($this->table_name);
             $this->db->where("user_id",$user_id);
+            $this->db->order_by('order_id','DESC');
             $query = $this->db->get();
             return $query->result();
         }

@@ -14,6 +14,7 @@
             $user_id = $data->user_id;
             $total_amount = $data->total_amount;
             $isHalf = $data->isHalf;
+            $payment_method = $data->payment_method;
 
             $itemList = $this->Cart_Model->getActiveItemByUser($user_id);
 
@@ -27,12 +28,20 @@
            $isSuccess = 1; 
            foreach($listOfShops as $value){
                 $totalByShop = $this->getTotalByShop($value,$itemList);
+                $totalOfOrderItem = 0;
+
+                if($payment_method == 1){
+                    $totalOfOrderItem = $isHalf == 1   ? $totalByShop / 2 : $totalByShop;
+                }else{
+                    $totalOfOrderItem = 0;
+                }
+
                 $payload = array(
                     "order_id" => $orderNumber->order_id,
                     "shop_id" => $value,
                     "shopReference" => $orderNumber->referenceNo,
                     "shop_order_status"=>"0",
-                    "shoporderpaid" => $isHalf == 1 ? $totalByShop / 2 : $totalByShop,
+                    "shoporderpaid" => $totalOfOrderItem,
                     "shopordertotal" => $totalByShop,
                 );
 
@@ -268,7 +277,7 @@
                 return $moreUniqueArray;
         }
 
-        public function createNewOrder($user_id,$total_amount,$isHalf){
+        public function createNewOrder($user_id,$total_amount,$isHalf,$payment_method){
             $random = random_int(100000, 999999);
             $reference = "PTR-".date("y")."".date("d")."".date("m").date("h").date("s").date("i")."-".$random;
             $paid = $isHalf == 1 ? $total_amount / 2 : $total_amount;
@@ -278,7 +287,8 @@
                 "paid" => $paid,
                 "isHalf" => $isHalf,
                 "referenceNo" => $reference,
-                "orderStatus" => 1
+                "orderStatus" => 1,
+                "payment_method" => $payment_method
             );
 
             $order = $this->UserOrder_Model->createNewOrder($payload,$user_id);

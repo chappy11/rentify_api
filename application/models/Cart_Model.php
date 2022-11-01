@@ -28,6 +28,10 @@ class Cart_Model extends CI_Model{
         return $this->db->update($this->tbl_name,$updatedData,"cart_id=".$cart_id);
     }
 
+    public function removeItem($cart_id){
+        return $cart_id;
+    }
+
     public function getCartItemById($cart_id){
         $this->db->select("*");
         $this->db->from($this->tbl_name);

@@ -148,12 +148,15 @@
     
   
             if(count($orderByShop) > 0){
-                $this->res(1,$orderByShop,"Data found",0);
+                $this->res(1,$orderByShop,"Data found",count($cartlist));
             }else{
                 $this->res(0,null,"Data not found",0);
             }
         }
 
+        public function remove_post($cart_id){
+            return null;
+        }
         public function updateItemStatus_post(){
             $data = $this->decode();
             $cart_id = $data->cart_id;
