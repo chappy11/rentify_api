@@ -46,6 +46,10 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function update($data,$order_id){
+            return $this->db->update($this->table_name,$data,array("order_id"=>$order_id));
+        }
         
     }
 

@@ -50,6 +50,12 @@
             }
         }
 
+        public function shopdata_get($shop_id){
+            $data = $this->Shop_Model->getShopByShopId($shop_id);
+
+            $this->res(1,$data[0],"Data found",0);
+        }
+
 
     }
 

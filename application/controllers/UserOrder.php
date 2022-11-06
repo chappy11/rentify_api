@@ -19,7 +19,7 @@
             $itemList = $this->Cart_Model->getActiveItemByUser($user_id);
 
             $arr = $this->returnUniqueProperty($itemList,"shop_id");
-            $orderNumber = $this->createNewOrder($user_id,$total_amount,$isHalf)[0];
+            $orderNumber = $this->createNewOrder($user_id,$total_amount,$isHalf,$payment_method)[0];
             $listOfShops = array();
             foreach($arr as $value){
                 array_push($listOfShops,$value->shop_id);
@@ -126,16 +126,17 @@
 
         public function order_get($order_id){
             $orderData = $this->UserOrder_Model->getOrderByOrderId($order_id);
-            $shopOrderData  = $this->ShopOrder_Model->getShopOrderByOrderId($order_id,1);
-            
+            $shopOrderData  = $this->ShopOrder_Model->getShopOrderByOrderId($order_id);
             $shopOrderList = array();
             foreach($shopOrderData as $item){
                 $payload = array(
                     "shopOrder_id" => $item->shoporder_id,
+                    "order_id"=> $orderData[0]->order_id,
                     "shop_id" => $item->shop_id,
                     "shop_name" => $item->shopName,
                     "logo"=>$item->logo,
                     "totalAmount"=>$item->shopordertotal,
+                    "payment_method"=>$orderData[0]->payment_method,
                     "status"=>$item->shop_order_status,
                     "paid"=>$item->shoporderpaid,
                     "items"=>$this->OrderItem_Model->getOrderItem($order_id,$item->shop_id)
@@ -225,6 +226,28 @@
             $this->res(1,$arr,"data found",0);
         }
 
+        public function cancelorder_post(){
+            $data = $this->decode();
+            $order_id = $data->order_id;
+            $shop_id = $data->shop_id;
+            $orderData = $this->UserOrder_Model->getOrderByOrderId($order_id);
+            $shopOrderData = $this->ShopOrder_Model->getOrderIdAndShopId($order_id,$shop_id);
+            $orderItem = $this->OrderItem_Model->getOrderItem($order_id,$shop_id);
+            
+            $orderpayload = array("totalAmount" => floatval($orderData[0]->totalAmount) - floatval($shopOrderData[0]->shopordertotal));
+            $isOrderUpdated = $this->UserOrder_Model->update($orderpayload,$order_id);
+            $shoporderpayload = array("shop_order_status" => 4);
+            $isShopOrderUpdated = $this->ShopOrder_Model->update($shopOrderData[0]->shoporder_id,$shoporderpayload);
+            
+            foreach ($orderItem as $value) {
+                # code...
+                $productData = $this->Product_Model->getProductById($value->product_id); 
+                $payload = array("stock" => $productData[0]->stock + $value->orderItemNo);
+                $this->Product_Model->updateProduct($value->product_id,$payload);
+            }
+            
+            $this->res(1,null,"Successfully Update",0);
+        }
 
       
 //--------------------------ITERNAL FUNCTION---------------------------------------------------------        
@@ -280,7 +303,12 @@
         public function createNewOrder($user_id,$total_amount,$isHalf,$payment_method){
             $random = random_int(100000, 999999);
             $reference = "PTR-".date("y")."".date("d")."".date("m").date("h").date("s").date("i")."-".$random;
-            $paid = $isHalf == 1 ? $total_amount / 2 : $total_amount;
+         
+            if($payment_method == 1){
+                $paid = $isHalf == 1 ? $total_amount / 2 : $total_amount;
+            }else{
+                $paid = 0;
+            }
             $payload = array(
                 "user_id"=> $user_id,
                 "totalAmount" => $total_amount,

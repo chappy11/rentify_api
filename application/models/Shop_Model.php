@@ -58,6 +58,15 @@
             return $query->result();
         }
 
+        public function getShopByShopId($shop_id){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("shop_id",$shop_id);
+            $query =$this->db->get();
+            return $query->result();
+        }
+        
+        
         public function getAllShop(){
             $this->db->select("*");
             $this->db->from($this->tbl);

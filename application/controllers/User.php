@@ -68,11 +68,11 @@
             $isMobileExist = $this->isMobileExist($contact,"customer");
             if($isEmailExist){
                 
-                $this->res(0,null,"Your Email is Already Exist");
+                $this->res(0,null,"Your Email is Already Exist",0);
             
             }else if($isMobileExist){
             
-                $this->res(0,null,"Your Mobile Number is Alreay Exist");
+                $this->res(0,null,"Your Mobile Number is Alreay Exist",0);
             
             }else{
             

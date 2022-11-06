@@ -155,8 +155,15 @@
         }
 
         public function remove_post($cart_id){
-            return null;
+            $resp = $this->Cart_Model->deleteCart($cart_id);
+
+            if($resp){
+                $this->res(1,null,"Successfully Removed",0);
+            }else{
+                $this->res(0,null,"Error while removing, Please try again later",0);
+            }
         }
+        
         public function updateItemStatus_post(){
             $data = $this->decode();
             $cart_id = $data->cart_id;
