@@ -85,6 +85,17 @@
             }
             return false;
         }
+
+        public function getCustomer($user_id){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user_id",$user_id);
+            $this->db->join("user","user.user_id=customer.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        
               
     }
 ?>

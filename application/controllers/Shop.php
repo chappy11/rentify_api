@@ -56,6 +56,12 @@
             $this->res(1,$data[0],"Data found",0);
         }
 
+        public function getactive_get(){
+            $data = $this->Shop_Model->getActiveShop();
+
+            $this->res(1,$data,"Data found",0);
+        }
+
 
     }
 

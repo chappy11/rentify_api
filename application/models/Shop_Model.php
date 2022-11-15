@@ -105,7 +105,17 @@
             return $query->result();
         }
 
-        
+
+        public function getActiveShop(){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user.user_roles!=",0);
+            $this->db->where("user.user_status",1);
+            $this->db->join("user","user.user_id=shop.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function hasSubscription($shop_id){
            
             $this->db->select("*");
@@ -141,6 +151,12 @@
             }
         }
 
+
+        public function getactive_get(){
+            $data = $this->Shop_Model->getActiveShop();
+
+            $this->res(1,$data,"Data found",0);
+        }
     
     }
 ?>

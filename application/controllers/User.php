@@ -6,7 +6,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("User_Model","Customer_Model","Shop_Model","Admin_Model"));
+            $this->load->model(array("User_Model","UserLog_Model","Customer_Model","Shop_Model","Admin_Model"));
         }
         //note:
         //user role:
@@ -208,12 +208,23 @@
             $data = $this->decode();
             $username = isset($data->username) ? $data->username : "";
             $password = isset($data->password) ? $data->password : "";
-                $user = $this->User_Model->login($username,$password);
-                
+            $browserName = isset($data->browserName) ? $data->browserName : "";
+       
+            $user = $this->User_Model->login($username,$password);
+                            
                 if(count($user) < 1){
                     $this->res(0,null,"Invalid account please check your username or password",0);
                 }else{
-                  
+                    $pay = array(
+                        "user_id"=>$user[0]->user_id,
+                        "browserName" => $browserName,
+                    );
+
+                    if($user[0]->user_status === "1"){
+                        $this->UserLog_Model->insert($pay);
+                    }
+
+                   
                     if($user[0]->user_status === "0"){
                         $this->res(0,null,"Your Account is Inactive",0);
                     }
@@ -231,7 +242,7 @@
                         
                         $this->res(1,$adminData[0],"Successfully Login",0);
                     }
-                }              
+               }              
         }
 
         public function getpendingcustomer_get(){
@@ -267,6 +278,17 @@
                     $this->res(0,null,"Something went wrong",0);
                 }
          
+        }
+
+        public function getuser_get($id,$type){
+            if($type == "shop"){
+                $shop = $this->Shop_Model->getShopByUserId($id);
+                $this->res(1,$shop[0],"data found",0);
+            }else{
+                $customer = $this->Customer_Model->getCustomerByUserId($id);
+                $this->res(1,$customer[0],"Data found",0);
+            }            
+
         }
     
     }
