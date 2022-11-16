@@ -290,7 +290,29 @@
             }            
 
         }
-    
+
+        public function getlogs_get(){
+            $data = $this->UserLog_Model->getlog();
+  
+            $this->res(1,$data,"Data not found",0);
+        }
+  
+        public function changepass_post(){
+            $data = $this->decode();
+            $password = $data->password;
+            $id = $data->id;
+
+            $payload = array("password"=>$password);
+        
+            $isUpdate = $this->User_Model->updateUser($id,$payload);
+
+            if($isUpdate){
+                $this->res(1,null,"Successfully Updating Your Password",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        
+        }
     }
 
 ?>

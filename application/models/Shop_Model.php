@@ -66,7 +66,14 @@
             return $query->result();
         }
         
-        
+        public function getShopByEmail($email){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("shopEmail",$email);
+            $query = $this->db->get();
+            return $query->result();
+        }        
+
         public function getAllShop(){
             $this->db->select("*");
             $this->db->from($this->tbl);
@@ -152,11 +159,7 @@
         }
 
 
-        public function getactive_get(){
-            $data = $this->Shop_Model->getActiveShop();
-
-            $this->res(1,$data,"Data found",0);
-        }
+        
     
     }
 ?>

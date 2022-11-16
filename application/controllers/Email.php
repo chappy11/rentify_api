@@ -53,6 +53,45 @@
         }
     }
 
+    public function sendotp_post(){
+        $data = $this->decode();
+        $email = isset($data->email) ? $data->email:"";
+        $code = isset($data->code) ? $data->code : "";
+        $config['protocol']    = 'smtp';
+        $config['smtp_host']    = 'smtp.mailtrap.io';
+        $config['smtp_port']    = '2525';
+        $config['smtp_user'] = '6d5ff02ecee7f8';
+        $config['smtp_pass'] = 'ca6a6441b64634';
+        $config['charset']    = 'utf-8';
+        $config['newline']    = "\r\n";
+        $config['mailtype'] = 'html'; // or html
+        $config['validation'] = TRUE; // bool whether to validate email or not      
+        $this->load->library('email');
+
+        $this->email->initialize($config);
+        $this->email->from("no-reply@petsoceity.com");
+        $this->email->to($email);
+        $this->email->subject("Email Verificatoin Code");
+        $this->email->message($code);
+
+        $shopData = $this->Shop_Model->getShopByEmail($email);
+        $customer = $this->Customer_Model->getCustomerEmail($email);
+  
+        if(count($shopData) > 0){
+            $res = $this->email->send();
+            if($res){
+               $message = "We send Verification code to your email ".$shopData[0]->shopEmail;
+                $this->res(1,$shopData,$message,0);
+            }
+        }else if(count($customer) > 0){
+            $res = $this->email->send();
+            $message = "We send Verification code to your email ".$customer[0]->email;
+            $this->res(1,$customer[0],$message,0);
+        }else{
+            $this->res(0,null,"Invalid Account",0);
+        }
+    }
+  
     public function emailVerification($send_to,$ver_code){
         // Email Sender order placed
         $to =  $send_to;  // User email pass here

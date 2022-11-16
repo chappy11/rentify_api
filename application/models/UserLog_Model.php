@@ -15,6 +15,7 @@ class UserLog_Model extends CI_Model{
     public function getLog(){
         $this->db->select("*");
         $this->db->from($this->tbl);
+        $this->db->join("user","user.user_id=userlog.user_id");
         $this->db->order_by("log_date","DESC");
         $query =$this->db->get();
         return $query->result();
