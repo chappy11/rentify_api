@@ -53,7 +53,7 @@
         public function shopdata_get($shop_id){
             $data = $this->Shop_Model->getShopByShopId($shop_id);
 
-            $this->res(1,$data[0],"Data found",0);
+                $this->res(1,$data[0],"Data found",0);
         }
 
         public function getactive_get(){
@@ -63,30 +63,28 @@
         }
 
         public function updatepic_post(){
-           // $logo = $_FILES['shopLogo']['name'];
+            $logo = $_FILES['shopLogo']['name'];
             $id =  $this->post("id");
-
-            $this->res(1,$id,"dd",0);
-          
-            // $payload = array(
-            //     "logo"=>"shop/".$pic
-            // );
-
-            // $isUpdated = $this->Shop_Model->updateShop($id,$payload);
-      
-            // if($isUpdated){
+ 
+            $payload = array(
+                "logo"=>"shops/".$logo
+            );
+            
+            $isUpdated = $this->Shop_Model->updateShop($id,$payload);
+            $this->res(1,$isUpdated,"ff",0);
+            if($isUpdated){
                 
-            //     $isUploaded = move_uploaded_file($_FILES['pic']['tmp_name'],"shops/".$pic);
-            //     if($isUploaded){
-            //         $shop = $this->Shop_Model->getShopByid($id);
-            //         $this->res(1,$shop,"Successfully Updated",0);
-            //     }else{
-            //         $this->res(1,null,"Something went wrong while updating",0);
-            //     }
+                $isUploaded = move_uploaded_file($_FILES['shopLogo']['tmp_name'],"shops/".$logo);
+                if($isUploaded){
+                    $shop = $this->Shop_Model->getShopByid($id);
+                    $this->res(1,$shop,"Successfully Updated",0);
+                }else{
+                    $this->res(0,null,"Something went wrong while updating",0);
+                }
                
-            // }else{
-            //     $this->res(0,null,"Error",0);
-            // }
+            }else{
+                $this->res(0,null,"Error",0);
+            }
           
         }
 
