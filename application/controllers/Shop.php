@@ -62,6 +62,33 @@
             $this->res(1,$data,"Data found",0);
         }
 
+        public function updatepic_post(){
+           // $logo = $_FILES['shopLogo']['name'];
+            $id =  $this->post("id");
+
+            $this->res(1,$id,"dd",0);
+          
+            // $payload = array(
+            //     "logo"=>"shop/".$pic
+            // );
+
+            // $isUpdated = $this->Shop_Model->updateShop($id,$payload);
+      
+            // if($isUpdated){
+                
+            //     $isUploaded = move_uploaded_file($_FILES['pic']['tmp_name'],"shops/".$pic);
+            //     if($isUploaded){
+            //         $shop = $this->Shop_Model->getShopByid($id);
+            //         $this->res(1,$shop,"Successfully Updated",0);
+            //     }else{
+            //         $this->res(1,null,"Something went wrong while updating",0);
+            //     }
+               
+            // }else{
+            //     $this->res(0,null,"Error",0);
+            // }
+          
+        }
 
     }
 

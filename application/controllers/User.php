@@ -313,6 +313,35 @@
             }
         
         }
+
+        public function update_post($id){
+            $data= $this->decode();
+            $user_id = $id;
+            $user_data = $this->User_Model->getuser($user_id)[0];
+            
+            
+            if($user_data->user_roles == "2"){
+                $isCustomerUpdate = $this->Customer_Model->updateCustomerByUserId($user_id,$data);
+
+                if($isCustomerUpdate){
+                    $customer = $this->Customer_Model->getCustomerByUserId($user_id);
+                    
+                    $this->res(1,$customer[0],"Successfully Updated",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+            }else if($user_data->user_roles=="1"){
+                $isShopUpdated = $this->Shop_Model->updateShopByUserId($user_id,$data);
+                
+                if($isShopUpdated){
+                    $shop = $this->Shop_Model->getShopByUserId($user_id);
+                    
+                    $this->res(1,$shop[0],"Successfully Updated",0);
+                }else{
+                    $this->res(0,null,"SOmething went wrong",0);
+                }
+            }
+        }
     }
 
 ?>

@@ -14,6 +14,15 @@
             return $this->db->insert($this->tbl,$customerData);
         }
 
+        public function updateCustomerByUserId($id,$data){
+            return $this->db->update($this->tbl,$data,"user_id=".$id);
+        }
+
+
+        public function updateCustomer($id,$arr){
+            return $this->db->update($this->tbl,$arr,"customer_id=".$id);
+        }
+
         //get Customer by Id
         public function getCustomerByUserId($user_id){
            $this->db->select("*");

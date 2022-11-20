@@ -26,6 +26,10 @@
             }
         }
 
+        public function updateShopByUserId($id,$arr){
+            return $this->db->update($this->tbl,$arr,"user_id=".$id);
+        }
+
         public function getShopByStatus($status){
             $this->db->select("*");
             $this->db->from($this->tbl);
@@ -89,6 +93,8 @@
             $query =$this->db->get();
             return $query->result();
         }
+
+        
 
         public function latestShop(){
             $this->db->select("*");
