@@ -22,6 +22,15 @@
             return $query->result();
         }
 
+        public function getShopOrderByShopOrderId($id){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+            $this->db->where("shoporder.shoporder_id",$id);
+            $this->db->join("shop","shop.shop_id=shoporder.shop_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function getOrderShop($shop_id,$status){
             $this->db->select("*");
             $this->db->from($this->table_name);
@@ -36,7 +45,8 @@
         public function getorderByShopId($shop_id){
             $this->db->select("*");
             $this->db->from($this->table_name);
-            $this->db->where("shop_id",$shop_id);
+            $this->db->where("shoporder.shop_id",$shop_id);
+            $this->db->join("shop","shop.shop_id=shoporder.shop_id");
             $query = $this->db->get();
             return $query->result();
         }

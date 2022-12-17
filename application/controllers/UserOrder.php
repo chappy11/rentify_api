@@ -171,14 +171,16 @@
                 "shop_order_status" => $status
             );
 
-            $orderData = $this->ShopOrder_Model->getShopOrderByOrderId($id)[0];
+            $orderData = $this->ShopOrder_Model->getShopOrderByShopOrderId($id)[0];
+            $this->res(1,$orderData,"",0);
             $update = $this->ShopOrder_Model->update($id,$payload);
         
             if($update){
                 if($status == "5"){ 
                     $payload = array(
-                        "order_id" => $id,
+                        "order_id" => $orderData->order_id,
                         "shop_id" => $orderData->shop_id,
+                        "shoporder_id" => $orderData->shoporder_id,
                         "order_total_amout"=> $orderData->shopordertotal
                     );
                     $resp = $this->ShopReport_Model->create($payload);
@@ -188,10 +190,12 @@
                     }else{
                         $this->res(0,null,"Something went wrong",0);
                     }
+                }else{
+                    $this->res(1,null,"Successfully Update",0);
+
                 }
 
-                $this->res(1,null,"Successfully Update",0);
-
+              
             }else{
                 $this->res(0,null,"Something went wrong",0);
             }

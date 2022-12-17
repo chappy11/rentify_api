@@ -17,6 +17,16 @@ class ShopReport extends Data_format {
             $this->res(0,null,"Data not found",0);
         }
     }
+
+    public function  getreports(){
+        $data = $this->ShopReport_Model->getShopReport();
+
+        if(count($data)){
+            $this->res(1,$data,"Retrieve",0);
+        }else{
+            $this->res(0,null,"data not found",0);
+        }
+    }
 }
 
 ?>
