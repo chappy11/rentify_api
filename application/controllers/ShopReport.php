@@ -18,7 +18,7 @@ class ShopReport extends Data_format {
         }
     }
 
-    public function  getreports(){
+    public function  getreports_get(){
         $data = $this->ShopReport_Model->getShopReport();
 
         if(count($data)){

@@ -75,5 +75,17 @@
             return $query->result();
 
         }
+
+        public function getTransactionByStatus($status){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+            $this->db->where("shop_order_status",$status);
+            $this->db->join("shop","shop.shop_id=shoporder.shop_id");
+            $this->db->join("orders","orders.order_id=shoporder.order_id");
+            $this->db->join("customer","customer.user_id=orders.user_id");
+            $query = $this->db->get();
+
+            return $query->result();
+        }
     }
 ?>

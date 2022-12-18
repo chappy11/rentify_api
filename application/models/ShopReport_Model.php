@@ -25,6 +25,7 @@ class ShopReport_Model extends CI_Model{
         $this->db->select("*");
         $this->db->from($this->table);
         $this->db->join("shoporder","shoporder.shoporder_id=shopreport.shoporder_id");
+        $this->db->order_by("shopOrderUpdateAt","DESC");
         $query = $this->db->get();
         return $query->result();
     }

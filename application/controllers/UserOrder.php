@@ -253,6 +253,16 @@
             $this->res(1,null,"Successfully Update",0);
         }
 
+        public function getorderbystatus_get($status){
+            $data = $this->ShopOrder_Model->getTransactionByStatus($status);
+
+            if(count($data) > 0){
+                $this->res(1,$data,"Data found",0);
+            }else{
+                $this->res(0,null,"Data nto found",0);
+            }
+        }
+
       
 //--------------------------ITERNAL FUNCTION---------------------------------------------------------        
 
