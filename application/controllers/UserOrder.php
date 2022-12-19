@@ -263,7 +263,26 @@
             }
         }
 
-      
+
+        public function getCountAllOrders_get(){
+            $pending = $this->ShopOrder_Model->getTransactionByStatus(0);
+            $accepted = $this->ShopOrder_Model->getTransactionByStatus(1);
+            $packed = $this->ShopOrder_Model->getTransactionByStatus(2);
+            $deliver = $this->ShopOrder_Model->getTransactionByStatus(3);
+            $cancel = $this->ShopOrder_Model->getTransactionByStatus(4);
+            $success = $this->ShopOrder_Model->getTransactionByStatus(5);
+        
+            $data = array(
+                "pending" => count($pending),
+                "accepted" => count($accepted),
+                "packed" => count($packed),
+                "deliver"=>count($deliver),
+                "cancel" => count($cancel),
+                "success" => count($success)
+            );
+        
+            $this->res(1,$data,"Data found",0);
+        }
 //--------------------------ITERNAL FUNCTION---------------------------------------------------------        
 
         public function updateProductStock($itemList){
