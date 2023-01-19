@@ -16,7 +16,7 @@ class ShopReport extends Data_format {
                 "date_success" => $value->date_success,
                 "referenceNo" => $value->shopReference,
                 "success_date" => $value->date_success,
-                "order_total_amout" => $value->order_total_amout,
+                "order_total_amout" => $value->shopordertotal,
                 "order_item" => $this->OrderItem_Model->getOrderItem($value->order_id,$shop_id)
             );
 

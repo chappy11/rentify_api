@@ -62,7 +62,8 @@
                         "product_id" => $item->product_id,
                         "orderItemAmount" => $item->totalAmount,
                         "orderItemNo"=>$item->noItem,
-                        "order_id"=> $orderNumber->order_id
+                        "order_id"=> $orderNumber->order_id,
+                        "stock_history"=>$this->Product_Model->getTotalStock($item->product_id)[0]->stock
                     );
 
                     $created = $this->OrderItem_Model->insert($payload);
@@ -95,9 +96,7 @@
 
 
         public function warmup_get(){
-            $dates = $this->getBetweenDates('2022-9-18','2022-9-24');
-            $data = $this->ShopOrder_Model->getallorder($dates);
-        
+            $data = $this->Product_Model->getTotalStock(1);
             $this->res(1,$data,"NO",null);
         }
 

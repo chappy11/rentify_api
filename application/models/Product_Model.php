@@ -77,5 +77,14 @@
         public function updateProduct($id,$data=array()){
             return $this->db->update($this->tbl_name,$data,"product_id=".$id);
         }
+  
+        public function getTotalStock($product_id){
+            $this->db->select("stock");
+            $this->db->from($this->tbl_name);
+            $this->db->where('product_id',$product_id);
+            $query = $this->db->get();
+            return $query->result();    
+        }
+  
     }
 ?>
