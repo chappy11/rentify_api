@@ -17,48 +17,53 @@
             $total = 0;
             $productData = $this->Product_Model->getProductById($product_id)[0];
             $cartExistedItem = $this->Cart_Model->getCartItemByUser($user_id,$product_id);
-            $stockAvailable = (int)$productData->stock - (int)$no_item;
-            if($stockAvailable < 0){
-                $this->res(0,null,"Insufficient Stock",0);
-            }else{
-                if(count($cartExistedItem) > 0){
+            
+            if(count($cartExistedItem) > 0){
+                $stockAvailable = (int)$productData->stock - ((int)$cartExistedItem[0]->noItem + (int)$no_item);
+          
+                if($stockAvailable < 0){
+                    $this->res(0,null,"Insufficient Stock",0);
+                }else{
                     $totalItem = (int)$no_item + $cartExistedItem[0]->noItem;
                     $totalAmount = $productData->price * $totalItem;
                     $pay = array(
                         "noItem" => $totalItem,
                         "totalAmount" => $totalAmount,
                     );
-
+    
                     $updat = $this->Cart_Model->updateCart($cartExistedItem[0]->cart_id,$pay);
-
+    
                     if($updat){
                         $this->res(1,null,"Successfully Cart Added",0);
                     }else{
                         $this->res(0,null,"Something went wrong",0);
-                    }
-                }else{
-                    $total = (int)$no_item * (float)$productData->price;
-
-                    $newCart = array(
-                        "product_id" => $product_id,
-                        "user_id" => $user_id,
-                        "noItem" => $no_item,
-                        "totalAmount" => $total,
-                        "item_status" => 0
-                    );
-
-                    $this->res(1,null,$newCart,0);
-
-                    $isItemAdded = $this->Cart_Model->addtoCart($newCart);
-                    
-                    if($isItemAdded){
-                        $this->res(1,null,"Successfully Added to your cart",0);
-                    }else{
-                        $this->res(0,null,"Something went wrong sorry for inconvinience",0);
-                    }
+                    }     
                 }
+               
+            }else{
+                $total = (int)$no_item * (float)$productData->price;
+
+                $newCart = array(
+                    "product_id" => $product_id,
+                    "user_id" => $user_id,
+                    "noItem" => $no_item,
+                    "totalAmount" => $total,
+                    "item_status" => 0
+                );
+
+                $this->res(1,null,$newCart,0);
+
+                $isItemAdded = $this->Cart_Model->addtoCart($newCart);
                 
+                if($isItemAdded){
+                    $this->res(1,null,"Successfully Added to your cart",0);
+                }else{
+                    $this->res(0,null,"Something went wrong sorry for inconvinience",0);
+                }
             }
+            
+
+            
         }
 
         public function increament_post(){
