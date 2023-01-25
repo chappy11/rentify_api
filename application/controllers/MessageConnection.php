@@ -51,6 +51,7 @@ include_once(dirname(__FILE__)."./Data_format.php");
                     "conn_id"=> $getLatestConnection->conn_id,
                     "message" => $message,
                     "msg_isActive"=>1,
+                    "sender"=>$sender
                 );
                 $isSuccessMessage = $this->Messages_Model->create($message_payload);
 
