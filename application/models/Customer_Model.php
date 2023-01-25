@@ -112,6 +112,14 @@
             return $query->result();
         }
 
+        public function getCustomerById($customer_id){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("customer_id",$customer_id);
+            $this->db->join("user","user.user_id=customer.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
         
               
     }

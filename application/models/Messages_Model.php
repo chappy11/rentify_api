@@ -17,7 +17,7 @@
             $this->db->select("*");
             $this->db->from($this->table);
             $this->db->where("conn_id",$conn_id);
-            $this->db->order_by("message_date","DESC");
+            $this->db->order_by("message_date","ASC");
             $query = $this->db->get();
             return $query->result();
         }

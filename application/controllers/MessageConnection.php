@@ -6,7 +6,7 @@ include_once(dirname(__FILE__)."./Data_format.php");
         public function __construct(){
             parent::__construct();
 
-            $this->load->model(array("Message_Connection_Model","Messages_Model","Shop_Model"));
+            $this->load->model(array("Message_Connection_Model","Messages_Model","Shop_Model","Customer_Model"));
         }
     
         public function newmessage_post(){
@@ -21,7 +21,7 @@ include_once(dirname(__FILE__)."./Data_format.php");
             $this->res(1,null,$hasConnection,0);
             
 
-        if(count($hasConnection) < 1){
+            if(count($hasConnection) < 1){
 
                 $payload = array(
                     "customer_id"=>$customer_id,
@@ -85,19 +85,25 @@ include_once(dirname(__FILE__)."./Data_format.php");
             }
         }
   
-        public function getCustomerConvo_get($conn_id){
+        public function convos_get($conn_id,$roles){
             $connection = $this->Message_Connection_Model->getByConnectionId($conn_id)[0];
-
+            $partner = null;
             $shop = $this->Shop_Model->getShopByid($connection->shop_id);
+            $customer = $this->Customer_Model->getCustomerById($connection->customer_id);     
+            $customerResponse = $roles == 1 ? $customer[0] : null;
+            $shopResponse = $roles == 2 ? $shop[0] : null;
+           
             $convo = $this->Messages_Model->getMessagesByConnectionId($conn_id);
             $respData = array(
-                "shop" => $shop[0],
+                "shop" => $shopResponse,
+                "customer" => $customerResponse,
                 "convo" => $convo
             );
             
             $this->res(1,$respData,"Success",0);
 
         }
+  
   
     }
 ?>
