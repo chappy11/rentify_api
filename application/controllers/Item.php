@@ -149,6 +149,24 @@
             $this->res(0,null,"Data not found",0);
           }
         }
+
+
+        public function updateInfo_post(){
+            $data = $this->decode();
+
+            $payload = array(
+                "productName"=>$data->name,
+                "productDescription"=>$data->description
+            );
+
+            $isUpdate = $this->Product_Model->updateProduct($data->id,$payload);
+
+            if($isUpdate){
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
     }
 
 ?>
