@@ -14,6 +14,8 @@
         }
 
         //login user
+
+        //select * from user where username='kye' && password='1234kye'
         public function login($username,$password){
             $this->db->select("*");
             $this->db->from($this->tbl);

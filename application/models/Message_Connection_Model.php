@@ -13,6 +13,22 @@
             return $this->db->insert($this->table,$data);
         }
 
+        public function getConnectionByCustomerId($customer_id){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->where("customer_id",$customer_id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function getConnectionByShopId($shop_id){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->where("shop_id",$shop_id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function getCustomerMessage($customer_id){
             $this->db->select("*");
             $this->db->from($this->table);

@@ -68,6 +68,7 @@
             $this->db->select("*");
             $this->db->from($this->tbl_name);
             $this->db->where("shop.subscription_id >",0);
+            $this->db->where("stock >",0);
             $this->db->join("category","category.category_id=product.category_id");
             $this->db->join("shop","shop.shop_id=product.shop_id");
             $query = $this->db->get();
