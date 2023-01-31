@@ -8,6 +8,51 @@
             $this->load->model(array("Product_Model","Shop_Model","Subscription_Model"));
         }
 
+        public function addPets_post(){
+            $product_pic = $_FILES['pic']['name'];
+            $documentImg = $_FILES['document']['name'];
+            $name = $this->post("name");
+            $description = $this->post("description");
+            $category_id =$this->post("category_id");
+            $type = $this->post("type");
+            $breed = $this->post("breed");
+            $price = $this->post("price");
+            $shop_id = $this->post("shop_id");
+       
+            $this->Shop_Model->checkIsSubscriptionExpire($shop_id);
+            $isSubscribe = $this->Shop_Model->getShopByid($shop_id)[0];
+            if($this->Shop_Model->hasSubscription($shop_id)){
+                $productData = array(
+                    "shop_id" => $shop_id,
+                    "productImage" => "products/".$product_pic,
+                    "documentImg" => "products/".$documentImg,
+                    "productName" => $name,
+                    "category_id" => $category_id,
+                    "breed" => $breed,
+                    "type" => $type,
+                    "productDescription" => $description,
+                    "price" => $price,
+                    "stock" => 1,
+                    "isAvailable" => 1,
+                    "product_del" => 0,
+                    "unit" => "pcs",
+                );
+        
+                $isCreated = $this->Product_Model->createNewProduct($productData);
+        
+                if($isCreated){
+                    move_uploaded_file($_FILES['pic']['tmp_name'],"products/".$product_pic);
+                    move_uploaded_file($_FILES['document']['tmp_name'],"products/".$documentImg);
+                    $this->res(1,null,"Successfully Added to you shop",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+            }else{
+                $this->res(0,null,"You cannot Add Item as for now please update your subscription first",0);
+            }
+       
+        }
+
         public function createproduct_post(){
             $product_pic = $_FILES['pic']['name'];
             $name = $this->post("name");
@@ -25,8 +70,11 @@
                 $productData = array(
                     "shop_id" => $shop_id,
                     "productImage" => "products/".$product_pic,
+                    "documentImg" => "",
                     "productName" => $name,
                     "category_id" => $category_id,
+                    "breed" => "",
+                    "type"=>"",
                     "productDescription" => $description,
                     "price" => $price,
                     "stock" => $stock,

@@ -100,8 +100,8 @@
             $cartData = $this->Cart_Model->getCartItemById($cart_id)[0];
 
             $totalItem = $cartData->noItem - 1;
-            if($totalItem < 0){
-                $this->res(0,null,"You Cannot input below zero",0);
+            if($totalItem < 1){
+                $this->res(0,null,"Mininum count is one",0);
             }else{
                 $productData = $this->Product_Model->getProductById($cartData->product_id)[0];
                 $newAmount = $totalItem * $productData->price;

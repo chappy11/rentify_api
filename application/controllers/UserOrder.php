@@ -5,7 +5,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("UserOrder_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model","ShopReport_Model"));
+            $this->load->model(array("UserOrder_Model","Remarks_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model","ShopReport_Model","Notification_Model","User_Model","Shop_Model"));
         }
 
         public function createorder_post(){
@@ -17,7 +17,7 @@
             $payment_method = $data->payment_method;
 
             $itemList = $this->Cart_Model->getActiveItemByUser($user_id);
-
+            $usr = $this->User_Model->getuser($user_id);
             $arr = $this->returnUniqueProperty($itemList,"shop_id");
             $orderNumber = $this->createNewOrder($user_id,$total_amount,$isHalf,$payment_method)[0];
             $listOfShops = array();
@@ -44,6 +44,17 @@
                     "shoporderpaid" => $totalOfOrderItem,
                     "shopordertotal" => $totalByShop,
                 );
+                $shp = $this->Shop_Model->getShopByShopId($value)[0];
+
+                $notif =array(
+                    "notif_title"=>"You have new order from ".$usr[0]->username,
+                    "notif_message"=>"New order of your shop please check it now",
+                    "notif_link"=>"/pending",
+                    "notif_receiver"=>$shp->user_id,
+                    "isRead"=>0
+                );
+
+                $this->Notification_Model->create($notif);
 
                 $isCreate = $this->ShopOrder_Model->createShopOrder($payload);
 
@@ -75,12 +86,13 @@
                         $hasError = $hasError * 0;
                     }
                }
+              
                if($hasError === 0){
                     $this->res(0,null,"Something went wrong",0);
                }else{
 
                 $isUpdateStock = $this->updateProductStock($itemList);
-                
+ 
                 if($isUpdateStock){
                     $this->removeFromCart($itemList);
                     $this->res(1,null,"Success Order",0);
@@ -124,6 +136,7 @@
 
 
         public function order_get($order_id){
+          
             $orderData = $this->UserOrder_Model->getOrderByOrderId($order_id);
             $shopOrderData  = $this->ShopOrder_Model->getShopOrderByOrderId($order_id);
             $shopOrderList = array();
@@ -161,6 +174,8 @@
             }
         }
 
+      
+
         public function updateorderstatus_post(){
             $data= $this->decode();
             $status = $data->status;
@@ -171,10 +186,50 @@
             );
 
             $orderData = $this->ShopOrder_Model->getShopOrderByShopOrderId($id)[0];
-            $this->res(1,$orderData,"",0);
+            $shop = $this->Shop_Model->getShopById($orderData->shop_id)[0];
+            
             $update = $this->ShopOrder_Model->update($id,$payload);
-        
+            
+            $ordr = $this->UserOrder_Model->getOrderByOrderId($orderData->order_id)[0];
+
             if($update){
+                $notif = array();
+                if($status == "1"){
+                    $notif = array(
+                        "notif_title" => "Your order has been accepted from ".$shop->shopName,
+                        "notif_message" => "Your order: ".$orderData->shopReference." has been accepted",
+                        "notif_receiver" => $ordr->user_id,
+                        "isRead" => 0,
+                        "notif_link" => "/vieworder/".$orderData->order_id."/".$orderData->shopReference
+                    );
+                }else if($status == "2"){
+                    $notif = array(
+                        "notif_title" => "Your order has been packed from ".$shop->shopName,
+                        "notif_message" => "Your order: ".$orderData->shopReference." has been packed",
+                        "notif_receiver" => $ordr->user_id,
+                        "isRead" => 0,
+                        "notif_link" => "/vieworder/".$orderData->order_id."/".$orderData->shopReference
+                    );
+                }else if($status == "3"){
+                    $notif = array(
+                        "notif_title" => "Your order has been out for delivery from ".$shop->shopName,
+                        "notif_message" => "Your order: ".$orderData->shopReference." has been out for delivery",
+                        "notif_receiver" => $ordr->user_id,
+                        "isRead" => 0,
+                        "notif_link" => "/vieworder/".$orderData->order_id."/".$orderData->shopReference
+                    );
+                }else if($status == "5"){
+                    $notif = array(
+                        "notif_title" => "You have  received from ".$shop->shopName,
+                        "notif_message" => "Your order: ".$orderData->shopReference." has been received",
+                        "notif_receiver" => $ordr->user_id,
+                        "isRead" => 0,
+                        "notif_link" => "/vieworder/".$orderData->order_id."/".$orderData->shopReference
+                    );
+                }
+
+                $this->Notification_Model->create($notif);
+                
                 if($status == "5"){ 
                     $payload = array(
                         "order_id" => $orderData->order_id,
@@ -214,7 +269,8 @@
         }
 
         public function getorderbyshop_get($order_id,$shop_id){
-           $order_data = $this->UserOrder_Model->getOrderByOrderId($order_id);
+      
+            $order_data = $this->UserOrder_Model->getOrderByOrderId($order_id);
            $shopOrder = $this->ShopOrder_Model->getOrderIdAndShopId($order_id,$shop_id)[0];
            $orderItem = $this->OrderItem_Model->getOrderItem($order_id,$shop_id);
            $arr = array(
@@ -233,10 +289,12 @@
             $data = $this->decode();
             $order_id = $data->order_id;
             $shop_id = $data->shop_id;
+            $remarks = $data->remarks;
+            $cancelBy = $data->cancelBy;
+
             $orderData = $this->UserOrder_Model->getOrderByOrderId($order_id);
             $shopOrderData = $this->ShopOrder_Model->getOrderIdAndShopId($order_id,$shop_id);
             $orderItem = $this->OrderItem_Model->getOrderItem($order_id,$shop_id);
-            
             $orderpayload = array("totalAmount" => floatval($orderData[0]->totalAmount) - floatval($shopOrderData[0]->shopordertotal));
             $isOrderUpdated = $this->UserOrder_Model->update($orderpayload,$order_id);
             $shoporderpayload = array("shop_order_status" => 4);
@@ -249,7 +307,27 @@
                 $this->Product_Model->updateProduct($value->product_id,$payload);
             }
             
+            if($cancelBy == "shop"){
+                $re = array("remarks"=>$remarks,"shoporder_id"=>$shopOrderData[0]->shoporder_id);
+
+                $this->Remarks_Model->create($re);
+            }
+
+            if($cancelBy == "shop"){
+                $notif = array(
+                    "notif_title" => "Your order has been declined",
+                    "notif_message" => "Your order: ".$shopOrderData[0]->shopReference." has been decline",
+                    "notif_receiver" => $orderData[0]->user_id,
+                    "isRead" => 0,
+                    "notif_link" => "/remarks/".$order_id
+                );
+
+                    $this->Notification_Model->create($notif);
+            }
+            
+            
             $this->res(1,null,"Successfully Update",0);
+            
         }
 
         public function getorderbystatus_get($status){
@@ -264,6 +342,7 @@
 
 
         public function getCountAllOrders_get(){
+      
             $pending = $this->ShopOrder_Model->getTransactionByStatus(0);
             $accepted = $this->ShopOrder_Model->getTransactionByStatus(1);
             $packed = $this->ShopOrder_Model->getTransactionByStatus(2);
@@ -382,6 +461,6 @@
       
             return $rangArray;
         }     
-    
+      
     }
 ?>

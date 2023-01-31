@@ -87,5 +87,14 @@
 
             return $query->result();
         }
+  
+        public function getPendingOrder(){
+            $this->db->select("*");
+            $this->db->from($this->table_name);
+            $this->db->where("shop_order_status",0);
+            $query = $this->db->get();
+            return $query->result();
+        }
+  
     }
 ?>
