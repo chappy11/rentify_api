@@ -78,7 +78,7 @@
             
                 $userData = array(
                     "username" => $username,
-                    "password" => $password,
+                    "password" => md5($password),
                     "user_roles" => 2, //customer
                     "user_status" => 0, //status is active
                 );
@@ -171,7 +171,7 @@
     
                 $userData = array(
                     "username" => $username,
-                    "password" => $password,
+                    "password" => md5($password),
                     "user_roles" => 1,
                     "user_status" => 0, 
                 );
@@ -240,7 +240,7 @@
             $password = isset($data->password) ? $data->password : "";
             $browserName = isset($data->browserName) ? $data->browserName : "";
        
-            $user = $this->User_Model->login($username,$password);
+            $user = $this->User_Model->login($username,md5($password));
                             
                 if(count($user) < 1){
                     $this->res(0,null,"Invalid account please check your username or password",0);
