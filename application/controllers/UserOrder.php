@@ -5,7 +5,23 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("UserOrder_Model","Remarks_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model","ShopReport_Model","Notification_Model","User_Model","Shop_Model"));
+            $this->load->model(array("UserOrder_Model","Remarks_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model","ShopReport_Model","Notification_Model","User_Model","Shop_Model","Voucher_Model"));
+        }
+
+        public function warmup_get(){
+            $amount = (int)"500";
+            $percent = (int)"2";
+            $total = $this->getTotalDiscount($amount,$percent);
+            $this->res(1,$total,"Data found",0);
+        
+        }
+
+        public function getTotalDiscount($amount,$percent){
+            
+            $percentage = $percent / 100;
+            $totalDiscount = $amount * $percentage;
+            $total = $amount - $totalDiscount;
+            return $total;
         }
 
         public function createorder_post(){
@@ -15,11 +31,19 @@
             $total_amount = $data->total_amount;
             $isHalf = $data->isHalf;
             $payment_method = $data->payment_method;
-
+            $hasVoucher = $data->hasVoucher;
+            $voucher_id = $data->voucher_id;
             $itemList = $this->Cart_Model->getActiveItemByUser($user_id);
             $usr = $this->User_Model->getuser($user_id);
             $arr = $this->returnUniqueProperty($itemList,"shop_id");
             $orderNumber = $this->createNewOrder($user_id,$total_amount,$isHalf,$payment_method)[0];
+            $voucherData = null;
+
+            if($hasVoucher == 1){
+                $dataVoucher = $this->Voucher_Model->getVoucherById($voucher_id)[0];
+            }
+
+
             $listOfShops = array();
             foreach($arr as $value){
                 array_push($listOfShops,$value->shop_id);
@@ -29,7 +53,10 @@
            foreach($listOfShops as $value){
                 $totalByShop = $this->getTotalByShop($value,$itemList);
                 $totalOfOrderItem = 0;
-
+                if($dataVoucher->shop_id == $value && $hasVoucher == "1"){
+                    $totalByShop = $this->getTotalDiscount($totalByShop,$dataVoucher->percent);
+                }
+                
                 if($payment_method == 1){
                     $totalOfOrderItem = $isHalf == 1   ? $totalByShop / 2 : $totalByShop;
                 }else{
@@ -107,10 +134,10 @@
         }
 
 
-        public function warmup_get(){
-            $data = $this->Product_Model->getTotalStock(1);
-            $this->res(1,$data,"NO",null);
-        }
+        // public function warmup_get(){
+        //     $data = $this->Voucher_Model->warmUp("400");
+        //     $this->res(1,$data,"NO",null);
+        // }
 
         public function orders_get($user_id){
             $orderList = $this->UserOrder_Model->getOrderByUserId($user_id);

@@ -31,7 +31,7 @@
 
     public function shopvouchers_get($shop_id){
         $data = $this->Voucher_Model->getShopVoucher($shop_id);
-
+        $this->res(1,$data,"DD",0);
         if(count($data) > 0){
             $this->res(1,$data,"Data found",count($data));
         }else{
