@@ -17,8 +17,8 @@
             $config['protocol']    = 'smtp';
             $config['smtp_host']    = 'smtp.mailtrap.io';
             $config['smtp_port']    = '2525';
-            $config['smtp_user'] = '7ec9d17b2163b3';
-            $config['smtp_pass'] = '55c83a05d8d4cb';
+            $config['smtp_user'] = '6afc1522bdd40d';
+            $config['smtp_pass'] = '59e5f75154184d';
             $config['charset']    = 'utf-8';
             $config['newline']    = "\r\n";
             $config['mailtype'] = 'html'; // or html
@@ -60,8 +60,8 @@
         $config['protocol']    = 'smtp';
         $config['smtp_host']    = 'smtp.mailtrap.io';
         $config['smtp_port']    = '2525';
-        $config['smtp_user'] = '7ec9d17b2163b3';
-        $config['smtp_pass'] = '55c83a05d8d4cb';
+        $config['smtp_user'] = '6afc1522bdd40d';
+        $config['smtp_pass'] = '59e5f75154184d';
         $config['charset']    = 'utf-8';
         $config['newline']    = "\r\n";
         $config['mailtype'] = 'html'; // or html

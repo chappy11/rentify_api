@@ -53,10 +53,11 @@
            foreach($listOfShops as $value){
                 $totalByShop = $this->getTotalByShop($value,$itemList);
                 $totalOfOrderItem = 0;
+                
                 if($dataVoucher->shop_id == $value && $hasVoucher == "1"){
                     $totalByShop = $this->getTotalDiscount($totalByShop,$dataVoucher->percent);
                 }
-                
+
                 if($payment_method == 1){
                     $totalOfOrderItem = $isHalf == 1   ? $totalByShop / 2 : $totalByShop;
                 }else{
