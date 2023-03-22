@@ -27,5 +27,20 @@
             $this->res(0,null,"Something went wrong",0);
         }
     }
+
+    public function myvouchers_post(){
+        $data = $this->decode();
+        $user_id = $data->user_id;
+        $shops = $data->shops;
+       
+        $arr = array();
+        foreach($shops as $value){
+            $getShops = $this->UserVoucher_Model->getMyVoucherId($user_id,$value);
+            $arr = array(...$arr,...$getShops);
+        }
+    
+    
+        $this->res(1,$arr,"data found",0);
+    }
   }
 ?>

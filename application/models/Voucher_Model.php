@@ -33,15 +33,17 @@ class Voucher_Model extends CI_Model{
         return $this->db->update($this->tbl_name,$data,'voucher_id='.$voucher_id);
     }
 
-    public function getVoucherByLimit($amount){
+    public function getVoucherByLimit($shop_id,$amount){
         $this->db->select("*");
         $this->db->from($this->tbl_name);
+        $this->db->where("shop_id",$shop_id);
         $this->db->where("voucherLimit <=",(int)$amount);
         $this->db->order_by("voucher_id","DESC");
         $this->db->limit(1);
         $query = $this->db->get();
         return $query->result();
     }
+
 
 }
 

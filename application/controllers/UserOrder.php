@@ -5,16 +5,16 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("UserOrder_Model","Remarks_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model","ShopReport_Model","Notification_Model","User_Model","Shop_Model","Voucher_Model"));
+            $this->load->model(array("UserOrder_Model","Remarks_Model","ShopOrder_Model","OrderItem_Model","Product_Model","Cart_Model","ShopReport_Model","Notification_Model","User_Model","Shop_Model","Voucher_Model","UserVoucher_Model"));
         }
 
-        public function warmup_get(){
-            $amount = (int)"500";
-            $percent = (int)"2";
-            $total = $this->getTotalDiscount($amount,$percent);
-            $this->res(1,$total,"Data found",0);
+        // public function warmup_get(){
+        //     $amount = (int)"500";
+        //     $percent = (int)"2";
+        //     $total = $this->getTotalDiscount($amount,$percent);
+        //     $this->res(1,$total,"Data found",0);
         
-        }
+        // }
 
         public function getTotalDiscount($amount,$percent){
             
@@ -32,15 +32,17 @@
             $isHalf = $data->isHalf;
             $payment_method = $data->payment_method;
             $hasVoucher = $data->hasVoucher;
-            $voucher_id = $data->voucher_id;
+            $uservoucher_id = $data->uservoucher_id;
+          
+          
             $itemList = $this->Cart_Model->getActiveItemByUser($user_id);
             $usr = $this->User_Model->getuser($user_id);
             $arr = $this->returnUniqueProperty($itemList,"shop_id");
             $orderNumber = $this->createNewOrder($user_id,$total_amount,$isHalf,$payment_method)[0];
-            $voucherData = null;
+            $dataVoucher = null;
 
             if($hasVoucher == 1){
-                $dataVoucher = $this->Voucher_Model->getVoucherById($voucher_id)[0];
+                $dataVoucher = $this->Voucher_Model->getUserVoucherById($uservoucher_id)[0];
             }
 
 
@@ -53,9 +55,17 @@
            foreach($listOfShops as $value){
                 $totalByShop = $this->getTotalByShop($value,$itemList);
                 $totalOfOrderItem = 0;
+                $vouch_id = 0;
                 
-                if($dataVoucher->shop_id == $value && $hasVoucher == "1"){
-                    $totalByShop = $this->getTotalDiscount($totalByShop,$dataVoucher->percent);
+                if($hasVoucher == "1"){
+                    if($dataVoucher->shop_id == $value){
+                        $totalByShop = $this->getTotalDiscount($totalByShop,$dataVoucher->percent);
+                        $vouch_id = $dataVoucher->voucher_id;
+                        $gg = array("isUse"=>"1");
+
+                        $this->UserVoucher_Model->update($uservoucher_id,$gg);
+                    }
+                 
                 }
 
                 if($payment_method == 1){
@@ -71,6 +81,7 @@
                     "shop_order_status"=>"0",
                     "shoporderpaid" => $totalOfOrderItem,
                     "shopordertotal" => $totalByShop,
+                    "voucher_id" => $vouch_id
                 );
                 $shp = $this->Shop_Model->getShopByShopId($value)[0];
 
@@ -135,10 +146,10 @@
         }
 
 
-        // public function warmup_get(){
-        //     $data = $this->Voucher_Model->warmUp("400");
-        //     $this->res(1,$data,"NO",null);
-        // }
+        public function warmup_get(){
+            $data = $this->Voucher_Model->getVoucherByLimit(2,"400");
+            $this->res(1,$data,"NO",null);
+        }
 
         public function orders_get($user_id){
             $orderList = $this->UserOrder_Model->getOrderByUserId($user_id);
@@ -266,6 +277,17 @@
                         "order_total_amout"=> $orderData->shopordertotal
                     );
                     $resp = $this->ShopReport_Model->create($payload);
+                    
+                    $voucherDataByShop = $this->Voucher_Model->getVoucherByLimit($orderData->shop_id,$orderData->shopordertotal);
+                    if(count($voucherDataByShop) > 0){
+                        $uservoucherPayload = array(
+                            "voucher_id" => $voucherDataByShop[0]->voucher_id,
+                            "user_id" => $ordr->user_id,
+                            "isUse" => 0
+                        );
+
+                        $this->UserVoucher_Model->create($uservoucherPayload);
+                    }
                     
                     if($resp){
                         $this->res(1,null,"Successfully Updated",0);
