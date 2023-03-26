@@ -31,7 +31,7 @@
 
 
         public function update($uservoucher_id,$payload){
-            return $this->db->update($tbl_name,$payload,'uservoucher_id='.$uservoucher_id);
+            return $this->db->update($this->tbl_name,$payload,'uservoucher_id='.$uservoucher_id);
         }
 
         public function getMyVoucherId($user_id,$shop_id){

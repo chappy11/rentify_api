@@ -42,7 +42,7 @@
             $dataVoucher = null;
 
             if($hasVoucher == 1){
-                $dataVoucher = $this->Voucher_Model->getUserVoucherById($uservoucher_id)[0];
+                $dataVoucher = $this->UserVoucher_Model->getUserVoucherById($uservoucher_id)[0];
             }
 
 
