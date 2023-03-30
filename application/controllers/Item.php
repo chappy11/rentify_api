@@ -5,7 +5,7 @@
         
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("Product_Model","Shop_Model","Subscription_Model"));
+            $this->load->model(array("Product_Model","Shop_Model","Subscription_Model","Rate_Model"));
         }
 
         public function addPets_post(){
@@ -18,6 +18,7 @@
             $breed = $this->post("breed");
             $price = $this->post("price");
             $shop_id = $this->post("shop_id");
+            $reorderLevel = $this->post("reorderLevel");
        
             $this->Shop_Model->checkIsSubscriptionExpire($shop_id);
             $isSubscribe = $this->Shop_Model->getShopByid($shop_id)[0];
@@ -36,6 +37,7 @@
                     "isAvailable" => 1,
                     "product_del" => 0,
                     "unit" => "pcs",
+                    "reorderLevel"=>$reorderLevel
                 );
         
                 $isCreated = $this->Product_Model->createNewProduct($productData);
@@ -62,6 +64,7 @@
             $stock = $this->post("stock");
             $unit = $this->post("unit");
             $shop_id = $this->post("shop_id");
+            $reorderLevel = $this->post("reorderLevel");
         
 
             $this->Shop_Model->checkIsSubscriptionExpire($shop_id);
@@ -81,6 +84,7 @@
                     "isAvailable" => 1,
                     "product_del" => 0,
                     "unit" => $unit,
+                    "reorderLevel"=>$reorderLevel
                 );
         
                 $isCreated = $this->Product_Model->createNewProduct($productData);
@@ -127,11 +131,24 @@
   
         public function displayproducts_get(){
             $products = $this->Product_Model->displayProduct();
-            if(count($products) > 0){
-                $this->res(1,$products,"Data found",0);
-            }else{
-                $this->res(0,null,"Data not found",0);
+            $arr = [];
+            foreach($products as $val){
+                $payload = array(
+                    "product_id"=>$val->product_id,
+                    "productImage"=>$val->productImage,
+                    "productName"=>$val->productName,
+                    "price"=>$val->price,
+                    "rating"=>$this->Rate_Model->getRating($val->product_id)[0]->rate,
+                    "category_id"=>$val->category_id,
+                    "stock"=>$val->stock,
+                    "reorderLevel"=>$val->reorderLevel,
+                );
+
+                array_push($arr,$payload);
             }
+
+            $this->res(1,$arr,"ff",0);
+         
         }
         
         public function updatestock_post(){

@@ -56,9 +56,10 @@ class Cart_Model extends CI_Model{
     public function getActiveItemByUser($user_id){
         $this->db->select("*");
         $this->db->from($this->tbl_name);
-        $this->db->where("user_id",$user_id);
-        $this->db->where("item_status",1);
+        $this->db->where("cart.user_id",$user_id);
+        $this->db->where("cart.item_status",1);
         $this->db->join("product","product.product_id=cart.product_id");
+        $this->db->join("shop","shop.shop_id=product.shop_id");
         $query = $this->db->get();
         return $query->result();
     }
