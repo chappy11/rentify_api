@@ -16,6 +16,8 @@
 
     public function getNotification_get($user_id){
         $this->autoCancelPendingOrder();
+       
+       
         $data = $this->Notification_Model->getNotif($user_id);
         $this->res(1,$data,"",count($data));
     }
@@ -49,6 +51,14 @@
             }
         }
 
+    }
+
+    public function days_get(){
+        $date=date_create(date('Y-m-d'));
+        date_sub($date,date_interval_create_from_date_string("7 days"));
+        $mindate = date_format($date,"Y-m-d");
+        $resp = $this->Notification_Model->updateNotifDate($mindate);
+        $this->res(1,$resp,"GG",0);
     }
 
 

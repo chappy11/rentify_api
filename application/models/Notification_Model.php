@@ -43,6 +43,11 @@
         return $this->db->update($this->table_name,$data,"notif_id=".$notif_id);
     }
 
+    public function updateNotifDate($minDate){
+       
+        return $this->db->update($this->table_name,array("isRead" => 1),"notif_date <",$minDate);
+    }
+
 }
 
 ?>
