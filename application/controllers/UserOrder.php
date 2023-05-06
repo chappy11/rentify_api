@@ -512,5 +512,20 @@
             return $rangArray;
         }     
       
+        public function saleable_get($shop_id){
+            $data = $this->OrderItem_Model->getitemSalable($shop_id);
+            $temp = array();
+            foreach ($data as $value) {
+                $arr = array(
+                    "product_id"=>$value->product_id,
+                    "count"=>count($this->OrderItem_Model->getOrderItemByProductId($value->product_id)),
+                    "product"=>$this->Product_Model->getProductById($value->product_id)[0]
+                );
+
+                array_push($temp,$arr);
+            }
+
+            $this->res(1,$temp,"GG",0);
+        }
     }
 ?>

@@ -32,5 +32,18 @@
             return $query->result();
         }
 
+        public function getitemSalable($shop_id){
+            $query = $this->db->query("SELECT DISTINCT orderitem.product_id FROM `orderitem` LEFT JOIN product ON orderitem.product_id = product.product_id LEFT JOIN shopreport ON orderitem.order_id = shopreport.order_id WHERE product.shop_id =".$shop_id." AND MONTH(shopreport.date_success) =  MONTH(CURRENT_DATE())");
+            return $query->result();
+        }
+
+        public function getOrderItemByProductId($product_id){
+            $this->db->select("*");
+            $this->db->from($this->tbl_name);
+            $this->db->where("product.product_id",$product_id);
+            $this->db->join("product","product.product_id=orderitem.product_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 ?>
