@@ -15,7 +15,9 @@
     }
 
     public function getNotification_get($user_id){
+        $this->updateNotifByDate();
         $this->autoCancelPendingOrder();
+       
         $data = $this->Notification_Model->getNotif($user_id);
         $this->res(1,$data,"",count($data));
     }
@@ -33,6 +35,25 @@
         $this->res(0,null,"Error",0);
        }
     }    
+
+    public function updateNotifByDate(){
+        $dat = $this->Notification_Model->getAllNotification();
+    
+         
+            $weekAgo = date("Y-m-d", strtotime("-7 days"));
+           
+        foreach($dat as $val){
+            $notifDate =strtotime($val->notif_date);
+            $week = strtotime($weekAgo);
+            if($notifDate < $week){
+                $payload = array(
+                    "isRead" => 1
+                );
+            
+                $this->Notification_Model->updateNotification($val->notif_id,$payload);
+            }
+        }
+    }
 
     public function autoCancelPendingOrder(){
         $data = $this->ShopOrder_Model->getPendingOrder();
@@ -78,6 +99,8 @@
 
             $this->Notification_Model->create($notif);
     }
+
+
 
  }
 ?>

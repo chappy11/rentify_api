@@ -43,6 +43,13 @@
         return $this->db->update($this->table_name,$data,"notif_id=".$notif_id);
     }
 
+    public function getAllNotification(){
+        $this->db->select("*");
+        $this->db->from($this->table_name);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
 }
 
 ?>
