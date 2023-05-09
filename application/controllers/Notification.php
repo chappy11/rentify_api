@@ -45,11 +45,7 @@
             $notifDate =strtotime($val->notif_date);
             $week = strtotime($weekAgo);
             if($notifDate < $week){
-                $payload = array(
-                    "isRead" => 1
-                );
-            
-                $this->Notification_Model->updateNotification($val->notif_id,$payload);
+                $this->Notification_Model->deleteNotif($val->notif_id);
             }
         }
     }

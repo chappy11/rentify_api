@@ -50,6 +50,10 @@
         return $query->result();
     }
 
+    public function deleteNotif($notif_id){
+        return $this->db->delete($this->table_name,array("notif_id"=>$notif_id));
+    }
+
 }
 
 ?>
