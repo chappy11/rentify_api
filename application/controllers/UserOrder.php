@@ -527,5 +527,21 @@
 
             $this->res(1,$temp,"GG",0);
         }
+
+        public function saleableproductbymonth_get($shop_id,$month){
+            $data = $this->OrderItem_Model->getitemSalableByMonth($shop_id,$month);
+            $temp = array();
+            foreach ($data as $value) {
+                $arr = array(
+                    "product_id"=>$value->product_id,
+                    "count"=>count($this->OrderItem_Model->getOrderItemByProductId($value->product_id)),
+                    "product"=>$this->Product_Model->getProductById($value->product_id)[0]
+                );
+
+                array_push($temp,$arr);
+            }
+
+            $this->res(1,$temp,"GG",0);
+        }
     }
 ?>
