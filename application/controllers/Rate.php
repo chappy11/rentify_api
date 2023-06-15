@@ -18,7 +18,7 @@
             foreach($orders as $val){
                 $orderItem = $this->OrderItem_Model->getOrderItemByOrderId($val->order_id);
                 foreach($orderItem as $item){
-                    if($item->product_id === $product_id){
+                    if($item->product_id == $product_id){
                         $hasError = 1;
                     }
                 }
