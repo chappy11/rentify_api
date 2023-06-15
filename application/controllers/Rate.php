@@ -24,7 +24,7 @@
                 }
             }
 
-            if($hasError == 1){
+            if($hasError == 0){
                 $this->res(0,null," Order first before rating this product",0);
             }else{
 
