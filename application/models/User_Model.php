@@ -1,7 +1,7 @@
 <?php 
 
     class User_Model extends CI_Model{
-        private $tbl = "user";
+        private $tbl = "users";
 
         public function __construct(){
             parent::__construct();

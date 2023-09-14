@@ -6,7 +6,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("User_Model","Notification_Model","UserLog_Model","Customer_Model","Shop_Model","Admin_Model",""));
+            $this->load->model(array("User_Model"));
         }
         //note:
         //user role:
@@ -15,12 +15,63 @@
         //2 customer
         
         
-        public function warmup_post(){
-            $data = $this->decode();
-            $arr = array("email"=>$data->email);
-            $this->res(1,$this->Customer_Model->checkIsEmailExist($data->email),"error",1);
+        public function warmup_get(){
+            $this->res(1,null,"Hello world",1);
         }
 
+
+        public function register_post(){
+            $data = $this->decode();
+            $username = $data->userName;
+            $password = $data->password;
+            $firstName = $data->firstName;
+            $middleName = $data->middleName;
+            $lastName = $data->lastName;
+            $gender = $data->gender;
+            $birthdate = $data->birthdate;
+            $address = $data->address;
+            $user_type = $data->userType;
+            $isActive = $data->isActive;
+
+            $payload = array(
+                "username" => $username,
+                "password" => $password,
+                "firstname" => $firstName,
+                "middleName" => $middleName,
+                "lastName" => $lastName,
+                "gender" => $gender,
+                "birthdate" => $birthdate,
+                "user_type" => $user_type,
+                "isActive" => $isActive
+            );
+
+            $resp = $this->User_Model->createUser($payload);
+
+
+            if($resp){
+                $this->res(1,null,"Successfully Registered",1);
+            }else{
+                $this->res(0,null,"Something went wrong",0);   
+            }
+        }
+
+
+        public function login_post(){
+            $data = $this->decode();
+            
+            $username = $data->userName;
+            $password = $data->password;
+            
+            $resp = $this->User_Model->login($username,$password);
+
+            if(count($resp) < 1){
+                $this->res(0,null,"Account is not exist",0);
+            }else{
+                $this->res(1,$resp,"Successfully Login",0);
+            }
+        }
+
+        
         public function isEmailExist($email,$type){
             $isExist = false;
 
@@ -141,149 +192,8 @@
             }          
         }
 
-        //create account for shop
-        public function createshop_post(){
-            $shop_logo = $_FILES['shopLogo']['name'];
-            $username = $this->post("username");
-            $password = $this->post("password");
-            $shop_email = $this->post("shopEmail");
-            $shop_name = $this->post("shopName");
-            $shop_description = $this->post("shopDescription");
-            $firstname = $this->post("firstname");
-            $middlename = $this->post("middlename");
-            $lastname = $this->post("lastname");
-            $address = $this->post("address");
-            $shopContact = $this->post("contact");
-            $cFname = $this->post("cfname");
-            $cLname = $this->post("clname");
-            $cNumber = $this->post("cNumber"); 
-            $isEmailExist = $this->isEmailExist($shop_email,"shop");
-            $isMobileNumberExist = $this->isMobileExist($shopContact,'shop');
-
-            if($isEmailExist){
-                
-                $this->res(0,null,"This email is already exist",0);
-            }else{
-
-                $arr = array("username"=>$username);
-                $this->res(1,$this->User_Model->checkDataExist($arr),"error",1);
-            
-    
-                $userData = array(
-                    "username" => $username,
-                    "password" => md5($password),
-                    "user_roles" => 1,
-                    "user_status" => 0, 
-                );
-    
-                $isCreated = $this->User_Model->createUser($userData);
-    
-                if(!$isCreated){
-                    $this->res(0,null,"Something went wrong",0);
-                }else{
-                    $newUserData = $this->User_Model->getNewUser();
-    
-                    try{
-                        $newShop = array(
-                            "user_id" => $newUserData[0]->user_id,
-                            "logo" => "shops/".$shop_logo,
-                            "shopName" => $shop_name,
-                            "shopEmail" => $shop_email,
-                            "shopDescription" => $shop_description,
-                            "ownerFirstname" => $firstname,
-                            "ownerMiddlename" => $middlename,
-                            "ownerLastname" => $lastname,
-                            "shopAddress" => $address,
-                            "subscription_id" => 0,
-                            "shopContact" => $shopContact,
-                            "contactPersonNumber"=>$cNumber,
-                            "contactPersonFname"=>$cFname,
-                            "contactPersonLname"=>$cLname
-                        );
-        
-                        $isShopCreated = $this->Shop_Model->createShop($newShop);
-        
-                        if(!$isShopCreated){
-                            $this->res(0,null,"Something went wrong, Sorry for Inconvinience",0);
-                        }
-
-                        $notif_data = array(
-                            "notif_title"=>"New Registered Seller",
-                            "notif_message"=> $newUserData[0]->username." was successfully register to our system please check it for approval",
-                            "notif_receiver"=> 1,
-                            "notif_link"=>"/pendingshops",
-                            "isRead"=>0
-                        );
-
-                        $this->Notification_Model->create($notif_data);
-
-                        $this->res(1,null,$shop_name." is successfully created!",0);
-                        move_uploaded_file($_FILES['shopLogo']['tmp_name'],"shops/".$shop_logo);
-               
-                    }catch(Exception $e){
-                        $this->User_Model->deleteUser($newUserData[0]->user_id);
-                        $this->res(0,null,"Something went wrong",0);
-                    }
-                }
-
-            }
-
-
-
       
-        }
-        
-        //login
-        public function login_post(){
-            $data = $this->decode();
-            $username = isset($data->username) ? $data->username : "";
-            $password = isset($data->password) ? $data->password : "";
-            $browserName = isset($data->browserName) ? $data->browserName : "";
        
-            $user = $this->User_Model->login($username,md5($password));
-                            
-                if(count($user) < 1){
-                    $this->res(0,null,"Invalid account please check your username or password",0);
-                }else{
-                    $pay = array(
-                        "user_id"=>$user[0]->user_id,
-                        "browserName" => $browserName,
-                    );
-
-                    if($user[0]->user_status === "1"){
-                        $this->UserLog_Model->insert($pay);
-                    }
-
-                   
-                    if($user[0]->user_status === "0"){
-                        $this->res(0,null,"Your Account is Inactive",0);
-                    }
-                    else if($user[0]->user_roles == "1"){
-                        $shopData = $this->Shop_Model->getShopByUserId($user[0]->user_id);
-                    
-                        $this->res(1,$shopData[0],"Successfully Login",0);
-                    }
-                    else if($user[0]->user_roles == "2"){
-                        $customerData = $this->Customer_Model->getCustomerByUserId($user[0]->user_id);
-    
-                        $this->res(1,$customerData[0],"Successfully Login",0);
-                    }else if($user[0]->user_roles == 0 || $user[0]->user_roles == 3){
-                        $adminData = $this->Admin_Model->getAdminByUserId($user[0]->user_id);
-                        
-                        $this->res(1,$adminData[0],"Successfully Login",0);
-                    }
-               }              
-        }
-
-        public function getpendingcustomer_get(){
-            $data = $this->Customer_Model->getPendingCustomer();
-            if(count($data) > 0){
-                $this->res(1,$data,"Data found",count($data));
-            }else{
-                $this->res(0,null,"Data not found",0);
-            }
-        }
-
         public function getusers_get($roles,$status){
             $data = $this->User_Model->getUserByStatus($roles,$status);
             $this->res(1,$data,"data found",0);
