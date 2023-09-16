@@ -20,7 +20,7 @@
             $this->db->select("*");
             $this->db->from($this->tbl);
             $this->db->where("username",$username);
-            $this->db->where("password",$password);
+            $this->db->where("password",$password); 
             $query = $this->db->get();
             return $query->result();
         }
