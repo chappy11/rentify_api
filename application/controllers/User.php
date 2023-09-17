@@ -6,7 +6,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("User_Model"));
+            $this->load->model(array("User_Model",'OwnerDocument_Model'));
         }
         //note:
         //user role:
@@ -30,8 +30,10 @@
             $gender = $data->gender;
             $birthdate = $data->birthdate;
             $address = $data->address;
-            $user_type = $data->userType;
-            $isActive = $data->isActive;
+            $email = $data->email;
+            $mobileNumber = $data->mobileNumber;
+            $user_type = 'RENTER';
+            $isActive = 'ACTIVE';
 
             $payload = array(
                 "username" => $username,
@@ -41,6 +43,8 @@
                 "lastName" => $lastName,
                 "gender" => $gender,
                 "birthdate" => $birthdate,
+                'email' => $email,
+                'mobileNumber' => $mobileNumber,
                 "user_type" => $user_type,
                 "isActive" => $isActive
             );
@@ -59,7 +63,7 @@
         public function login_post(){
             $data = $this->decode();
             
-            $username = $data->userName;
+            $username = $data->username;
             $password = $data->password;
             
             $resp = $this->User_Model->login($username,$password);
@@ -67,11 +71,44 @@
             if(count($resp) < 1){
                 $this->res(0,null,"Account is not exist",0);
             }else{
-                $this->res(1,$resp,"Successfully Login",0);
+                $this->res(1,$resp[0],"Successfully Login",0);
             }
         }
 
-        
+        public function updatetoowner_post(){
+            $document = $_FILES['docs']['name'];
+            $docsType = $this->post("documentType");
+            $userId = $this->post("userId");
+            $type = "OWNER";
+
+            $userPayload = array(
+                "user_type" => $type
+            );
+            $responseOfUpdateUser = $this->User_Model->updateUser($userId,$userPayload);
+
+            if($responseOfUpdateUser){
+                $docsPayload = array(
+                    'user_id' => $userId,
+                    "documentImage" => "profiles/".$document,
+                    "documentType" => $docsType
+                );
+
+                $resp = $this->OwnerDocument_Model->create($docsPayload);
+
+                if($resp){
+                    move_uploaded_file($_FILES['docs']['tmp_name'],"profiles/".$document);
+                    $resp = $this->User_Model->getuser($userId);
+
+                    $this->res(1,$resp[0],'Successfully Update',0);
+                }
+
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+
+        }
+
+
         public function isEmailExist($email,$type){
             $isExist = false;
 

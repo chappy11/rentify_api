@@ -46,12 +46,12 @@
         }
         
         public function updateUser($id,$data){
-            return $this->db->update($this->tbl,$data,"user.user_id=".$id);
+            return $this->db->update($this->tbl,$data,"users.user_id=".$id);
         }
 
         public function deleteUser($user_id){
             return $this->db->delete($this->tbl,array("user_id"=>$user_id));
-        }
+        }   
 
         public function checkDataExist($compareData){
             $this->db->select("*");
