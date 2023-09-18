@@ -14,5 +14,12 @@
        }
 
 
+       public function getVehicleById($userId){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user_id",$userId);
+            $query = $this->db->get();
+            return $query->result();
+       }
     }
 ?>

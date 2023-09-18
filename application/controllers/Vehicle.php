@@ -23,8 +23,6 @@
             $vehicleType = $this->post('vehicleType');
             $vehicleIsActive = 'ACTIVE';
             
-
-
             $payload = array(
                 "brand" => $brand,
                 "description" => $description,
@@ -49,6 +47,12 @@
             }else{
                 $this->res(0,null,"Something went wrong please try again later");
             }
+        }
+
+        public function myvehicle_get($userId){
+            $data = $this->Vehicle_Model->getVehicleById($userId);
+
+            $this->res(1,$data,"Fetch",count($data));
         }
     
     }
