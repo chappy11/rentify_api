@@ -21,5 +21,12 @@
             $query = $this->db->get();
             return $query->result();
        }
+
+       public function getVehicles(){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 ?>
