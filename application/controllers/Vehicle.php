@@ -62,5 +62,11 @@
             $this->res(1,$data,'Fetch',count($data));
         }
     
+
+        public function details_get($id){
+            $data = $this->Vehicle_Model->getVehicleDetails($id);
+
+            $this->res(1,$data[0],'Fetch',0);
+        }
     }
 ?>

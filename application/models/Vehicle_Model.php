@@ -28,5 +28,14 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function getVehicleDetails($id){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where('vehicles.vehicle_id',$id);
+            $this->db->join('users','users.user_id=vehicles.user_id');
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 ?>
