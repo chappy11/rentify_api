@@ -12,6 +12,7 @@
         public function warmup_post(){
             $this->res(1,null,"Connected",0);
         }
+        
         public function create_post(){
             $orImage = $_FILES['or']['name'];
             $crImage = $_FILES['cr']['name'];
@@ -22,7 +23,8 @@
             $userId  =$this->post('userId');
             $vehicleType = $this->post('vehicleType');
             $vehicleIsActive = 'ACTIVE';
-            
+            $price = $this->post("price");
+
             $payload = array(
                 "brand" => $brand,
                 "description" => $description,
@@ -32,7 +34,8 @@
                 "vehicleOr" => "or/".$orImage,
                 "vehicleCr" => "cr/".$crImage,
                 "vehicleImage" => "products/".$vehicleImage,
-                "user_id" => $userId              
+                "user_id" => $userId,              
+                "price" => $price,
             );
 
             $resp = $this->Vehicle_Model->createVehicle($payload);

@@ -60,6 +60,16 @@ require APPPATH.'libraries/REST_Controller.php';
                 return false;
             }
         }
+
+        public function generateRefId(){
+            $day = date('d');
+            $month = date('m');
+            $year = date('y');
+
+            $sixDigit = random_int(100000, 999999);
+        
+            return 'RTF'.'-'.$month.''.$year.''.$day.'-'.$sixDigit;
+        }
     
     }
 
