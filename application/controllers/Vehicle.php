@@ -71,5 +71,6 @@
 
             $this->res(1,$data[0],'Fetch',0);
         }
+
     }
 ?>

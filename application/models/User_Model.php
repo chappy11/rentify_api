@@ -84,6 +84,10 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function getUserById($userId){
+            return $this->db->get_where($this->tbl,['user_id'=>$userId])->row();
+        }
     }
 
 ?>

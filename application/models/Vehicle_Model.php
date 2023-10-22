@@ -37,5 +37,9 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function getVehicleDataById($vehicle_id){
+            return $this->db->get_where('vehicles', ['vehicle_id' => $vehicle_id])->row();
+        }
     }
 ?>

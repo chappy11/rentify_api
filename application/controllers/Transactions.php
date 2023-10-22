@@ -1,46 +1,31 @@
 <?php 
-
 include_once(dirname(__FILE__)."/Data_format.php");
+
     class Transactions extends Data_format{
+
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array('Transaction_Model'));
-        }
 
+            $this->load->model(array("Transactions_Model"));
+        }
 
         public function create_post(){
             $data = $this->decode();
-            $refId = $this->generateRefId();
-            $customerId = $data->customerId;
-            $vehicleId = $data->vehicleId;
-            $bookdate = $data->bookdate;
-            $pickuptime = $data->pickuptime;
-            $status = 'PENDING';
-            $origin = $data->origin;
-            $destination = $data->destination;
 
+            $customer_id = $data->customerId;
+            $vehicle_id = $data->vehicleId;
+            $booking_id = $data->bookingId;
+            $driverId = $data->driverId;
+        
+        
             $payload = array(
-                'ref_id' => $refId,
-                'customer_id' => $customerId,
-                'vehicle_id' => $vehicleId,
-                'book_date' => $bookdate,
-                'pickup_time' => $pickuptime,
-                'status' => $status,
-                'origin' => $origin,
-                'destination' => $destination
+                "driver_id" => $driverId,
+                "user_id" => $customer_id,
+                "booking_id" => $booking_id,
+                "transaction_status" => "PENDING",
             );
-
-            $resp = $this->Transaction_Model->create($payload);
-
-            if($resp){
-                $this->res(1,null,"Successfully Created",0);
-            }else{
-                $this->res(0,null,"Something went wrong",0);
-            }
         }
-
-    
     }
 
 ?>
