@@ -54,5 +54,11 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $this->res(1,$result[0],"Successfully Login",0);
             }
         }
+
+        public function getdriverbyowner_get($ownerId){
+            $data = $this->Drivers_Model->getDriversByOwner($ownerId);
+
+            $this->res(1,$data,'Success get',0);
+        }
     }
 ?>
