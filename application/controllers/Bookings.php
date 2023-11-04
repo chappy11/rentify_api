@@ -5,7 +5,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array('Bookings_Model'));
+            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model'));
         }
 
 
@@ -27,6 +27,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 'ref_id' => $refId,
                 'customer_id' => $customerId,
                 'vehicle_id' => $vehicleId,
+                'driver_id' => 0,
                 'distance' => $distance,
                 'amount' => $amount,
                 'book_date' => $bookdate,
@@ -52,6 +53,36 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
             $this->res(1,$data,'Data found',0);
         }
+
+        public function getbookingbyid_get($booking_id){
+            $data = $this->Booking_Model->getBookingById($booking_id);
+
+            $this->res(1,$data,"Data",0);
+        }
+
+        public function getbookingbyrefid_get($refId){
+            $data = $this->Bookings_Model->getBookingByRefId($refId)[0];
+
+            $ownerData = $this->User_Model->getuser($data->owner_id)[0];
+            $customerData = $this->User_Model->getuser($data->customer_id)[0];
+            $vehicleData = $this->Vehicle_Model->getVehicleDataById($data->vehicle_id);
+            $driverData = null;
+
+            if($data->driver_id !== '0'){
+                $driverData = $this->Drivers_Model->getDriverById($data->driver_id);
+            }
+
+            $response = array(
+                "booking" => $data,
+                "owner" => $ownerData,
+                "customer" => $customerData,
+                "vehicles" => $vehicleData,
+                'driver' => $driverData
+            );
+
+            $this->res(1,$response,'Retrieve',0);
+        }
+
     }
 
 ?>

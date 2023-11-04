@@ -32,7 +32,10 @@
             $query = $this->db->get();
             return $query->result();
         }
-    
+
+        public function getDriverById($driver_id){
+            return $this->db->get_where($this->tble, ['driver_id' => $driver_id])->row();
+        }
     }
 
 ?>
