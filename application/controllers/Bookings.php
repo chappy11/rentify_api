@@ -83,6 +83,65 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $this->res(1,$response,'Retrieve',0);
         }
 
+
+        public function accept_post(){
+            $data = $this->decode();
+        
+            $refId = $data->refId;
+            $driverId  = $data->driver_id;
+  
+            $bookingData = $this->Bookings_Model->getBookingByRefId($refId)[0];
+
+            $checkDriverBookingByDate = $this->Bookings_Model->checkifdriver($driverId,$bookingData->book_date);
+           
+            if(count($checkDriverBookingByDate) > 0){
+                $this->res(0,null,"The driver is currenty no available on this book date",0);
+            }else{
+                $payload = array(
+                    "driver_id" => $driverId,
+                    "status" => "ACCEPTED"
+                );
+                $response = $this->Bookings_Model->updateData($refId,$payload);
+
+                if($response){
+                    $this->res(1,null,"Successfully Updated",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+            }
+        }
+
+        public function bookingbydriver_get($driverId){
+            $data = $this->Bookings_Model->getBookingByDriver($driverId);
+
+            $this->res(1,$data,"GG",count($data));
+        }
+    
+        public function updatestatus_post($refId,$status){
+            $payload = array(
+                "status" => $status
+            );
+
+            $response = $this->Bookings_Model->updateData($refId,$payload);
+
+            if($response){
+                $this->res(1,null,"Data Updated",0);
+            }else{
+                $this->res(0,null,"Data not updated",0);
+            }
+        }
+  
+        public function getbookingbycustomer_get($userId){
+            $data = $this->Bookings_Model->getbookingbyuserid($userId);
+
+            $this->res(1,$data,"GG",0);
+        }
+
+        public function gettransactionbyowner_get($user_id){
+            $data = $this->Bookings_Model->getTransactionsByOwner($user_id);
+
+            $this->res(1,$data,"GG",0);
+        }
     }
 
 ?>
