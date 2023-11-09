@@ -88,6 +88,10 @@
         public function getUserById($userId){
             return $this->db->get_where($this->tbl,['user_id'=>$userId])->row();
         }
+
+        public function update($id,$payload){
+            return $this->db->update($this->tbl,$payload,'user_id='.$id);
+        }
     }
 
 ?>

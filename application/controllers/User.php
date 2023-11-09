@@ -19,6 +19,7 @@
             $this->res(1,null,"Hello world",1);
         }
 
+        
 
         public function register_post(){
             $data = $this->decode();
@@ -73,6 +74,18 @@
             }else{
                 $this->res(1,$resp[0],"Successfully Login",0);
             }
+        }
+
+        public function updatepicture_post(){
+            $userId = $this->post('id');
+            $img = $_FILES['img']['name'];
+
+            $payload = array(
+                'image' => "profiles/".$img,
+            );
+
+            $isUpdate = $this->User_Model->update($userId,$payload);
+            
         }
 
         public function updatetoowner_post(){
@@ -228,8 +241,6 @@
     
             }          
         }
-
-      
        
         public function getusers_get($roles,$status){
             $data = $this->User_Model->getUserByStatus($roles,$status);
