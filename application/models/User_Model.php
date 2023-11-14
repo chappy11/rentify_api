@@ -61,22 +61,6 @@
             return $query->result();
         }
 
-        public function getUserByStatus($roles,$status){
-            $this->db->select("*");
-            $this->db->from($this->tbl);
-            if($status != 3){
-                $this->db->where("user.user_status",$status);
-            }
-           
-            if($roles == 2){
-                $this->db->join("customer","customer.user_id=user.user_id");
-            }else{
-                $this->db->join("shop","shop.user_id=user.user_id");
-            }
-            $query =$this->db->get();
-            return $query->result();
-        }
-
         public function getuser($user_id){
             $this->db->select("*");
             $this->db->from($this->tbl);
@@ -91,6 +75,15 @@
 
         public function update($id,$payload){
             return $this->db->update($this->tbl,$payload,'user_id='.$id);
+        }
+  
+        public function getuserbystatus($status){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->where("user_status",$status);
+            $this->db->join("owner_documents",'owner_documents.user_id=users.user_id','LEFT');
+            $query= $this->db->get();
+            return $query->result();
         }
     }
 
