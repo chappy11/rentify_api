@@ -179,6 +179,47 @@
 
             $this->res(1,$user,"GET",count($user));
         }
+
+        public function verification_post(){
+            $data = $this->decode();
+            $email = $data->email;
+            $code = $data->code;
+
+            $ht ="<html>
+            <div style='margin: auto; width: 600px'>
+              <h3 style='text-align: center'>Rentify Verification Code</h3>
+          
+              <p style='text-align: center'>
+                Your verification code is ".$code." please do not share it to anyone
+              </p>
+            </div>
+          </html>";
+            $config['protocol']    = 'smtp';
+            $config['smtp_host']    = 'smtp.mailtrap.io';
+            $config['smtp_port']    = '2525';
+            $config['smtp_user'] = '97e866dd948879';
+            $config['smtp_pass'] = '0ebfc149ebaf56';
+            $config['charset']    = 'utf-8';
+            $config['newline']    = "\r\n";
+            $config['mailtype'] = 'html'; // or html
+            $config['validation'] = TRUE; // bool whether to validate email or not      
+            $this->load->library('email');
+
+            $this->email->initialize($config);
+            $this->email->from("no-reply@petsoceity.com");
+            $this->email->to($email);
+            $this->email->subject("Verification Code");
+            $this->email->message($ht);
+  
+            $resp = $this->email->send();
+        
+            if($resp){
+                $this->res(1,null,"Successfully Sent",0);
+            }else{
+                $this->res(0,null,"Error Verification",0);
+            }
+        }
+
         public function approvedEmail($email){
             $ht ="<html>
             <div style='margin: auto; width: 600px'>
@@ -203,7 +244,7 @@
             $this->email->initialize($config);
             $this->email->from("no-reply@petsoceity.com");
             $this->email->to($email);
-            $this->email->subject("Email Verificatoin Code");
+            $this->email->subject("Welcome to Rentify Vehicle Owners");
             $this->email->message($ht);
   
             $this->email->send();
