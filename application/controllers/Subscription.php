@@ -47,7 +47,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
             
             $this->res(1,$data,"Successfully Fetch",count($data));
         }
-    
+
     }
 
 ?>

@@ -46,6 +46,7 @@
                 "birthdate" => $birthdate,
                 'email' => $email,
                 'mobileNumber' => $mobileNumber,
+                'address' => $address,
                 "user_type" => $user_type,
                 "isActive" => $isActive
             );
@@ -222,9 +223,8 @@
 
         public function approvedEmail($email){
             $ht ="<html>
-            <div style='margin: auto; width: 600px'>
+            <div style='margin: auto; width: 600px'>    
               <h3 style='text-align: center'>Welcome to Rentify</h3>
-          
               <p style='text-align: center'>
             Congratulations! Your are now part of Rentify Owners.
               </p>
@@ -244,7 +244,7 @@
             $this->email->initialize($config);
             $this->email->from("no-reply@petsoceity.com");
             $this->email->to($email);
-            $this->email->subject("Welcome to Rentify Vehicle Owners");
+            $this->email->subject("Email Verificatoin Code");
             $this->email->message($ht);
   
             $this->email->send();
