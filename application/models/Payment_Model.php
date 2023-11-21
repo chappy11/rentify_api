@@ -9,7 +9,14 @@
             $this->load->database();
         }
 
-        public function create($payload){
+        public function create($data){
+            $fourdigit = random_int(1000,9999);
+            $sixDigit = random_int(100000, 999999);
+        
+            $code = $fourdigit.'-'.$sixDigit;
+            $codePayload = array("code"=>$code);
+            $payload = (object)array_merge((array)$data,(array)$codePayload);
+            
             return $this->db->insert($this->table,$payload);
         }
 

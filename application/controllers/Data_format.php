@@ -62,13 +62,10 @@ require APPPATH.'libraries/REST_Controller.php';
         }
 
         public function generateRefId(){
-            $day = date('d');
-            $month = date('m');
-            $year = date('y');
-
+            $fourdigit = random_int(1000,9999);
             $sixDigit = random_int(100000, 999999);
         
-            return 'RTF'.'-'.$month.''.$year.''.$day.'-'.$sixDigit;
+            return $fourdigit.'-'.$sixDigit;
         }
     
     }

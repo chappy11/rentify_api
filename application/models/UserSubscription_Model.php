@@ -16,8 +16,9 @@
         public function getusersub($user_id){
             $this->db->select("*");
             $this->db->from($this->table);
-            $this->db->where("user_id",$user_id);
-            $this->db->where("usersub_status","ACTIVE");
+            $this->db->where("user_subscription.user_id",$user_id);
+            $this->db->where("user_subscription.usersub_status","ACTIVE");
+            $this->db->join("subscription","subscription.sub_id=user_subscription.sub_id");
             $query = $this->db->get();
             return $query->result();
         }
