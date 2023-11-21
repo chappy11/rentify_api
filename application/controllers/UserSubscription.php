@@ -31,9 +31,8 @@
                     $isUpdated =  $this->UserSubscription_Model->updateStatus($userId,$payload);
                     
                     return false;
-                    return true;
                 } else {
-                    return false;
+                    return true;
                 }
             }
         }
@@ -43,5 +42,18 @@
 
             $this->res(1,$resp,"GG",0);
         }
+
+        public function check_get(){
+            $resp = $this->isHasSubscription($userId);
+
+            if($resp){
+               $data =  $this->UserSubscription_Model->getusersub($userId);
+            
+               $this->res(1,$data[0],"Successfully Get",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
+
     }
 ?>
