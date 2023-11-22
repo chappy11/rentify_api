@@ -20,6 +20,10 @@
             return $this->db->insert($this->table,$payload);
         }
 
+        public function pay($data){
+          return $this->db->insert($this->table,$data);
+        }
+
         public function getPaymentByReciever($mobileNumber){
             $this->db->select("*");
             $this->db->from($this->table);

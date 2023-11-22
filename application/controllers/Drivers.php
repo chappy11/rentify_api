@@ -11,15 +11,17 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
 
         public function create_post(){
-            $data = $this->decode();
+            $img = $_FILES['img']['name'];
+            $license = $_FILES['license']['name'];
+    
 
-            $owner_id = $data->owner_id;
-            $username = $data->username;
-            $password = $data->password;
-            $firstname = $data->firstName;
-            $middlename = $data->middleName;
-            $lastname = $data->lastName;
-            $contactNumber = $data->contactNumber;
+            $owner_id = $this->post('owner_id');
+            $username = $this->post('username');
+            $password = $this->post('password');
+            $firstname = $this->post('fname');
+            $middlename = $this->post('mname');
+            $lastname = $this->post('lname');
+            $contactNumber = $this->post('contact');;
         
             $payload = array(
                 "owner_id" => $owner_id,
@@ -28,13 +30,18 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 "firstName" => $firstname,
                 "middleName" => $middlename,
                 "lastName" => $lastname,
-                "contactNumber" => $contactNumber
+                "contactNumber" => $contactNumber,
+                "driver_pic" => "shops/".$img,
+                "driver_license" => "shops/".$license
             );
         
             $result = $this->Drivers_Model->create($payload);
 
             if($result){
+                move_uploaded_file($_FILES['img']['tmp_name'],"shops/".$img);
+                move_uploaded_file($_FILES['license']['tmp_name'],"shops/".$license);
                 $this->res(1,null,"Successfully Registered",0);
+                
             }else{
                 $this->res(0,null,"Something went wrong please try again later");
             }

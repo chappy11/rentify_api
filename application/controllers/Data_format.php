@@ -65,7 +65,7 @@ require APPPATH.'libraries/REST_Controller.php';
             $fourdigit = random_int(1000,9999);
             $sixDigit = random_int(100000, 999999);
         
-            return $fourdigit.'-'.$sixDigit;
+            return 'RTF-'.$fourdigit.'-'.$sixDigit;
         }
     
     }

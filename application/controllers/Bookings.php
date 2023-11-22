@@ -5,7 +5,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model'));
+            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model','VehicleImage_Model'));
         }
 
 
@@ -18,10 +18,12 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $vehicleId = $data->vehicleId;
             $bookdate = $data->bookdate;
             $pickuptime = $data->time;
+            $paymentMethod = $data->paymentMethod;
             $status = 'PENDING';
             $origin = $data->origin;
             $owner_id = $data->owner_id;
             $destination = $data->destination;
+            $payment = '';
 
             $payload = array(
                 'ref_id' => $refId,
@@ -35,7 +37,9 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 'status' => $status,
                 'origin' => $origin,
                 'destination' => $destination,
-                'owner_id' => $owner_id
+                'owner_id' => $owner_id,
+                "paymentMethod" => $paymentMethod,
+                "paymentCode" => $payment,
             );
 
             $resp = $this->Bookings_Model->create($payload);
@@ -50,8 +54,16 @@ include_once(dirname(__FILE__)."/Data_format.php");
   
         public function getbookingbystatus_get($user_id,$status){
             $data = $this->Bookings_Model->getBookingsByStatus($user_id,$status);
+            $arr_container = [];
+            foreach($data as $val){
+                $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);
+                $imgPayload = array("images" => $vehicleImg);
+                $pyload = (object)array_merge((array)$val,(array)$imgPayload);
 
-            $this->res(1,$data,'Data found',0);
+                array_push($arr_container,$pyload);
+            }
+
+            $this->res(1,$arr_container,"Fetch",count($data));
         }
 
         public function getbookingbyid_get($booking_id){
@@ -113,8 +125,16 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         public function bookingbydriver_get($driverId){
             $data = $this->Bookings_Model->getBookingByDriver($driverId);
+            $arr_container = [];
+            foreach($data as $val){
+                $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);
+                $imgPayload = array("images" => $vehicleImg);
+                $pyload = (object)array_merge((array)$val,(array)$imgPayload);
 
-            $this->res(1,$data,"GG",count($data));
+                array_push($arr_container,$pyload);
+            }
+
+            $this->res(1,$arr_container,"Fetch",count($data));
         }
     
         public function updatestatus_post($refId,$status){
@@ -133,14 +153,49 @@ include_once(dirname(__FILE__)."/Data_format.php");
   
         public function getbookingbycustomer_get($userId){
             $data = $this->Bookings_Model->getbookingbyuserid($userId);
+            $arr_container = [];
+            foreach($data as $val){
+                $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);
+                $imgPayload = array("images" => $vehicleImg);
+                $pyload = (object)array_merge((array)$val,(array)$imgPayload);
 
-            $this->res(1,$data,"GG",0);
+                array_push($arr_container,$pyload);
+            }
+
+            $this->res(1,$arr_container,"Fetch",count($data));
         }
 
         public function gettransactionbyowner_get($user_id){
             $data = $this->Bookings_Model->getTransactionsByOwner($user_id);
+            $arr_container = [];
+            foreach($data as $val){
+                $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);
+                $imgPayload = array("images" => $vehicleImg);
+                $pyload = (object)array_merge((array)$val,(array)$imgPayload);
 
+                array_push($arr_container,$pyload);
+            }
+
+            $this->res(1,$arr_container,"Fetch",count($data));
+        }
+  
+        public function addfee_post(){
+            $data = $this->decode();
             $this->res(1,$data,"GG",0);
+            $id = $data->ref_id;
+            $amount = $data->amount;
+
+            $payload = array(
+                "additionalfee" => $amount
+            );
+
+            $resp = $this->Bookings_Model->updateData($id,$payload);
+
+            if($resp){
+                $this->res(1,null,"Successfully Added",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
         }
     }
 
