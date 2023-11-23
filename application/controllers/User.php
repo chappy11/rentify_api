@@ -181,6 +181,20 @@
             $this->res(1,$user,"GET",count($user));
         }
 
+        public function updateuser_post($id){
+            $data = $this->decode();
+
+            $isUpdate = $this->User_Model->update($id,$data);
+
+            if($isUpdate) {
+                $user = $this->User_Model->getUserById($id);
+                $this->res(1,$user,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
+
+
         public function verification_post(){
             $data = $this->decode();
             $email = $data->email;

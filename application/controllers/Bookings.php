@@ -228,12 +228,32 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 if($isUpdate){
                     $this->res(1,null,"Successfully Paid",0);
                 }else{
-                    $this->res(0,null,"Something went wrong",0);
+                     $this->res(0,null,"Something went wrong",0);
                 }
             }else{
                 $this->res(0,null,"Something went wrong",0);
             }
         }
+
+
+        public function updateuser_post(){
+            $data = $this->decode();
+
+            $isUpdate = $this->User_Model->update($data->user_id,$payload);
+
+            if($isUpdate) {
+                $user = $this->User_Model->getUserById($id);
+                $this->res(1,$user,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
+
+        public function updat_post($id){
+            $this->res(1,$id,"GG",0);
+        }
+
+        
     }
 
 ?>
