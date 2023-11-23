@@ -91,5 +91,15 @@
             $this->res(1,$pyload,'Fetch',0);
         }
 
+        public function update_post($id){
+            $data = $this->decode();
+            $resp = $this->Vehicle_Model->updateData($id,$data);
+
+            if($resp){
+                $this->res(1,null,"Fetch",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
     }
 ?>

@@ -19,6 +19,7 @@
             $this->db->select("*");
             $this->db->from($this->tble);
             $this->db->where("owner_id",$owner_id);
+            $this->db->where("isDeleted",0);
             $query = $this->db->get();
             return $query->result();
         }
@@ -36,6 +37,11 @@
         public function getDriverById($driver_id){
             return $this->db->get_where($this->tble, ['driver_id' => $driver_id])->row();
         }
+  
+        public function updateDriver($id,$payload){
+            return $this->db->update($this->tble,$payload,"driver_id=".$id);
+        }
+  
     }
 
 ?>

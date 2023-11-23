@@ -43,7 +43,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $this->res(1,null,"Successfully Registered",0);
                 
             }else{
-                $this->res(0,null,"Something went wrong please try again later");
+                $this->res(0,null,"Something went wrong please try again later",0);
             }
         }
 
@@ -67,6 +67,25 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $data = $this->Drivers_Model->getDriversByOwner($ownerId);
 
             $this->res(1,$data,'Success get',0);
+        }
+
+        public function driver_get($id){
+            $data = $this->Drivers_Model->getDriverById($id);
+
+            $this->res(1,$data,'Success get',0);
+        }
+
+        public function update_post($id){
+            $data = $this->decode();
+
+            $isUpdate = $this->Drivers_Model->updateDriver($id,$data);
+            if($isUpdate){
+              
+                $this->res(1,null,"Successfully Updated",0);
+                
+            }else{
+                $this->res(0,null,"Something went wrong please try again later",0);
+            }
         }
     }
 ?>

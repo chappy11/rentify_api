@@ -18,6 +18,7 @@
             $this->db->select("*");
             $this->db->from($this->tbl);
             $this->db->where("user_id",$userId);
+            $this->db->where('isDeleted',0);
             $query = $this->db->get();
             return $query->result();
        }
@@ -25,6 +26,7 @@
        public function getVehicles(){
             $this->db->select("*");
             $this->db->from($this->tbl);
+            $this->db->where('vehicles.isDeleted',0);
             $query = $this->db->get();
             return $query->result();
         }
@@ -40,6 +42,10 @@
 
         public function getVehicleDataById($vehicle_id){
             return $this->db->get_where('vehicles', ['vehicle_id' => $vehicle_id])->row();
+        }
+
+        public function updateData($id,$payload){
+            return $this->db->update($this->tbl,$payload,"vehicle_id=".$id);
         }
     }
 ?>
