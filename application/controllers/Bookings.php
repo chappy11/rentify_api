@@ -5,7 +5,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model','VehicleImage_Model'));
+            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model','VehicleImage_Model',"Payment_Model"));
         }
 
 
@@ -193,6 +193,43 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
             if($resp){
                 $this->res(1,null,"Successfully Added",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
+
+        public function pay_post(){
+            $data = $this->decode();
+            $refId = $data->refid;
+            $owner_mobile = $data->oMobileNo;
+            $customer_mobile = $data->cMobileNo;
+            $amount = $data->amount;
+            $fourdigit = random_int(1000,9999);
+            $sixDigit = random_int(100000, 999999);
+        
+            $code = $fourdigit.'-'.$sixDigit;
+            $payload = array(
+                "code" => $code,
+                "reciever" => $owner_mobile,
+                "sender" => $customer_mobile,
+                "amount" => $amount,
+                "notes" => "Online Payment"
+            );
+
+            $isPaid = $this->Payment_Model->pay($payload);
+
+            if($isPaid){
+                $updatePayload = array(
+                    "paymentCode" => $code
+                );
+
+                $isUpdate = $this->Bookings_Model->updateData($refId,$updatePayload);
+
+                if($isUpdate){
+                    $this->res(1,null,"Successfully Paid",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
             }else{
                 $this->res(0,null,"Something went wrong",0);
             }
