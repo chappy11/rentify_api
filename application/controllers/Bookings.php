@@ -80,6 +80,9 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $vehicleData = $this->Vehicle_Model->getVehicleDataById($data->vehicle_id);
             $driverData = null;
 
+            $vehicleImg = $this->VehicleImage_Model->getByNonce($vehicleData->vehicleImage);
+            $imgPayload = array("images" => $vehicleImg);
+            $pyload = (object)array_merge((array)$vehicleData,(array)$imgPayload);
             if($data->driver_id !== '0'){
                 $driverData = $this->Drivers_Model->getDriverById($data->driver_id);
             }
@@ -88,7 +91,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 "booking" => $data,
                 "owner" => $ownerData,
                 "customer" => $customerData,
-                "vehicles" => $vehicleData,
+                "vehicles" => $pyload,
                 'driver' => $driverData
             );
 
@@ -234,26 +237,30 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $this->res(0,null,"Something went wrong",0);
             }
         }
-
-
-        public function updateuser_post(){
-            $data = $this->decode();
-
-            $isUpdate = $this->User_Model->update($data->user_id,$payload);
-
-            if($isUpdate) {
-                $user = $this->User_Model->getUserById($id);
-                $this->res(1,$user,"Successfully Updated",0);
-            }else{
-                $this->res(0,null,"Something went wrong",0);
-            }
-        }
-
+      
         public function updat_post($id){
             $this->res(1,$id,"GG",0);
         }
 
-        
+        public function cancel_post($refId){
+            $bookingData = $this->Bookings_Model->getBookingByRefId($refId)[0];
+
+            if($bookingData->status == 'ACCEPTED'){
+                $this->res(0,null,"This transaction is already accepted",0);
+            }else{
+                $payload = array(
+                    "status" => 'CANCELED'
+                );
+
+                $isUpdate = $this->Bookings_Model->updateData($refId,$payload);
+
+                if($isUpdate){
+                    $this->res(1,null,"Successfully Canceled",0);
+                }else{
+                    $this->res(0,null,"Something went wrong",0);
+                }
+            }        
+        }
     }
 
 ?>
