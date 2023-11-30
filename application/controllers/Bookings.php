@@ -5,7 +5,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model','VehicleImage_Model',"Payment_Model"));
+            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model','VehicleImage_Model',"Payment_Model","Notification_Model"));
         }
 
 
@@ -116,6 +116,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
                     "driver_id" => $driverId,
                     "status" => "ACCEPTED"
                 );
+
                 $response = $this->Bookings_Model->updateData($refId,$payload);
 
                 if($response){
@@ -141,12 +142,53 @@ include_once(dirname(__FILE__)."/Data_format.php");
         }
     
         public function updatestatus_post($refId,$status){
+            $bookingData = $this->Bookings_Model->getBookingByRefId($refId)[0];
+            
             $payload = array(
                 "status" => $status
             );
 
             $response = $this->Bookings_Model->updateData($refId,$payload);
+            if($status == "TO_PICK_UP"){
 
+                $nPayload = array(
+                    "reciever_id" => $bookingData->customer_id,
+                    "header" => "Traveling to your location ",
+                    "body" => "Your driver is on the way to your location please be prepared...",
+                    "notif_status" => 1,
+                );
+                $this->Notification_Model->create($nPayload);
+            }else if($status == 'PICK_UP'){
+                $customerPayload = array(
+                    "reciever_id" => $bookingData->customer_id,
+                    "header" => "Successfully Pick Up ",
+                    "body" => "You have successfully pick up by your driver",
+                    "notif_status" => 1
+                );
+                $this->Notification_Model->create($customerPayload);
+                $ownerPayload = array(
+                    "reciever_id" => $bookingData->owner_id,
+                    "header" => "Driver pick up customer",
+                    "body" => "Your driver successfully pickup customer",
+                    "notif_status" => 1
+                );
+                $this->Notification_Model->create($ownerPayload);
+            }else if($status == 'SUCCESS'){
+                $sownerPayload = array(
+                    "reciever_id" => $bookingData->owner_id,
+                    "header" => "Customer Arrived to their destination",
+                    "body" => "Your driver successfully to its destination",
+                    "notif_status" => 1
+                );
+                $this->Notification_Model->create($sownerPayload);
+                $scustomerPayload = array(
+                    "reciever_id" => $bookingData->customer_id,
+                    "header" => "Arrived to your destination ",
+                    "body" => "Driver successfully arrived to your destination.. ",
+                    "notif_status" => 1
+                );
+                $this->Notification_Model->create($scustomerPayload);
+            }
             if($response){
                 $this->res(1,null,"Data Updated",0);
             }else{
