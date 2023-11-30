@@ -21,5 +21,18 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+        public function getactivenotif($reciever_id){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->where("reciever_id",$reciever_id);
+            $this->db->where("notif_status",1);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function updateData($id,$payload){
+            return $this->db->update($this->table,$payload,"notif_id=".$id);
+        }
     }
 ?>
