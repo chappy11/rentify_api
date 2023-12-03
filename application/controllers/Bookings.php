@@ -45,6 +45,13 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $resp = $this->Bookings_Model->create($payload);
 
             if($resp){
+                $customerPayload = array(
+                    "reciever_id" => $owner_id,
+                    "header" => "You have new bookings ",
+                    "body" => "Hi, You have a new booking please check your list of bookings",
+                    "notif_status" => 1
+                );
+                $this->Notification_Model->create($customerPayload);
                 $this->res(1,null,"Successfully Created",0);
             }else{
                 $this->res(0,null,"Something went wrong",0);
@@ -120,6 +127,13 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $response = $this->Bookings_Model->updateData($refId,$payload);
 
                 if($response){
+                    $customerPayload = array(
+                        "reciever_id" => $bookingData->customer_id,
+                        "header" => "Your booking  is accepted ",
+                        "body" => "Your booking request is accepted please check you booking",
+                        "notif_status" => 1
+                    );
+                    $this->Notification_Model->create($customerPayload);
                     $this->res(1,null,"Successfully Updated",0);
                 }else{
                     $this->res(0,null,"Something went wrong",0);
@@ -297,11 +311,44 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $isUpdate = $this->Bookings_Model->updateData($refId,$payload);
 
                 if($isUpdate){
+                    $customerPayload = array(
+                        "reciever_id" => $bookingData->owner_id,
+                        "header" => "Booking canceled ",
+                        "body" => "Booking ".$bookingData->ref_id." has been canceled",
+                        "notif_status" => 1
+                    );
+                    $this->Notification_Model->create($customerPayload);
                     $this->res(1,null,"Successfully Canceled",0);
                 }else{
                     $this->res(0,null,"Something went wrong",0);
                 }
             }        
+        }
+
+        public function declined_post($refId){
+            $data = $this->decode();
+            $bookingData = $this->Bookings_Model->getBookingByRefId($refId)[0];
+
+            $reason = $data->reason;
+        
+            $payload = array(
+                "status" => 'DECLINED'
+            );
+
+            $isUpdate = $this->Bookings_Model->updateData($refId,$payload);
+        
+            if($isUpdate){
+                $customerPayload = array(
+                    "reciever_id" => $bookingData->customer_id,
+                    "header" => "Booking Declined ",
+                    "body" => "Your booking has been declined due to ".$reason,
+                    "notif_status" => 1
+                );
+                $this->Notification_Model->create($customerPayload);
+                $this->res(1,null,"Successfully Declined",0);
+            }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
         }
     }
 
