@@ -10,7 +10,7 @@
         }
 
         public function create($payload){
-            $this->db->insert($this->table,$payload);
+            return $this->db->insert($this->table,$payload);
         }
 
         public function getConvo($array){
