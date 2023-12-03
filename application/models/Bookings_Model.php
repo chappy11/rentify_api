@@ -94,5 +94,26 @@
             return $query->result();
         }
 
+        public function bookingQuery($arrQuery){
+            $this->db->select("*");
+            $this->db->from($this->tbl_name);
+            $this->db->where($arrQuery);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        public function checkBooking($customerid,$vehicleId){
+            $this->db->select('*');
+            $this->db->from($this->tbl_name);
+            $this->db->group_start();
+            $this->db->or_where('status!=','CANCELED');
+            $this->db->or_where('status!=','DECLINED');
+            $this->db->or_where('status!=','SUCCESS');
+            $this->db->group_end();
+            $this->db->where('customer_id', $customerid);
+            $this->db->where('vehicle_id', $customerid);
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 ?>

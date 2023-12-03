@@ -25,6 +25,33 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $destination = $data->destination;
             $payment = '';
 
+            $queryArr = array(
+                "vehicle_id" => $vehicleId,
+                "customer_id" => $customerId
+            );
+            
+            $check = $this->Bookings_Model->bookingQuery($queryArr);
+            $statusArray = [
+                'PENDING',
+                'ACCEPTED',
+                'TO_PICK_UP',
+                'PICK_UP'
+            ];
+            $countError = 0;
+            foreach ($check as  $bookData) {
+               if(in_array($bookData->status,$statusArray)){
+                $countError += 1;
+               }else{
+                $countError +=0;
+               }
+            }
+
+        
+            
+            if($countError > 0){
+                $this->res(0,null,"You have a current booking to this vehicle please settle first",0);
+                return;
+            }
             $payload = array(
                 'ref_id' => $refId,
                 'customer_id' => $customerId,
