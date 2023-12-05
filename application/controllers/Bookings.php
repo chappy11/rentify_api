@@ -31,7 +31,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 "book_date" =>$bookdate
             );
 
-            $checkHasBooking = $this->Booking_Model->bookingQuery($checkQUery);
+            $checkHasBooking = $this->Bookings_Model->bookingQuery($checkQUery);
 
             if(count($checkHasBooking) > 0){
                 $this->res(0,null,"This Date is not available",0);
