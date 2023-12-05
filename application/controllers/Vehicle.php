@@ -101,5 +101,16 @@
                 $this->res(0,null,"Something went wrong",0);
             }
         }
+
+
+        //admin
+
+        public function vehicles_post(){
+            $data = $this->decode();
+
+            $resp = $this->Vehicle_Model->getVehicles($data);
+            
+            $this->res(1,$resp,"Successfully Fetch",count($resp));
+        }
     }
 ?>

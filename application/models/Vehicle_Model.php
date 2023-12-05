@@ -47,5 +47,16 @@
         public function updateData($id,$payload){
             return $this->db->update($this->tbl,$payload,"vehicle_id=".$id);
         }
+
+        public function getVehicleQuery($arr = null){
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            if($arr !== null){
+                $this->db->where($arr);
+            }
+            $this->db->join('users','users.user_id=vehicles.user_id');
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 ?>

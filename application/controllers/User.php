@@ -263,6 +263,15 @@
   
             $this->email->send();
         }
+
+        //admin
+
+        public function users_post(){
+            $data = $this->decode();
+
+            $resp = $this->User_Model->getuserQuery($data);
+            $this->res(1,$resp,'GG',count($resp));
+        }
     }
 
 ?>
