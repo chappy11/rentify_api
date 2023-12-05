@@ -25,11 +25,25 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $destination = $data->destination;
             $payment = '';
 
+            
+            $checkQUery = array(
+                "vehicle_id" => $vehicleId,
+                "book_date" =>$bookdate
+            );
+
+            $checkHasBooking = $this->Bookings_Model->bookingQuery($checkQUery);
+
+            if(count($checkHasBooking) > 0){
+                $this->res(0,null,"This Date is not available",0);
+                return;
+            }
+            
             $queryArr = array(
                 "vehicle_id" => $vehicleId,
                 "customer_id" => $customerId
             );
             
+
             $check = $this->Bookings_Model->bookingQuery($queryArr);
             $statusArray = [
                 'PENDING',
