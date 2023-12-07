@@ -109,5 +109,11 @@
             }
   
         }
+
+        public function income_get(){
+            $data =  $this->UserSubscription_Model->getAllusersub();
+            
+            $this->res(1,$data,"Subscritpion",0);
+        }
     }
 ?>

@@ -26,6 +26,15 @@
         public function updateStatus($user_id,$payload){
             return $this->db->update($this->table,$payload,"user_id=".$user_id);
         }
+
+        public function getAllusersub(){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->join("subscription","subscription.sub_id=user_subscription.sub_id");
+            $this->db->join("users","users.user_id=user_subscription.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 
 ?>
