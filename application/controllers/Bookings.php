@@ -183,8 +183,8 @@ include_once(dirname(__FILE__)."/Data_format.php");
             }
         }
 
-        public function bookingbydriver_get($driverId){
-            $data = $this->Bookings_Model->getBookingByDriver($driverId);
+        public function bookingbydriver_get($driverId,$isSuccess){
+            $data = $this->Bookings_Model->getBookingByDriver($driverId,$isSuccess);
             $arr_container = [];
             foreach($data as $val){
                 $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);

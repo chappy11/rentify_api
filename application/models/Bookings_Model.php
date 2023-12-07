@@ -63,14 +63,29 @@
             return $query->result();
         }
 
-        public function getBookingByDriver($driverId){
-            $this->db->select("*");
-            $this->db->from($this->tbl_name);
-            $this->db->where('bookings.driver_id',$driverId);
-            $this->db->join('vehicles','vehicles.vehicle_id=bookings.vehicle_id','LEFT');
-            $this->db->join('users','users.user_id=bookings.customer_id','LEFT');
-            $query = $this->db->get();
-            return $query->result();
+        public function getBookingByDriver($driverId,$isSuccess){
+            if($isSuccess === '1'){
+                $this->db->select("*");
+                $this->db->from($this->tbl_name);
+                $this->db->where('bookings.driver_id',$driverId);
+                $this->db->where('bookings.status','SUCCESS');
+                $this->db->join('vehicles','vehicles.vehicle_id=bookings.vehicle_id','LEFT');
+                $this->db->join('users','users.user_id=bookings.customer_id','LEFT');
+                $this->db->order_by('createdAt','DESC');
+                $query = $this->db->get();
+                return $query->result();
+            }else{
+                $this->db->select("*");
+                $this->db->from($this->tbl_name);
+                $this->db->where('bookings.driver_id',$driverId);
+                $this->db->where('bookings.status!=','SUCCESS');
+                $this->db->join('vehicles','vehicles.vehicle_id=bookings.vehicle_id','LEFT');
+                $this->db->join('users','users.user_id=bookings.customer_id','LEFT');
+                $this->db->order_by('createdAt','DESC');
+                $query = $this->db->get();
+                return $query->result();
+            }
+         
         }
 
         public function getbookingbyuserid($userId){
