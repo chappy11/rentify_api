@@ -26,6 +26,12 @@
             return $this->db->update($this->table,$payload,'rating_id='.$ratingid);
         }
     
+        public function getAverageRating($ownerId) {
+            $this->db->select_avg('rating', 'average_rating');
+            $this->db->where("owner_id",$ownerId);
+            $query = $this->db->get($this->table);
+            return $query->row()->average_rating;
+        }
     }
 
 ?>

@@ -6,7 +6,7 @@
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array("Vehicle_Model","VehicleImage_Model"));
+            $this->load->model(array("Vehicle_Model","VehicleImage_Model","Rate_Model"));
         }
 
         public function warmup_post(){
@@ -58,7 +58,11 @@
             $arr_container = [];
             foreach($data as $val){
                 $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);
-                $imgPayload = array("images" => $vehicleImg);
+                $imgPayload = array(
+                    "images" => $vehicleImg,
+                    "owner_rating" =>  $this->Rate_Model->getAverageRating($val->user_id)
+
+                );
                 $pyload = (object)array_merge((array)$val,(array)$imgPayload);
 
                 array_push($arr_container,$pyload);
@@ -73,7 +77,11 @@
             $arr_container = [];
             foreach($data as $val){
                 $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);
-                $imgPayload = array("images" => $vehicleImg);
+                $imgPayload = array(
+                    "images" => $vehicleImg,
+                    "owner_rating" =>  $this->Rate_Model->getAverageRating($val->user_id)
+
+                );
                 $pyload = (object)array_merge((array)$val,(array)$imgPayload);
 
                 array_push($arr_container,$pyload);
@@ -86,7 +94,11 @@
         public function details_get($id){
             $data = $this->Vehicle_Model->getVehicleDetails($id)[0];
             $vehicleImg = $this->VehicleImage_Model->getByNonce($data->vehicleImage);
-            $imgPayload = array("images" => $vehicleImg);
+            $imgPayload = array(
+                "images" => $vehicleImg,
+                "owner_rating" =>  $this->Rate_Model->getAverageRating($data->user_id)
+
+            );
             $pyload = (object)array_merge((array)$data,(array)$imgPayload);
             $this->res(1,$pyload,'Fetch',0);
         }

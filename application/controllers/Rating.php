@@ -42,8 +42,12 @@
                     $this->res(0,null,"Something went wrong",0);
                 }
             }
+        }
 
-            
+        public function getrating_get($ownerId){
+            $data = $this->Rate_Model->getAverageRating($ownerId);
+
+            $this->res(1,$data,"GG",0);
         }
     }
 ?>

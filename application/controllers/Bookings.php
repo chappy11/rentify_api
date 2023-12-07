@@ -5,7 +5,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
         public function __construct(){
             parent::__construct();
-            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model','VehicleImage_Model',"Payment_Model","Notification_Model"));
+            $this->load->model(array('Bookings_Model','User_Model','Vehicle_Model','Drivers_Model','VehicleImage_Model',"Payment_Model","Notification_Model","Rate_Model"));
         }
 
 
@@ -140,7 +140,8 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 "owner" => $ownerData,
                 "customer" => $customerData,
                 "vehicles" => $pyload,
-                'driver' => $driverData
+                'driver' => $driverData,
+                'owner_rating' => $this->Rate_Model->getAverageRating($data->owner_id),
             );
 
             $this->res(1,$response,'Retrieve',0);
