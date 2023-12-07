@@ -36,6 +36,29 @@
             $user_type = 'RENTER';
             $isActive = 'ACTIVE';
 
+            $checkEmailPayload =array(
+                "email" => $email
+            );
+
+            $isEmailAlreadyExist = count($this->User_MOdel->getUserQuery($checkEmailPayload)) > 0;
+
+            $checkmobileNumberPayload = array(
+                "mobileNumber" => $mobileNumber
+            );
+
+            $isMobileNumberExist = count($this->User_Model->getUserQuery($checkmobileNumberPayload)) > 0;
+
+            if($isEmailAlreadyExist){
+                $this->res(0,null,"Email is already exist",0);
+                return;
+            }
+
+            if($isMobileNumberExist){
+                $this->res(0,null,"Mobile Number is already exist",0);                
+                return;
+            }
+
+
             $payload = array(
                 "username" => $username,
                 "password" => $password,

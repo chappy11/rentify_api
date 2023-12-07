@@ -91,8 +91,7 @@
             $this->db->from($this->tbl);
             if($arr !== null){
                 $this->db->where($arr);
-            }
-           
+            }         
             $this->db->where('user_type !=','ADMIN');
             $query = $this->db->get();
             return $query->result();
