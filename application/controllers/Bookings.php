@@ -306,7 +306,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $amount = $data->amount;
             $fourdigit = random_int(1000,9999);
             $sixDigit = random_int(100000, 999999);
-        
+            $bookingData = $this->Bookings_Model->getBookingByRefId($refId)[0];
             $code = $fourdigit.'-'.$sixDigit;
             $payload = array(
                 "code" => $code,
@@ -316,6 +316,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 "notes" => "Online Payment"
             );
 
+            
             $isPaid = $this->Payment_Model->pay($payload);
 
             if($isPaid){
@@ -326,6 +327,13 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $isUpdate = $this->Bookings_Model->updateData($refId,$updatePayload);
 
                 if($isUpdate){
+                    $sownerPayload = array(
+                        "reciever_id" => $bookingData->owner_id,
+                        "header" => "Customer Paid Transactions ".$refId,
+                        "body" => "Your customer succesfully paid ".$amount." via gcash",
+                        "notif_status" => 1
+                    );
+                    $this->Notification_Model->create($sownerPayload);
                     $this->res(1,null,"Successfully Paid",0);
                 }else{
                      $this->res(0,null,"Something went wrong",0);
