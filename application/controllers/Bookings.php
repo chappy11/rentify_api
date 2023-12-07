@@ -402,6 +402,15 @@ include_once(dirname(__FILE__)."/Data_format.php");
         }
 
         
+        public function getownerincome_get($ownerId){
+            $payload = array(
+                "owner_id" => $ownerId,
+                "status" => "SUCCESS"
+            );
+            $data = $this->Bookings_Model->bookingQuery($payload);
+
+            $this->res(1,$data,"GG",count($data));
+        }
     }
 
 ?>
