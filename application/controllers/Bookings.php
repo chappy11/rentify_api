@@ -25,15 +25,28 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $destination = $data->destination;
             $payment = '';
 
-            
+            $statusArray = [
+                'PENDING',
+                'ACCEPTED',
+                'TO_PICK_UP',
+                'PICK_UP'
+            ];
             $checkQUery = array(
                 "vehicle_id" => $vehicleId,
                 "book_date" =>$bookdate
             );
 
             $checkHasBooking = $this->Bookings_Model->bookingQuery($checkQUery);
-
-            if(count($checkHasBooking) > 0){
+           
+            $countCheckBooking = 0;
+            foreach ($checkHasBooking as  $bookData) {
+               if(in_array($checkHasBooking->status,$statusArray)){
+                $countCheckBooking += 1;
+               }else{
+                $countCheckBooking +=0;
+               }
+            }
+            if($countCheckBooking > 0){
                 $this->res(0,null,"This Date is not available",0);
                 return;
             }
@@ -45,12 +58,6 @@ include_once(dirname(__FILE__)."/Data_format.php");
             
 
             $check = $this->Bookings_Model->bookingQuery($queryArr);
-            $statusArray = [
-                'PENDING',
-                'ACCEPTED',
-                'TO_PICK_UP',
-                'PICK_UP'
-            ];
             $countError = 0;
             foreach ($check as  $bookData) {
                if(in_array($bookData->status,$statusArray)){
