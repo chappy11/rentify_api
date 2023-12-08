@@ -225,22 +225,22 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $customerPayload = array(
                     "reciever_id" => $bookingData->customer_id,
                     "header" => "Successfully Pick Up ",
-                    "body" => "You have successfully pick up by your driver",
+                    "body" => "Your Items have successfully been pick up by your driver",
                     "notif_status" => 1
                 );
                 $this->Notification_Model->create($customerPayload);
                 $ownerPayload = array(
                     "reciever_id" => $bookingData->owner_id,
-                    "header" => "Driver pick up customer",
-                    "body" => "Your driver successfully pickup customer",
+                    "header" => "Driver pick up Items",
+                    "body" => "Your driver successfully pickup your Items",
                     "notif_status" => 1
                 );
                 $this->Notification_Model->create($ownerPayload);
             }else if($status == 'SUCCESS'){
                 $sownerPayload = array(
                     "reciever_id" => $bookingData->owner_id,
-                    "header" => "Customer Arrived to their destination",
-                    "body" => "Your driver successfully to its destination",
+                    "header" => "Customer Item Arrived to their destination",
+                    "body" => "Your driver successfully deliver the item to its destination",
                     "notif_status" => 1
                 );
                 $this->Notification_Model->create($sownerPayload);
