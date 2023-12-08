@@ -39,8 +39,8 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $checkHasBooking = $this->Bookings_Model->bookingQuery($checkQUery);
            
             $countCheckBooking = 0;
-            foreach ($checkHasBooking as  $bookData) {
-               if(in_array($checkHasBooking->status,$statusArray)){
+            foreach ($checkHasBooking as  $booking) {
+               if(in_array($booking->status,$statusArray)){
                 $countCheckBooking += 1;
                }else{
                 $countCheckBooking +=0;
