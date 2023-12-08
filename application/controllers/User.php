@@ -312,8 +312,10 @@
            if($isUpload){
             $uploadPath = "profiles/".$img;
                 move_uploaded_file($_FILES["img"]["tmp_name"], $uploadPath);
-                $this->res(1,null,"Successfully Updated",0);
-           }else{
+                $user = $this->User_Model->getUserById($userId);
+                $this->res(1,$user  ,"Successfully Updated",0);
+
+            }else{
                 $this->res(0,null,"Something went wrong",0);
             }
         }
