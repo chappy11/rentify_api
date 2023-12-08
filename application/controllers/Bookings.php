@@ -418,6 +418,19 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
             $this->res(1,$data,"GG",count($data));
         }
+    
+    
+        public function gettodaysbooking_get(){
+            $today = date('Y-m-d');
+
+            $queryPayload = array(
+                "book_date" => $today
+            );
+
+            $resp = $this->Bookings_Model->bookingQuery($queryPayload);
+
+            $this->res(1,$resp,"Fetch",count($resp));
+        }
     }
 
 ?>

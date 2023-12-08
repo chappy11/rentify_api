@@ -42,6 +42,13 @@
             return $this->db->update($this->tble,$payload,"driver_id=".$id);
         }
   
+        public function getAllDriver(){
+            $this->db->select("*");
+            $this->db->from($this->tble);
+            $this->db->where("isDeleted",0);
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 
 ?>

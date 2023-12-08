@@ -87,5 +87,11 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $this->res(0,null,"Something went wrong please try again later",0);
             }
         }
+
+        public function drivers_get(){
+            $data = $this->Drivers_Model->getAllDriver();
+
+            $this->res(1,$data,"GG",0);
+        }
     }
 ?>
