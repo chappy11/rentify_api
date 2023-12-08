@@ -103,6 +103,16 @@
             return $query->result();
         }
 
+        public function getbookingbyownerid($userId){
+            $this->db->select("*");
+            $this->db->from($this->tbl_name);
+            $this->db->where('bookings.customer_id',$userId);
+            $this->db->join('vehicles','vehicles.vehicle_id=bookings.vehicle_id','LEFT');
+            $this->db->join('users','users.user_id=bookings.owner_id','LEFT');
+            $query = $this->db->get();
+            return $query->result();
+        }
+
         public function getTransactionsByOwner($user_id){
             $this->db->select("*");
             $this->db->from($this->tbl_name);
@@ -136,5 +146,16 @@
             return $query->result();
         }
 
+        // public function getOnGoingTransactions(){
+        //     $this->db->select('*');
+        //     $this->db->from($this->table);
+        //     $this->db->where_in('status', ['PICK_UP', 'TO_PICK', 'ACCEPTED']);
+        //     $query = $this->db->get();
+        //     // Execute the query
+        //     return  $query->result(); // Fetch           
+        // }
+
+
+       
     }
 ?>

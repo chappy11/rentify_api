@@ -431,6 +431,29 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
             $this->res(1,$resp,"Fetch",count($resp));
         }
+
+        public function getbookingbyquery_post(){
+            $data = $this->decode();
+
+            $resp = $this->Bookings_Model->bookingQuery($data);
+
+            $this->res(1,$resp,"Successfully Fetch",0);
+        }
+
+
+        public function gettransactionby_get($id,$type){
+            $data = $this->decode();
+
+            $arr = array();
+
+            if($type == 'RENTER'){
+                $arr = $this->Bookings_Model->getbookingbyuserid($id);
+            }else{
+                $arr = $this->Bookings_Model->getbookingbyownerid($id);
+            }
+        
+            $this->res(1,$arr,"GG",0);
+        }
     }
 
 ?>
