@@ -31,25 +31,25 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 'TO_PICK_UP',
                 'PICK_UP'
             ];
-            $checkQUery = array(
-                "vehicle_id" => $vehicleId,
-                "book_date" =>$bookdate
-            );
+            // $checkQUery = array(
+            //     "vehicle_id" => $vehicleId,
+            //     "book_date" =>$bookdate
+            // );
 
-            $checkHasBooking = $this->Bookings_Model->bookingQuery($checkQUery);
+            // $checkHasBooking = $this->Bookings_Model->bookingQuery($checkQUery);
            
-            $countCheckBooking = 0;
-            foreach ($checkHasBooking as  $booking) {
-               if(in_array($booking->status,$statusArray)){
-                $countCheckBooking += 1;
-               }else{
-                $countCheckBooking +=0;
-               }
-            }
-            if($countCheckBooking > 0){
-                $this->res(0,null,"This Date is not available",0);
-                return;
-            }
+            // $countCheckBooking = 0;
+            // foreach ($checkHasBooking as  $booking) {
+            //    if(in_array($booking->status,$statusArray)){
+            //     $countCheckBooking += 1;
+            //    }else{
+            //     $countCheckBooking +=0;
+            //    }
+            // }
+            // if($countCheckBooking > 0){
+            //     $this->res(0,null,"This Date is not available",0);
+            //     return;
+            // }
             
             $queryArr = array(
                 "vehicle_id" => $vehicleId,
