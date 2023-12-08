@@ -437,6 +437,7 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
             $resp = $this->Bookings_Model->bookingQuery($data);
 
+
             $this->res(1,$resp,"Successfully Fetch",0);
         }
 
@@ -451,8 +452,17 @@ include_once(dirname(__FILE__)."/Data_format.php");
             }else{
                 $arr = $this->Bookings_Model->getbookingbyownerid($id);
             }
-        
-            $this->res(1,$arr,"GG",0);
+            $arr_container = [];
+            foreach($arr as $val){
+                $vehicleImg = $this->VehicleImage_Model->getByNonce($val->vehicleImage);
+                $imgPayload = array("images" => $vehicleImg);
+                $pyload = (object)array_merge((array)$val,(array)$imgPayload);
+
+                array_push($arr_container,$pyload);
+            }
+
+            
+            $this->res(1,$arr_container,"GG",0);
         }
     }
 
