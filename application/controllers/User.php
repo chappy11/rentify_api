@@ -298,6 +298,25 @@
             $resp = $this->User_Model->getuserQuery($data);
             $this->res(1,$resp,'GG',count($resp));
         }
+
+        public function updatephotos_post(){
+           $img = $_FILES['img']['name'];
+           $userId = $this->post('user_id');
+
+           $updatePayload = array(
+            "image" => "profiles/".$img
+           );
+
+           $isUpload = $this->User_Model->update($userId,$updatePayload);
+
+           if($isUpload){
+            $uploadPath = "profiles/".$img;
+                move_uploaded_file($_FILES["img"]["tmp_name"], $uploadPath);
+                $this->res(1,null,"Successfully Updated",0);
+           }else{
+                $this->res(0,null,"Something went wrong",0);
+            }
+        }
     }
 
 ?>
