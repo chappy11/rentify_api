@@ -59,6 +59,11 @@
             $this->db->from($this->tbl_name);
             $this->db->where('driver_id',$driverId);
             $this->db->where('book_date',$date);
+            $this->db->group_start();
+            $this->db->or_where('status!=','SUCCESS');
+            $this->db->or_where('status!=','CANCELED');
+            $this->db->or_where('status!=','DECLINED');
+            $this->db->group_end();
             $query = $this->db->get();
             return $query->result();
         }
