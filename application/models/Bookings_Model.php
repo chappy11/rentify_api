@@ -106,7 +106,7 @@
         public function getbookingbyownerid($userId){
             $this->db->select("*");
             $this->db->from($this->tbl_name);
-            $this->db->where('bookings.customer_id',$userId);
+            $this->db->where('bookings.owner_id',$userId);
             $this->db->join('vehicles','vehicles.vehicle_id=bookings.vehicle_id','LEFT');
             $this->db->join('users','users.user_id=bookings.owner_id','LEFT');
             $query = $this->db->get();

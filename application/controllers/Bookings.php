@@ -183,6 +183,14 @@ include_once(dirname(__FILE__)."/Data_format.php");
                         "notif_status" => 1
                     );
                     $this->Notification_Model->create($customerPayload);
+
+                    $driverPayload = array(
+                        "driver_id" => $driverId,
+                        "header" => "Assigned to a new delivery ",
+                        "body" => "You have assigned a delivery by your owner",
+                        "notif_status" => 1
+                    );
+                    $this->Notification_Model->create($driverPayload);
                     $this->res(1,null,"Successfully Updated",0);
                 }else{
                     $this->res(0,null,"Something went wrong",0);
@@ -463,6 +471,33 @@ include_once(dirname(__FILE__)."/Data_format.php");
 
             
             $this->res(1,$arr_container,"GG",0);
+        }
+
+        public function reassigndriver_post(){
+            $data = $this->decode();
+
+            $driverId = $data->driver_id;
+            $refId = $data->refId;
+
+            $updatePayload = array(
+                "driver_id" => $driverId
+            );
+
+            $isUpdate = $this->Bookings_Model->updateData($refId,$updatePayload);
+
+            if($isUpdate){
+                $driverPayload = array(
+                    "driver_id" => $driverId,
+                    "header" => "Assigned to a new delivery ",
+                    "body" => "You have assigned a delivery by your owner",
+                    "notif_status" => 1
+                );
+                $this->Notification_Model->create($driverPayload);
+                $this->res(1,null,"Successfully Updated",0);
+            }else{
+                $this->res(0,null,"Successfully Updated",0);
+            }
+
         }
     }
 
