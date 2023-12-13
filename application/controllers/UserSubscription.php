@@ -60,7 +60,7 @@
             
                $this->res(1,$data[0],"Successfully Get",0);
             }else{
-                $this->res(0,null,"Something went wrong",0);
+                $this->res(1,$data,"No Subscription",0);
             }
         }
 
