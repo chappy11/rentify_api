@@ -19,6 +19,8 @@
             $this->db->from($this->tbl);
             $this->db->where("user_id",$userId);
             $this->db->where('isDeleted',0);
+            $this->db->join('categories','categories.category_id=vehicles.category_id');
+            $this->db->join('brand','brand.brand_id=vehicles.brand_id');
             $query = $this->db->get();
             return $query->result();
        }
@@ -27,6 +29,8 @@
             $this->db->select("*");
             $this->db->from($this->tbl);
             $this->db->where('vehicles.isDeleted',0);
+            $this->db->join('categories','categories.category_id=vehicles.category_id');
+            $this->db->join('brand','brand.brand_id=vehicles.brand_id');
             $query = $this->db->get();
             return $query->result();
         }
@@ -36,12 +40,20 @@
             $this->db->from($this->tbl);
             $this->db->where('vehicles.vehicle_id',$id);
             $this->db->join('users','users.user_id=vehicles.user_id');
+            $this->db->join('categories','categories.category_id=vehicles.category_id');
+            $this->db->join('brand','brand.brand_id=vehicles.brand_id');
             $query = $this->db->get();
             return $query->result();
         }
 
         public function getVehicleDataById($vehicle_id){
-            return $this->db->get_where('vehicles', ['vehicle_id' => $vehicle_id])->row();
+            $this->db->select("*");
+            $this->db->from($this->tbl);
+            $this->db->join('users','users.user_id=vehicles.user_id');
+            $this->db->join('categories','categories.category_id=vehicles.category_id');
+            $this->db->join('brand','brand.brand_id=vehicles.brand_id');
+            $query = $this->db->get();
+            return $query->result()[0];
         }
 
         public function updateData($id,$payload){

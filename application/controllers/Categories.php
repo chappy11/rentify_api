@@ -10,21 +10,16 @@ include_once(dirname(__FILE__)."/Data_format.php");
             $this->load->model(array('Categories_Model'));
         }
 
-        public function sample_get(){
-            $this->res(1,"GGG","test",0);
-        } 
         public function create_post(){
             $data = $this->decode();
 
             $type = $data->type;
-            $min = $data->min;
-            $max = $data->max;
+            $price = $data->price;
             $desc = $data->desc;
 
             $payload = array(
                 "vehicleType" => $type,
-                "min" => $min,
-                "max" => $max,
+                "price" => $price,
                 "typeDescription" => $desc
             );
 

@@ -17,27 +17,25 @@
             $orImage = $_FILES['or']['name'];
             $crImage = $_FILES['cr']['name'];
             $nonce = $this->post("nonce");
-            $brand = $this->post('brand');
+            $brand_id = $this->post('brand_id');
             $model = $this->post('model');
             $description = $this->post('description');
             $capacity =$this->post("capacity");
             $userId  =$this->post('userId');
-            $vehicleType = $this->post('vehicleType');
+            $category_id = $this->post('category_id');
             $vehicleIsActive = 'ACTIVE';
-            $price = $this->post("price");
 
             $payload = array(
-                "brand" => $brand,
+                "brand_id" => $brand_id,
                 "description" => $description,
                 "vehicleImage" => $nonce,
-                "vehicle_type" => $vehicleType,
+                "category_id" => $category_id,
                 "model" => $model,
                 "capacity" => $capacity,
                 "vehicleIsActive" => $vehicleIsActive,
                 "vehicleOr" => "or/".$orImage,
                 "vehicleCr" => "cr/".$crImage,
                 "user_id" => $userId,              
-                "price" => $price,
             );
 
             $resp = $this->Vehicle_Model->createVehicle($payload);
