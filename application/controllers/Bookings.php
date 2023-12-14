@@ -417,14 +417,26 @@ include_once(dirname(__FILE__)."/Data_format.php");
         }
 
         
-        public function getownerincome_get($ownerId){
-            $payload = array(
-                "owner_id" => $ownerId,
-                "status" => "SUCCESS"
-            );
-            $data = $this->Bookings_Model->bookingQuery($payload);
+        public function getownerincome_post($ownerId){
 
-            $this->res(1,$data,"GG",count($data));
+            $data = $this->decode();
+            $firstDate = $data->dateStart;
+            $seconddate = $data->dateEnd;
+
+            if($firstDate == "" || $seconddate == ""){
+                $payload = array(
+                    "owner_id" => $ownerId,
+                    "status" => "SUCCESS"
+                );
+                $resp1 = $this->Bookings_Model->bookingQuery($payload);
+    
+                $this->res(1,$resp1,"GG",count($resp1));
+            }else{
+                $resp2 = $this->Bookings_Model->getBookingsByDateRange($firstDate,$seconddate);
+
+                $this->res(1,$resp2,'GG',0);
+            }
+         
         }
     
     
@@ -498,6 +510,17 @@ include_once(dirname(__FILE__)."/Data_format.php");
                 $this->res(0,null,"Successfully Updated",0);
             }
 
+        }
+
+        public function getdata_post(){
+            $data = $this->decode();
+
+            $firstdate = $data->dateStart;
+            $seconddate = $data->dateEnd;
+
+            $data = $this->Bookings_Model->getBookingsByDateRange($firstdate,$seconddate);
+        
+            $this->res(1,$data,"gg",0);
         }
     }
 

@@ -155,7 +155,16 @@
         //     return  $query->result(); // Fetch           
         // }
 
-
+        public function getBookingsByDateRange($startDate, $endDate)
+    {
+        $this->db->select('*');
+        $this->db->from('bookings');
+        $this->db->where('createdAt >=', $startDate);
+        $this->db->where('createdAt <=', $endDate);
+        $this->db->where("status","SUCCESS");
+        $query = $this->db->get();
+        return $query->result();
+    }
        
     }
 ?>
