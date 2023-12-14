@@ -54,10 +54,10 @@
 
         public function check_get($userId){
             $resp = $this->isHasSubscription($userId);
-
+          
             if($resp){
-               $data =  $this->UserSubscription_Model->getusersub($userId);
             
+                $data =  $this->UserSubscription_Model->getusersub($userId);
                $this->res(1,$data[0],"Successfully Get",0);
             }else{
                 $this->res(1,$data,"No Subscription",0);
