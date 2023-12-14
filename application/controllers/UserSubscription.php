@@ -110,10 +110,24 @@
   
         }
 
-        public function income_get(){
-            $data =  $this->UserSubscription_Model->getAllusersub();
+        public function income_post(){
+            $data = $this->decode();
+
+            $startDate = $data->startDate;
+            $endDate = $data->endDate;
             
-            $this->res(1,$data,"Subscritpion",0);
+
+            if($startDate == "" || $endDate == ""){
+                $resp1 =  $this->UserSubscription_Model->getAllusersub();
+  
+            
+                $this->res(1,$resp1,"Subscritpion",0);
+            }else{
+                $resp2 = $this->UserSubscription_Model->getUserSubByDate($startDate,$endDate);
+            
+                $this->res(1,$resp2,"Subscritpion",0);
+            }
+        
         }
     }
 ?>

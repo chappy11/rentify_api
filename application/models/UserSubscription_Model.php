@@ -35,6 +35,18 @@
             $query = $this->db->get();
             return $query->result();
         }
+
+
+        public function getUserSubByDate($startDate,$endDate){
+            $this->db->select("*");
+            $this->db->from($this->table);
+            $this->db->where('sub_created >=', $startDate);
+            $this->db->where('sub_created <=', $endDate);
+            $this->db->join("subscription","subscription.sub_id=user_subscription.sub_id");
+            $this->db->join("users","users.user_id=user_subscription.user_id");
+            $query = $this->db->get();
+            return $query->result();
+        }
     }
 
 ?>
